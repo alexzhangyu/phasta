@@ -20,6 +20,11 @@ c  iBC    (nshg)                : BC codes
 c  BC     (nshg,ndofBC)         : BC constraint parameters
 c  iper   (nshg)                : periodicity table
 c
+c  ! for solid
+c  b      (npro,ngauss,6)       : left Cauchy green tensor
+c  b_ac   (npro,ngauss,6)       : time derivative of left Cauchy green tensor
+c  b      (npro,ngauss,6)       : b at time step n+af
+c
 c shape functions:
 c  shp    (nshape,ngauss)        : interior element shape functions
 c  shgl   (nsd,nshape,ngauss)    : local shape function gradients
@@ -38,7 +43,6 @@ c
       use wallData
       use fncorpmod
       use bc3lhs_m
-c      use mesh_motion_m
 
         include "common.h"
         include "mpif.h"
@@ -50,7 +54,8 @@ c
      &            x(numnp,nsd),            iBC(nshg),
      &            BC(nshg,ndofBC),         ilwork(nlwork),
      &            iper(nshg),              uold(nshg,nsd)
-c
+c    
+c 
         dimension res(nshg,nflow),         
      &            rest(nshg),              solinc(nshg,ndof)
 c     
@@ -154,7 +159,16 @@ c
         time   = 0
         yold   = y
         acold  = ac
+C c......hard coded for the initialzation for arrays used for solid
+C         b    = zero 
+C         b_ac = zero
+C         b(:,:,1)=1.0
 
+C         b(:,:,2)=1.0
+C         b(:,:,3)=1.0
+C         b_af = b
+C c......end of the hard coded initialization for solid
+c
 !Blower Setup
        call BC_init(Delt, lstep, BC)  !Note: sets BC_enable
 ! fix the yold values to the reset BC
@@ -322,8 +336,7 @@ c============ Start the loop of time steps============================c
         deltaInlInv=one/(0.125*0.0254)
         do 2000 istp = 1, nstp
 c
-c      umesh = zero
-c            call temp_mesh_motion(x,umesh,time,delt(1),istp,numnp,nsd,myrank)
+c            call temp_mesh_motion(x,umesh,time,delt(1),istp,numnp,nsd)
 c
 
          
@@ -393,6 +406,7 @@ c
 c.... -----------------------> predictor phase <-----------------------
 c
             call itrPredict(   yold,    acold,    y,   ac )
+            call itrBC (y,  ac,  iBC,  BC,  iper, ilwork)
 c
 c...-------------> HARDCODED <-----------------------
 c
@@ -500,7 +514,7 @@ c                        write(*,*) 'lhs=',lhs
      &                       solinc,        rerr,          umesh)
                     endif
                       else if (mod(impl(1),100)/10 .eq. 2) then ! mfg solve
-c     
+c'     
 c.... preconditioned matrix-free GMRES solver
 c     
                         lhs=0
@@ -595,7 +609,7 @@ c
      &                    iper,          ilwork,
      &                    shp,           shgl,
      &                    shpb,          shglb, solinc(1,isclr+5))
-c    
+c'    
                   endif  ! endif usingPETSc for scalar
 c
                   else if(isolve.eq.10) then ! this is a mesh-elastic solve
@@ -611,7 +625,7 @@ c
                      call itrBCElas(umesh,  disp,  iBC, 
      &                              BC(:,ndof+2:ndof+5),
      &                              iper,   ilwork         )
-c
+c                         
 c.... call to SolGMRElas ... For mesh-elastic solve
 c
                      call SolGMRElas (x,        disp,      iBC,    BC,
@@ -654,7 +668,7 @@ c                       call itrBC (y,  ac,  iBC,  BC, iper, ilwork)
                         fct3=one/alfi
                         acold(:,7) = acold(:,7) 
      &                             + (ac(:,7)-acold(:,7))*fct2
-                        yold(:,7)  = yold(:,7)  
+                        yold(:,7)  = yold(:,7)    
      &                             + (y(:,7)-yold(:,7))*fct3  
                         call itrBCSclr (  yold,  acold,  iBC,  BC, 
      &                                    iper,  ilwork)
@@ -705,6 +719,10 @@ c
                almi =almit  
             endif          
             call itrUpdate( yold,  acold,   y,    ac)
+c
+c
+c.....Update the solid arrays at the end of the timestep
+      call itrupdate_b !add            
 c...-------------> HARDCODED <-----------------------
 c
 c            call itrBC (y,  ac,  iBC,  BC,  iper, ilwork)
@@ -861,7 +879,16 @@ c
      &                      myrank, 'a'//char(0), 'errors'//char(0), 6, 
      &                        rerr, 'd'//char(0), nshg, 10, lstep)
                endif
-
+c.....Hard coded of writing the solid arrays
+                 call write_field(
+     &                      myrank, 'a'//char(0), 'leftCG'//char(0), 6, 
+     &                        b, 'd'//char(0), nshg, 6, lstep)
+C
+                 call write_field(
+     &                      myrank, 'a'//char(0), 'leftCGDot'//char(0), 9, 
+     &                        b_dot, 'd'//char(0), nshg, 6, lstep)
+c......End of hard coded for solid
+c
 c the following is a future way to have the number of steps in the header...done for posix but not yet for syncio
 c
 c              call write_field2(myrank,'a'//char(0),'ybar'//char(0),
@@ -884,9 +911,6 @@ c         tcorewc2 = secs(0.0)
          endif
         
 c     call wtime
-
-      call destroyWallData
-      call destroyfncorp
 
  3000 continue !end of NTSEQ loop
 c     

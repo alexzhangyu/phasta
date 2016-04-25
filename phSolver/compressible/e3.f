@@ -1,7 +1,8 @@
         subroutine e3 (yl,      ycl,     acl,     shp,
      &                 shgl,    xl,      rl,      rml,    xmudmi,
      &                 BDiagl,  ql,      sgn,     rlsl,   EGmass,
-     &                 rerrl,   ytargetl, mater,  uml)
+     &                 rerrl,   ytargetl, mater,  uml,    b,
+     &                 b_dot,   b_af) !need to add the path for solid and        ! Declarations of the varibles generated in e3ivar
 c                                                                      
 c----------------------------------------------------------------------
 c
@@ -63,10 +64,13 @@ c
 c
         dimension g1yi(npro,nflow),          g2yi(npro,nflow),
      &            g3yi(npro,nflow),          shg(npro,nshl,nsd),
-     &            divqi(npro,nflow),       tau(npro,5)
+     &            divqi(npro,nflow),         tau(npro,5)
 c
         dimension dxidx(npro,nsd,nsd),       WdetJ(npro)
 c
+c....solid arrays
+        real*8, dimension(npro,ngauss,6) :: b, b_dot, b_af     
+c.....
         dimension rho(npro),                 pres(npro),
      &            T(npro),                   ei(npro),
      &            h(npro),                   alfap(npro),
@@ -77,7 +81,12 @@ c
      &            Sclr(npro),                dVdY(npro,15),
      &            giju(npro,6),              rTLS(npro),
      &            raLS(npro),                A0inv(npro,15)
-c      
+c
+C.....Additional solid properties
+        real*8, dimension(npro) :: bulkMod, shearMod, det_baf,      
+     &            Ja_def, det_d
+        real*8, dimension(npro,6):: d
+c
         dimension A0(npro,nflow,nflow),      A1(npro,nflow,nflow),
      &            A2(npro,nflow,nflow),      A3(npro,nflow,nflow)
 c
@@ -148,7 +157,10 @@ c
      &               rmu,             rlm,             rlm2mu,
      &               con,             rlsl,            rlsli,
      &               xmudmi,          sforce,          cv,
-     &               mater,           uml,             divum   )
+     &               mater,           uml,             divum,
+     &               b(:,intp,:),     b_dot(:,intp,:), b_af(:,intp,:),
+     &               bulkMod,         shearMod,        d, 
+     &               det_baf,         det_d,           Ja_def) !pass the solid arrays
         ttim(8) = ttim(8) + secs(0.0)
         
 c
@@ -164,7 +176,7 @@ c
      &               A2,              A3,             
      &               rLyi(:,1),       rLyi(:,2),      rLyi(:,3),  ! work arrays
      &               rLyi(:,4),       rLyi(:,5),      A0DC,
-     &               A0inv,           dVdY)
+     &               A0inv,           dVdY,           mater) !added for solid
         ttim(9) = ttim(9) + tmr()
 c
 c.... calculate the convective contribution (Galerkin)
@@ -191,7 +203,10 @@ c
      &               rmu,             rlm,             rlm2mu,
      &               u1,              u2,              u3,
      &               ri,              rmi,             stiff,
-     &               con, rlsli,     compK, T)
+     &               con,             rlsli,           compK,
+     &               T,               mater,
+     &               b_af(:,intp,:),  det_baf,         det_d,
+     &               d) !added for solid)
         endif
         ttim(15) = ttim(15) + secs(0.0)
 c

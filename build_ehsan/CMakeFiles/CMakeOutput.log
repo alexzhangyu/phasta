@@ -1,0 +1,475 @@
+The system is: Linux - 2.6.32-5-amd64 - x86_64
+Compiling the Fortran compiler identification source file "CMakeFortranCompilerId.F" succeeded.
+Compiler: /usr/local/gcc/4.9.2/bin/gfortran 
+Build flags: 
+Id flags: 
+
+The output was:
+0
+
+
+Compilation of the Fortran compiler identification source "CMakeFortranCompilerId.F" produced "a.out"
+
+The Fortran compiler identification is GNU, found in "/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/3.0.0/CompilerIdFortran/a.out"
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /usr/local/gcc/4.9.2/bin/gcc 
+Build flags: 
+Id flags: 
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is GNU, found in "/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/3.0.0/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /usr/local/gcc/4.9.2/bin/g++ 
+Build flags: 
+Id flags: 
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is GNU, found in "/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/3.0.0/CompilerIdCXX/a.out"
+
+Determining if the Fortran compiler works passed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec3948857806/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec3948857806.dir/build.make CMakeFiles/cmTryCompileExec3948857806.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building Fortran object CMakeFiles/cmTryCompileExec3948857806.dir/testFortranCompiler.f.o
+/usr/local/gcc/4.9.2/bin/gfortran    -c /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTryCompileExec3948857806.dir/testFortranCompiler.f.o
+Linking Fortran executable cmTryCompileExec3948857806
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec3948857806.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gfortran       CMakeFiles/cmTryCompileExec3948857806.dir/testFortranCompiler.f.o  -o cmTryCompileExec3948857806 -rdynamic 
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+
+Detecting Fortran compiler ABI info compiled with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec3391419699/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec3391419699.dir/build.make CMakeFiles/cmTryCompileExec3391419699.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building Fortran object CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o
+/usr/local/gcc/4.9.2/bin/gfortran    -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o
+Linking Fortran executable cmTryCompileExec3391419699
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec3391419699.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gfortran   -v   CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o  -o cmTryCompileExec3391419699 -rdynamic  
+Driving: /usr/local/gcc/4.9.2/bin/gfortran -v CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o -o cmTryCompileExec3391419699 -rdynamic -l gfortran -l m -shared-libgcc
+Using built-in specs.
+COLLECT_GCC=/usr/local/gcc/4.9.2/bin/gfortran
+COLLECT_LTO_WRAPPER=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/lto-wrapper
+Target: x86_64-linux-gnu
+Configured with: ../gcc-4.9.2/configure --enable-languages=c,c++,fortran --with-system-zlib --disable-multilib --enable-threads=posix --with-tune=generic --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --prefix=/usr/local/gcc/4.9.2 --with-gmp=/usr/local/gcc/4.9.2 --with-mpfr=/usr/local/gcc/4.9.2 --with-mpc=/usr/local/gcc/4.9.2 --disable-bootstrap
+Thread model: posix
+gcc version 4.9.2 (GCC) 
+Reading specs from /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64/libgfortran.spec
+rename spec lib to liborig
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3391419699' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+COMPILER_PATH=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/
+LIBRARY_PATH=/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3391419699' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2 --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTryCompileExec3391419699 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../.. CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o /usr/lib/../lib64/crtn.o
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+
+Parsed Fortran implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec3391419699/fast"]
+  ignore line: [/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec3391419699.dir/build.make CMakeFiles/cmTryCompileExec3391419699.dir/build]
+  ignore line: [gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp']
+  ignore line: [/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1]
+  ignore line: [Building Fortran object CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [/usr/local/gcc/4.9.2/bin/gfortran    -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [Linking Fortran executable cmTryCompileExec3391419699]
+  ignore line: [/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec3391419699.dir/link.txt --verbose=1]
+  ignore line: [/usr/local/gcc/4.9.2/bin/gfortran   -v   CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o  -o cmTryCompileExec3391419699 -rdynamic  ]
+  ignore line: [Driving: /usr/local/gcc/4.9.2/bin/gfortran -v CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o -o cmTryCompileExec3391419699 -rdynamic -l gfortran -l m -shared-libgcc]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/local/gcc/4.9.2/bin/gfortran]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/lto-wrapper]
+  ignore line: [Target: x86_64-linux-gnu]
+  ignore line: [Configured with: ../gcc-4.9.2/configure --enable-languages=c,c++,fortran --with-system-zlib --disable-multilib --enable-threads=posix --with-tune=generic --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --prefix=/usr/local/gcc/4.9.2 --with-gmp=/usr/local/gcc/4.9.2 --with-mpfr=/usr/local/gcc/4.9.2 --with-mpc=/usr/local/gcc/4.9.2 --disable-bootstrap]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 4.9.2 (GCC) ]
+  ignore line: [Reading specs from /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64/libgfortran.spec]
+  ignore line: [rename spec lib to liborig]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3391419699' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [COMPILER_PATH=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3391419699' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2 --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTryCompileExec3391419699 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../.. CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o /usr/lib/../lib64/crtn.o]
+    arg [/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTryCompileExec3391419699] ==> ignore
+    arg [/usr/lib/../lib64/crt1.o] ==> ignore
+    arg [/usr/lib/../lib64/crti.o] ==> ignore
+    arg [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o] ==> ignore
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2]
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..]
+    arg [CMakeFiles/cmTryCompileExec3391419699.dir/CMakeFortranCompilerABI.F.o] ==> ignore
+    arg [-lgfortran] ==> lib [gfortran]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lquadmath] ==> lib [quadmath]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o] ==> ignore
+    arg [/usr/lib/../lib64/crtn.o] ==> ignore
+  remove lib [gcc_s]
+  remove lib [gcc]
+  remove lib [gcc_s]
+  remove lib [gcc]
+  remove lib [gcc_s]
+  remove lib [gcc]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2] ==> [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64] ==> [/usr/local/gcc/4.9.2/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..] ==> [/usr/local/gcc/4.9.2/lib]
+  implicit libs: [gfortran;m;quadmath;m;c]
+  implicit dirs: [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2;/usr/local/gcc/4.9.2/lib64;/lib64;/usr/lib64;/usr/local/gcc/4.9.2/lib]
+  implicit fwks: []
+
+
+Determining if the Fortran compiler supports Fortran 90 passed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec2828973065/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec2828973065.dir/build.make CMakeFiles/cmTryCompileExec2828973065.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building Fortran object CMakeFiles/cmTryCompileExec2828973065.dir/testFortranCompilerF90.f90.o
+/usr/local/gcc/4.9.2/bin/gfortran    -c /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/testFortranCompilerF90.f90 -o CMakeFiles/cmTryCompileExec2828973065.dir/testFortranCompilerF90.f90.o
+Linking Fortran executable cmTryCompileExec2828973065
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2828973065.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gfortran       CMakeFiles/cmTryCompileExec2828973065.dir/testFortranCompilerF90.f90.o  -o cmTryCompileExec2828973065 -rdynamic 
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+
+Determining if the C compiler works passed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec2643278676/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec2643278676.dir/build.make CMakeFiles/cmTryCompileExec2643278676.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2643278676.dir/testCCompiler.c.o
+/usr/local/gcc/4.9.2/bin/gcc    -o CMakeFiles/cmTryCompileExec2643278676.dir/testCCompiler.c.o   -c /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTryCompileExec2643278676
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2643278676.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gcc       CMakeFiles/cmTryCompileExec2643278676.dir/testCCompiler.c.o  -o cmTryCompileExec2643278676 -rdynamic 
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec1205722740/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec1205722740.dir/build.make CMakeFiles/cmTryCompileExec1205722740.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o
+/usr/local/gcc/4.9.2/bin/gcc    -o CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o   -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/CMakeCCompilerABI.c
+Linking C executable cmTryCompileExec1205722740
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1205722740.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gcc     -v CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o  -o cmTryCompileExec1205722740 -rdynamic  
+Using built-in specs.
+COLLECT_GCC=/usr/local/gcc/4.9.2/bin/gcc
+COLLECT_LTO_WRAPPER=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/lto-wrapper
+Target: x86_64-linux-gnu
+Configured with: ../gcc-4.9.2/configure --enable-languages=c,c++,fortran --with-system-zlib --disable-multilib --enable-threads=posix --with-tune=generic --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --prefix=/usr/local/gcc/4.9.2 --with-gmp=/usr/local/gcc/4.9.2 --with-mpfr=/usr/local/gcc/4.9.2 --with-mpc=/usr/local/gcc/4.9.2 --disable-bootstrap
+Thread model: posix
+gcc version 4.9.2 (GCC) 
+COMPILER_PATH=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/
+LIBRARY_PATH=/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec1205722740' '-rdynamic' '-mtune=generic' '-march=x86-64'
+ /usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2 --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTryCompileExec1205722740 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../.. CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o /usr/lib/../lib64/crtn.o
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec1205722740/fast"]
+  ignore line: [/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec1205722740.dir/build.make CMakeFiles/cmTryCompileExec1205722740.dir/build]
+  ignore line: [gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp']
+  ignore line: [/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1]
+  ignore line: [Building C object CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/local/gcc/4.9.2/bin/gcc    -o CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o   -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/CMakeCCompilerABI.c]
+  ignore line: [Linking C executable cmTryCompileExec1205722740]
+  ignore line: [/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1205722740.dir/link.txt --verbose=1]
+  ignore line: [/usr/local/gcc/4.9.2/bin/gcc     -v CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o  -o cmTryCompileExec1205722740 -rdynamic  ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/local/gcc/4.9.2/bin/gcc]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/lto-wrapper]
+  ignore line: [Target: x86_64-linux-gnu]
+  ignore line: [Configured with: ../gcc-4.9.2/configure --enable-languages=c,c++,fortran --with-system-zlib --disable-multilib --enable-threads=posix --with-tune=generic --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --prefix=/usr/local/gcc/4.9.2 --with-gmp=/usr/local/gcc/4.9.2 --with-mpfr=/usr/local/gcc/4.9.2 --with-mpc=/usr/local/gcc/4.9.2 --disable-bootstrap]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 4.9.2 (GCC) ]
+  ignore line: [COMPILER_PATH=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec1205722740' '-rdynamic' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2 --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTryCompileExec1205722740 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../.. CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o /usr/lib/../lib64/crtn.o]
+    arg [/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTryCompileExec1205722740] ==> ignore
+    arg [/usr/lib/../lib64/crt1.o] ==> ignore
+    arg [/usr/lib/../lib64/crti.o] ==> ignore
+    arg [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o] ==> ignore
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2]
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..]
+    arg [CMakeFiles/cmTryCompileExec1205722740.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o] ==> ignore
+    arg [/usr/lib/../lib64/crtn.o] ==> ignore
+  remove lib [gcc]
+  remove lib [gcc_s]
+  remove lib [gcc]
+  remove lib [gcc_s]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2] ==> [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64] ==> [/usr/local/gcc/4.9.2/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..] ==> [/usr/local/gcc/4.9.2/lib]
+  implicit libs: [c]
+  implicit dirs: [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2;/usr/local/gcc/4.9.2/lib64;/lib64;/usr/lib64;/usr/local/gcc/4.9.2/lib]
+  implicit fwks: []
+
+
+Determining if the CXX compiler works passed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec1776178608/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec1776178608.dir/build.make CMakeFiles/cmTryCompileExec1776178608.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building CXX object CMakeFiles/cmTryCompileExec1776178608.dir/testCXXCompiler.cxx.o
+/usr/local/gcc/4.9.2/bin/g++     -o CMakeFiles/cmTryCompileExec1776178608.dir/testCXXCompiler.cxx.o -c /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTryCompileExec1776178608
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1776178608.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/g++        CMakeFiles/cmTryCompileExec1776178608.dir/testCXXCompiler.cxx.o  -o cmTryCompileExec1776178608 -rdynamic 
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec706433451/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec706433451.dir/build.make CMakeFiles/cmTryCompileExec706433451.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building CXX object CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o
+/usr/local/gcc/4.9.2/bin/g++     -o CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/CMakeCXXCompilerABI.cpp
+Linking CXX executable cmTryCompileExec706433451
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec706433451.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/g++      -v CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o  -o cmTryCompileExec706433451 -rdynamic  
+Using built-in specs.
+COLLECT_GCC=/usr/local/gcc/4.9.2/bin/g++
+COLLECT_LTO_WRAPPER=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/lto-wrapper
+Target: x86_64-linux-gnu
+Configured with: ../gcc-4.9.2/configure --enable-languages=c,c++,fortran --with-system-zlib --disable-multilib --enable-threads=posix --with-tune=generic --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --prefix=/usr/local/gcc/4.9.2 --with-gmp=/usr/local/gcc/4.9.2 --with-mpfr=/usr/local/gcc/4.9.2 --with-mpc=/usr/local/gcc/4.9.2 --disable-bootstrap
+Thread model: posix
+gcc version 4.9.2 (GCC) 
+COMPILER_PATH=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/
+LIBRARY_PATH=/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec706433451' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2 --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTryCompileExec706433451 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../.. CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o /usr/lib/../lib64/crtn.o
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec706433451/fast"]
+  ignore line: [/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec706433451.dir/build.make CMakeFiles/cmTryCompileExec706433451.dir/build]
+  ignore line: [gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp']
+  ignore line: [/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1]
+  ignore line: [Building CXX object CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/local/gcc/4.9.2/bin/g++     -o CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Linking CXX executable cmTryCompileExec706433451]
+  ignore line: [/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec706433451.dir/link.txt --verbose=1]
+  ignore line: [/usr/local/gcc/4.9.2/bin/g++      -v CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o  -o cmTryCompileExec706433451 -rdynamic  ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/local/gcc/4.9.2/bin/g++]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/lto-wrapper]
+  ignore line: [Target: x86_64-linux-gnu]
+  ignore line: [Configured with: ../gcc-4.9.2/configure --enable-languages=c,c++,fortran --with-system-zlib --disable-multilib --enable-threads=posix --with-tune=generic --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --prefix=/usr/local/gcc/4.9.2 --with-gmp=/usr/local/gcc/4.9.2 --with-mpfr=/usr/local/gcc/4.9.2 --with-mpc=/usr/local/gcc/4.9.2 --disable-bootstrap]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 4.9.2 (GCC) ]
+  ignore line: [COMPILER_PATH=/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/]
+  ignore line: [LIBRARY_PATH=/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec706433451' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2 --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTryCompileExec706433451 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../.. CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o /usr/lib/../lib64/crtn.o]
+    arg [/usr/local/gcc/4.9.2/libexec/gcc/x86_64-linux-gnu/4.9.2/collect2] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTryCompileExec706433451] ==> ignore
+    arg [/usr/lib/../lib64/crt1.o] ==> ignore
+    arg [/usr/lib/../lib64/crti.o] ==> ignore
+    arg [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtbegin.o] ==> ignore
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2]
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..] ==> dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..]
+    arg [CMakeFiles/cmTryCompileExec706433451.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/crtend.o] ==> ignore
+    arg [/usr/lib/../lib64/crtn.o] ==> ignore
+  remove lib [gcc_s]
+  remove lib [gcc]
+  remove lib [gcc_s]
+  remove lib [gcc]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2] ==> [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../../../lib64] ==> [/usr/local/gcc/4.9.2/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2/../../..] ==> [/usr/local/gcc/4.9.2/lib]
+  implicit libs: [stdc++;m;c]
+  implicit dirs: [/usr/local/gcc/4.9.2/lib/gcc/x86_64-linux-gnu/4.9.2;/usr/local/gcc/4.9.2/lib64;/lib64;/usr/lib64;/usr/local/gcc/4.9.2/lib]
+  implicit fwks: []
+
+
+Verifying Fortran/CXX Compiler Compatibility passed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX
+
+Run Build Command:"/usr/local/bin/gmake"
+/usr/local/cmake/3.0.0/bin/cmake -H/usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify -B/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX --check-build-system CMakeFiles/Makefile.cmake 0
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_start /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/progress.marks
+/usr/local/bin/gmake -f CMakeFiles/Makefile2 all
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/bin/gmake -f CMakeFiles/VerifyFortran.dir/build.make CMakeFiles/VerifyFortran.dir/depend
+gmake[2]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+cd /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX && /usr/local/cmake/3.0.0/bin/cmake -E cmake_depends "Unix Makefiles" /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortran.dir/DependInfo.cmake
+Scanning dependencies of target VerifyFortran
+gmake[2]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/bin/gmake -f CMakeFiles/VerifyFortran.dir/build.make CMakeFiles/VerifyFortran.dir/requires
+gmake[2]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+gmake[2]: Nothing to be done for `CMakeFiles/VerifyFortran.dir/requires'.
+gmake[2]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/bin/gmake -f CMakeFiles/VerifyFortran.dir/build.make CMakeFiles/VerifyFortran.dir/build
+gmake[2]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 1
+[ 25%] Building Fortran object CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
+/usr/local/gcc/4.9.2/bin/gfortran  -DVERIFY_CXX -O3 -I/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX    -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify/VerifyFortran.f -o CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
+Linking Fortran static library libVerifyFortran.a
+/usr/local/cmake/3.0.0/bin/cmake -P CMakeFiles/VerifyFortran.dir/cmake_clean_target.cmake
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/VerifyFortran.dir/link.txt --verbose=1
+/usr/bin/ar cr libVerifyFortran.a  CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
+/usr/bin/ranlib libVerifyFortran.a
+gmake[2]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles  1
+[ 25%] Built target VerifyFortran
+/usr/local/bin/gmake -f CMakeFiles/VerifyFortranC.dir/build.make CMakeFiles/VerifyFortranC.dir/depend
+gmake[2]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+cd /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX && /usr/local/cmake/3.0.0/bin/cmake -E cmake_depends "Unix Makefiles" /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortranC.dir/DependInfo.cmake
+Scanning dependencies of target VerifyFortranC
+gmake[2]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/bin/gmake -f CMakeFiles/VerifyFortranC.dir/build.make CMakeFiles/VerifyFortranC.dir/build
+gmake[2]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 2
+[ 50%] Building C object CMakeFiles/VerifyFortranC.dir/main.c.o
+/usr/local/gcc/4.9.2/bin/gcc  -DVERIFY_CXX -O3 -DNDEBUG -I/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX    -o CMakeFiles/VerifyFortranC.dir/main.c.o   -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify/main.c
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 3
+[ 75%] Building C object CMakeFiles/VerifyFortranC.dir/VerifyC.c.o
+/usr/local/gcc/4.9.2/bin/gcc  -DVERIFY_CXX -O3 -DNDEBUG -I/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX    -o CMakeFiles/VerifyFortranC.dir/VerifyC.c.o   -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify/VerifyC.c
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 4
+[100%] Building CXX object CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o
+/usr/local/gcc/4.9.2/bin/g++   -DVERIFY_CXX -O3 -DNDEBUG -I/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX    -o CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/FortranCInterface/Verify/VerifyCXX.cxx
+Linking CXX executable VerifyFortranC
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/VerifyFortranC.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/g++   -O3 -DNDEBUG    CMakeFiles/VerifyFortranC.dir/main.c.o CMakeFiles/VerifyFortranC.dir/VerifyC.c.o CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o  -o VerifyFortranC -rdynamic libVerifyFortran.a -lgfortran -lquadmath 
+gmake[2]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles  2 3 4
+[100%] Built target VerifyFortranC
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_start /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 0
+
+
+Determining if files pthread.h exist passed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec1650198234/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec1650198234.dir/build.make CMakeFiles/cmTryCompileExec1650198234.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1650198234.dir/CheckIncludeFiles.c.o
+/usr/local/gcc/4.9.2/bin/gcc    -o CMakeFiles/cmTryCompileExec1650198234.dir/CheckIncludeFiles.c.o   -c /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CheckIncludeFiles.c
+Linking C executable cmTryCompileExec1650198234
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1650198234.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gcc       CMakeFiles/cmTryCompileExec1650198234.dir/CheckIncludeFiles.c.o  -o cmTryCompileExec1650198234 -rdynamic 
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+
+Determining if the function pthread_create exists in the pthread passed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec2537829849/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec2537829849.dir/build.make CMakeFiles/cmTryCompileExec2537829849.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2537829849.dir/CheckFunctionExists.c.o
+/usr/local/gcc/4.9.2/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec2537829849.dir/CheckFunctionExists.c.o   -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec2537829849
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2537829849.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec2537829849.dir/CheckFunctionExists.c.o  -o cmTryCompileExec2537829849 -rdynamic -lpthread 
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+
+

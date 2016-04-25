@@ -91,6 +91,7 @@
 
 #define ieos_ideal_gas 1
 #define ieos_liquid_1  2
+#define ieos_solid_1  3
 
 #ifdef __cplusplus
 extern "C" {
@@ -420,6 +421,7 @@ extern "C" {
     int niter[MAXTS];
     int impl[MAXTS];
     double rhoinf[MAXTS];
+    double rhoinf_B[MAXTS]; // for solid
     int LHSupd[6];
     int loctim[MAXTS];
     double deltol[2][MAXTS];
@@ -571,6 +573,9 @@ extern "C" {
     double almi;
     double alfi;
     double gami;
+    double almBi; // for solid
+    double alfBi; // for solid
+    double gamBi; // for solid
     double flmpl;
     double flmpr;
     double dtol[2];

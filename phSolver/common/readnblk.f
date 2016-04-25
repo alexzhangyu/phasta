@@ -27,7 +27,7 @@ c
       
       end module
 
-      subroutine readnblk
+      subroutine readnblk(i_iniSolid)
       use iso_c_binding 
       use readarrays
       use fncorpmod
@@ -36,6 +36,7 @@ c
       use syncio
       use posixio
       use streamio
+c      use pointer_data !For solid
       include "common.h"
 
       real*8, target, allocatable :: xread(:,:), qread(:,:), acread(:,:)
@@ -58,13 +59,16 @@ c
       integer :: ierr_io, numprocs, itmp, itmp2
       integer :: ignored
       integer :: fileFmt
+      integer :: i_iniSolid
       character*255 fname2, temp2
       character*64 temp1
       type(c_ptr) :: handle
       character(len=1024) :: dataInt, dataDbl
       dataInt = c_char_'integer'//c_null_char
       dataDbl = c_char_'double'//c_null_char
-c
+c.....For solid
+c      dimension b(npro,ngauss,6),       b_ac(npro,ngauss,6),  
+c     &          b_af(npro,ngauss,6) 
 c.... determine the step number to start with
 c
       open(unit=72,file='numstart.dat',status='old')
@@ -542,6 +546,10 @@ c
             write(*,*) warning
          endif
          acold=zero
+c.... set flag to intialize solid arrays
+         i_iniSolid = 1 
+
+c.....End of setting flag for solid arrays
       endif
 cc
 cc.... read the header and check it against the run data

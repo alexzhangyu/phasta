@@ -7,7 +7,7 @@
      &                     A2,     A3,
      &                     e2p,    e3p,    e4p,
      &                     drdp,   drdT,   A0DC, 
-     &                     A0inv,  dVdY)
+     &                     A0inv,  dVdY,   mater)
 c
 c----------------------------------------------------------------------
 c
@@ -76,6 +76,8 @@ c
         dimension e2p(npro),                  
      &            e3p(npro),                 e4p(npro),
      &            drdp(npro),                drdT(npro)
+c
+        integer, intent(in) :: mater !select material type
 
 	ttim(21) = ttim(21) - secs(0.0)
 c
@@ -91,11 +93,20 @@ c
 c
         drdp = rho * betaT
         drdT = -rho * alfap
+c......for solid
+        if(mat_eos(mater,1).eq.ieos_solid_1) then
+          A0(:,5,1) = drdp * (ei + rk)  - alfap * T + betaT*pres  ! e1p 
+          e2p  = A0(:,5,1) + one
+          e3p  = rho * ( ei + rk) + pres
+          e4p  = drdT * (ei + rk) + rho * cp - pres * alfap
+c......end for solid
+        else
         A0(:,5,1) = drdp * (h + rk)  - alfap * T    ! e1p
 c        A0(:,5,1) = drdp * (ei + rk) + betaT * pres - alfap * T    ! e1p
           e2p  = A0(:,5,1) + one
           e3p  = rho * ( h + rk)
           e4p  = drdT * (h + rk) + rho * cp
+        endif
 c
 c
 c.... Calculate A0
@@ -257,7 +268,12 @@ c.... ref P-169 of the hand out
 c
        fact1 = one/(rho*cv*T**2)
        d = alfap*T/rho/betaT
-       e1bar = h - rk
+c..... modification for solid, may need change
+       if(mat_eos(mater,1).eq.ieos_solid_1) then
+        e1bar = ei + pres/rho
+       else
+        e1bar = h - rk
+       endif
        e2bar = e1bar - d
        e3bar = e2bar - cv * T
        e4bar = e2bar - 2* cv * T

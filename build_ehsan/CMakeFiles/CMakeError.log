@@ -1,0 +1,53 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec935523470/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec935523470.dir/build.make CMakeFiles/cmTryCompileExec935523470.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec935523470.dir/CheckSymbolExists.c.o
+/usr/local/gcc/4.9.2/bin/gcc    -o CMakeFiles/cmTryCompileExec935523470.dir/CheckSymbolExists.c.o   -c /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec935523470
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec935523470.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gcc       CMakeFiles/cmTryCompileExec935523470.dir/CheckSymbolExists.c.o  -o cmTryCompileExec935523470 -rdynamic 
+CMakeFiles/cmTryCompileExec935523470.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+gmake[1]: *** [cmTryCompileExec935523470] Error 1
+gmake: *** [cmTryCompileExec935523470/fast] Error 2
+
+File /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec3997427773/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec3997427773.dir/build.make CMakeFiles/cmTryCompileExec3997427773.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec3997427773.dir/CheckFunctionExists.c.o
+/usr/local/gcc/4.9.2/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec3997427773.dir/CheckFunctionExists.c.o   -c /usr/local/cmake/3.0.0/share/cmake-3.0/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec3997427773
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec3997427773.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec3997427773.dir/CheckFunctionExists.c.o  -o cmTryCompileExec3997427773 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_ehsan/CMakeFiles/CMakeTmp'
+gmake[1]: *** [cmTryCompileExec3997427773] Error 1
+gmake: *** [cmTryCompileExec3997427773/fast] Error 2
+
+

@@ -507,7 +507,9 @@ c
      &                 mattyp,              res,
      &                 rmes,                BDiag,
      &                 qres,                EGmass,
-     &                 rerr,                umesh )
+     &                 rerr,                umesh,
+     &                 b(iblk)%p,           b_dot(iblk)%p,
+     &                 b_af(iblk)%p) !need to add the arguments for solid
           if(lhs.eq.1) then
 c
 c.... satisfy the BC's on the implicit LHS
@@ -699,9 +701,6 @@ c
           endif
 c
         enddo
-c 
-c      write(*,*) 'umesh   65: ',umesh(65,:)
-c      write(*,*) 'umesh 2871: ',umesh(2871,:)
 c
         deallocate(sum_vi_area)
 c

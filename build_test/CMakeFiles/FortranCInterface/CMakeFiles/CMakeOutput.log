@@ -1,0 +1,19 @@
+Performing C SOURCE FILE Test C_SUPPORTS_DOLLAR succeded with the following output:
+Change Dir: /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_test/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/local/bin/gmake" "cmTryCompileExec1700228452/fast"
+/usr/local/bin/gmake -f CMakeFiles/cmTryCompileExec1700228452.dir/build.make CMakeFiles/cmTryCompileExec1700228452.dir/build
+gmake[1]: Entering directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_test/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp'
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_progress_report /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_test/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1700228452.dir/src.c.o
+/usr/local/gcc/4.9.2/bin/gcc   -DC_SUPPORTS_DOLLAR   -o CMakeFiles/cmTryCompileExec1700228452.dir/src.c.o   -c /fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_test/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTryCompileExec1700228452
+/usr/local/cmake/3.0.0/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1700228452.dir/link.txt --verbose=1
+/usr/local/gcc/4.9.2/bin/gcc   -DC_SUPPORTS_DOLLAR    CMakeFiles/cmTryCompileExec1700228452.dir/src.c.o  -o cmTryCompileExec1700228452 -rdynamic 
+gmake[1]: Leaving directory `/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_test/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp'
+
+Source file was:
+
+extern int dollar$(void);
+int main() { return 0; }
+

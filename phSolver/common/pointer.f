@@ -45,9 +45,12 @@ c
          type (i2d), dimension(MAXBLK2) ::  mienif0, mienif1
          type (r2d), dimension(MAXBLK2) ::  mxmudmi
          type (r3d), dimension(MAXBLK2) ::  mBCB
-c
+         type (r3d), dimension(MAXBLK2) ::  b !for solid,left Cauchy_green tensor,added
+         type (r3d), dimension(MAXBLK2) ::  b_dot!time derivative of b,added
+         type (r3d), dimension(MAXBLK2) ::  b_af! b at time step n+af,added          
+c          
          real*8, allocatable :: gmass(:)
        end module
-c
+c 
 c
 c

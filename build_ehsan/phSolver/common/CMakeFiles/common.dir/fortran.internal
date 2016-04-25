@@ -1,0 +1,37 @@
+# The fortran modules provided by this target.
+provides
+ asadj_m
+ aveall
+ bcsfidmap
+ blowercontrol
+ blowingduct
+ convolimpflow
+ convolrcrflow
+ dtnmod
+ fncorpmod
+ genint_m
+ genshp_m
+ hierarchic_m
+ lhsgkeep
+ local_m
+ local_mass
+ matdat_def_m
+ mattype_m
+ number_def_m
+ periodicity
+ phio
+ phstr
+ pointer_data
+ posixio
+ pvsqbi
+ quadfilt
+ readarrays
+ rlssave
+ slpw
+ spebc
+ specialbc
+ streamio
+ syncio
+ turbke
+ turbsa
+ walldata

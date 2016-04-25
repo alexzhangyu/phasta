@@ -8,15 +8,7 @@
           
         !Wall normal array of size (nshg, 3) 
         real*8, allocatable :: wnorm(:,:)
-
       contains 
-
-        subroutine destroyWallData()
-          if ( allocated(wnorm) ) then
-            deallocate(wnorm)
-            wnormCalced = .false.
-          endif
-        end subroutine destroyWallData
             
         subroutine findWallNorm(x,iBC,ilwork,iper)
    

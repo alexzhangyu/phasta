@@ -10,7 +10,7 @@ c
 c
         integer :: ivisc, icon
 c
-c HARDCODED until the proper indexing system is implemented
+c HARDCODED until the proper indexing system is implemented !For solid, no hard coded
 c
         select case (mater)
         case (1)
@@ -19,6 +19,8 @@ c
         case (2)
           ivisc = 7
           icon = 8
+        case (ieos_solid_1) 
+          icon = iprop_solid_1_cond
         case default
           call error ('getdiff ', 'ERROR: index can not be set!',0)
         end select

@@ -101,6 +101,8 @@ c
            allocate (ientp(neltp,nshl))
            allocate (ientmp(ibksz,nshl))
            allocate (mattype(intfromfile(1)))
+      write(*,*) 'CHECK', intfromfile(1)
+      write(*,*) 'CHECK mattype:',mattype
            allocate (neltp_mattype(nummat))
            iientpsiz=neltp*nshl
 
@@ -120,7 +122,7 @@ c
            call MPI_Barrier(MPI_COMM_WORLD,ierr) 
            call phio_readheader(fhandle, fname2 // char(0),
      &      c_loc(intfromfile), 1, dataInt, iotype)
-           call phio_readdatablock(fhandle,fname2 // char(0),
+           call phio_readdatablock(fhandle,fname2 // char(0), ! hard coded
      &      c_loc(mattype), intfromfile(1), dataInt, iotype)
 
            if(writeLock==0) then
@@ -168,6 +170,8 @@ c
                  endif
                  ! note mienG will be passed to gensav but nothing filled if not 
                  ! using PETSc so this is safe
+c
+c
 c
 c.... save the element block
 c
