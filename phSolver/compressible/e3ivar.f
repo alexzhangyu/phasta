@@ -63,6 +63,7 @@ c Kenneth Jansen, Winter 1997. Primitive Variables
 c----------------------------------------------------------------------
 c
 c        use eqn_state_m
+        use pointer_data
         include "common.h"
 c
 c  passed arrays
@@ -91,7 +92,7 @@ c
 c....Solid arrays
        real*8, dimension(npro,6) :: bq,bq_dot,bq_af
 c...
-        real*8,dimension(npro) :: bulkMod,shearMod,det_baf,Ja_def,               
+        real*8,dimension(npro) :: bulkMod,shearMod,det_baf,Ja_def,     
      &            det_d
         real*8,dimension(npro,6) :: d
 c        real*8, dimension(npro,ngauss) :: Ja_def_quad,det_d_quad
@@ -427,7 +428,7 @@ c        call approx_elm_prop(det_d_quad,det_d)
 c.....Get the thermodynamic properties for solid
          ithm = 7
          call getthm_solid_1(rho, ei, pres, T, npro, mater
-     &,              cv, cp,   alfap, betaT,bulkMod
+     &,              h, cv, cp,   alfap, betaT,bulkMod
      &,              shearMod, Ja_def) !add the solid
 c
       endif

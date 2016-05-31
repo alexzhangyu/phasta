@@ -123,8 +123,14 @@ c     &               rk,              rho,                ei,
 c     &               h,               tmp,                cv,
 c     &               cp,              alfap,              betaT,
 c     &               gamb,            c)
-         call getthm(rho, ei,  pres, T, npro, materb
+c         if(mat_eos(mater,1).eq.ieos_solid_1) then
+c           call getthm_solid_1(rho, ei, pres, T, npro, materb
+c     &,              h, cv, cp,   alfap, betaT,bulkMod
+c     &,              shearMod, tmp) !add the solid
+c         else     
+            call getthm(rho, ei,  pres, T, npro, materb
      &,              h,   cv,  cp,   alfap, betaT, tmp,  tmp)
+c          endif
 c
 c.... ---------------------->  Element Metrics  <-----------------------
 c

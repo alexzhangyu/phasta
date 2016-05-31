@@ -880,13 +880,13 @@ c
      &                        rerr, 'd'//char(0), nshg, 10, lstep)
                endif
 c.....Hard coded of writing the solid arrays
-                 call write_field(
-     &                      myrank, 'a'//char(0), 'leftCG'//char(0), 6, 
-     &                        b, 'd'//char(0), nshg, 6, lstep)
+c                 call write_field(
+c     &                      myrank, 'a'//char(0), 'leftCG'//char(0), 6, 
+c     &                        b, 'd'//char(0), nshg, 6, lstep)
 C
-                 call write_field(
-     &                      myrank, 'a'//char(0), 'leftCGDot'//char(0), 9, 
-     &                        b_dot, 'd'//char(0), nshg, 6, lstep)
+c                 call write_field(
+c     &                      myrank, 'a'//char(0), 'leftCGDot'//char(0), 9, 
+c     &                        b_dot, 'd'//char(0), nshg, 6, lstep)
 c......End of hard coded for solid
 c
 c the following is a future way to have the number of steps in the header...done for posix but not yet for syncio

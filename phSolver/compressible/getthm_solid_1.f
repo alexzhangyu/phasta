@@ -1,6 +1,6 @@
       subroutine getthm_solid_1 (rho,    ei
      &,                           p,      T,     npro, mater
-     &,                           cv,    cp
+     &,                           h,      cv,    cp
      &,                           alphaP, betaT, bulkMod, shearMod
      &,                           Ja_def)
         use number_def_m
@@ -8,7 +8,7 @@
 c
         integer, intent(in) :: npro, mater
         real*8, dimension(npro), intent(in)  :: p, T, Ja_def        
-        real*8, dimension(npro), intent(out) :: rho,ei
+        real*8, dimension(npro), intent(out) :: rho,ei,h
         real*8, dimension(npro), intent(out) :: cv,cp,alphaP,betaT
         real*8, dimension(npro), intent(out) :: bulkMod, shearMod
 c
@@ -28,10 +28,11 @@ c
         alphaP = alpha_P_s
         betaT  = one /(bulkMod_s * Ja_def) ! double check here
         rho = rho_ref_s * (one - alphaP*(T - T_ref_s) 
-     &                    + betaT*(P - P_ref_s))
-        ei  = ( cv_s - P * alpha_P_s/rho)* T 
-     &        + (betaT * P - alphaP * T)/rho * P
-C         h   = ei + P/rho
+     &                    + betaT*(p - p_ref_s))
+c        ei  = ( cv_s - P * alpha_P_s/rho)* T 
+c     &        + (betaT * P - alphaP * T)/rho * p
+        ei  = cv_s * T
+        h   = ei + p/rho
         cv  = cv_s
         cp  = cv_s
         bulkMod = bulkMod_s

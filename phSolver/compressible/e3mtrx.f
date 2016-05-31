@@ -94,19 +94,19 @@ c
         drdp = rho * betaT
         drdT = -rho * alfap
 c......for solid
-        if(mat_eos(mater,1).eq.ieos_solid_1) then
-          A0(:,5,1) = drdp * (ei + rk)  - alfap * T + betaT*pres  ! e1p 
-          e2p  = A0(:,5,1) + one
-          e3p  = rho * ( ei + rk) + pres
-          e4p  = drdT * (ei + rk) + rho * cp - pres * alfap
+c        if(mat_eos(mater,1).eq.ieos_solid_1) then
+c          A0(:,5,1) = drdp * (ei + rk)  - alfap * T + betaT*pres  ! e1p 
+c          e2p  = A0(:,5,1) + one
+c          e3p  = rho * ( ei + rk) + pres
+c          e4p  = drdT * (ei + rk) + rho * cp - pres * alfap
 c......end for solid
-        else
+c        else
         A0(:,5,1) = drdp * (h + rk)  - alfap * T    ! e1p
 c        A0(:,5,1) = drdp * (ei + rk) + betaT * pres - alfap * T    ! e1p
           e2p  = A0(:,5,1) + one
           e3p  = rho * ( h + rk)
           e4p  = drdT * (h + rk) + rho * cp
-        endif
+c        endif
 c
 c
 c.... Calculate A0
@@ -269,11 +269,11 @@ c
        fact1 = one/(rho*cv*T**2)
        d = alfap*T/rho/betaT
 c..... modification for solid, may need change
-       if(mat_eos(mater,1).eq.ieos_solid_1) then
-        e1bar = ei + pres/rho
-       else
+c       if(mat_eos(mater,1).eq.ieos_solid_1) then
+c        e1bar = ei + pres/rho
+c       else
         e1bar = h - rk
-       endif
+c       endif
        e2bar = e1bar - d
        e3bar = e2bar - cv * T
        e4bar = e2bar - 2* cv * T

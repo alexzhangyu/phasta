@@ -25,6 +25,7 @@ c
             call getthm_liquid_1(rho,ei,p,T,npro,mater,
      &        h, cv, cp, alphaP, betaT, gamb, c)
           case (ieos_solid_1)
+            return
 c......call the solid subroutine
 c            call getthm_solid_1(rho,    ei
 c     &,                           p,      T,     npro, mater

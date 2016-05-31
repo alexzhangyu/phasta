@@ -264,6 +264,7 @@ phSolver/compressible/CMakeFiles/compressible.dir/e3ivar.f.o: ../phSolver/common
 
 phSolver/compressible/CMakeFiles/compressible.dir/e3ivar.f.o: phSolver/modules/matdat_def_m.mod
 phSolver/compressible/CMakeFiles/compressible.dir/e3ivar.f.o: phSolver/modules/number_def_m.mod
+phSolver/compressible/CMakeFiles/compressible.dir/e3ivar.f.o: phSolver/modules/pointer_data.mod
 phSolver/compressible/CMakeFiles/compressible.dir/e3juel.f.o: ../phSolver/common/common.h
 
 phSolver/compressible/CMakeFiles/compressible.dir/e3juel.f.o: phSolver/modules/matdat_def_m.mod
@@ -319,6 +320,7 @@ phSolver/compressible/CMakeFiles/compressible.dir/e3visc.f.o: ../phSolver/common
 
 phSolver/compressible/CMakeFiles/compressible.dir/e3visc.f.o: phSolver/modules/matdat_def_m.mod
 phSolver/compressible/CMakeFiles/compressible.dir/e3visc.f.o: phSolver/modules/number_def_m.mod
+phSolver/compressible/CMakeFiles/compressible.dir/e3visc.f.o: phSolver/modules/pointer_data.mod
 phSolver/compressible/CMakeFiles/compressible.dir/e3visc.f.o: phSolver/modules/turbsa.mod
 phSolver/compressible/CMakeFiles/compressible.dir/e3wmlt.f.o: ../phSolver/common/common.h
 

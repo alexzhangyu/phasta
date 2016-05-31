@@ -10,7 +10,7 @@ c
 c
         integer :: ivisc, icon
 c
-c HARDCODED until the proper indexing system is implemented !For solid, no hard coded
+c HARDCODED until the proper indexing system is implemented
 c
         select case (mater)
         case (1)
@@ -19,8 +19,6 @@ c
         case (2)
           ivisc = 7
           icon = 8
-        case (ieos_solid_1) 
-          icon = iprop_solid_1_cond
         case default
           call error ('getdiff ', 'ERROR: index can not be set!',0)
         end select
@@ -40,6 +38,14 @@ c
         rlm2mu = rlm + two * rmu
 c
         con = mat_prop(mater,icon,1)
+c       hard coded for solid, need to check
+        if(mat_eos(mater,1).eq. ieos_solid_1)then
+         rmu = 0.0
+         rlm = -pt66 * rmu
+         rlm2mu = rlm + two * rmu
+         icon = 8
+         con = mat_prop(mater,icon,1)
+        endif    
 c
 c        if (iLES .gt. 0 .or. iRANS.eq.0) then
 c          call error ('getdiff ', 'ERROR: Turbulence Viscosity is NOT supported!', 0)

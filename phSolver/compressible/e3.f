@@ -2,7 +2,8 @@
      &                 shgl,    xl,      rl,      rml,    xmudmi,
      &                 BDiagl,  ql,      sgn,     rlsl,   EGmass,
      &                 rerrl,   ytargetl, mater,  uml,    b,
-     &                 b_dot,   b_af) !need to add the path for solid and        ! Declarations of the varibles generated in e3ivar
+     &                 b_dot,   b_af) !need to add the path for solid and
+                                      ! Declarations of the varibles generated in e3ivar
 c                                                                      
 c----------------------------------------------------------------------
 c
@@ -47,6 +48,7 @@ c Chris Whiting, Winter 1998.  (LHS matrix formation)
 c----------------------------------------------------------------------
 c
         include "common.h"
+c        use pointer_data
 c
         dimension yl(npro,nshl,nflow),     ycl(npro,nshl,ndof),
      &            acl(npro,nshl,ndof),     rmu(npro),    
@@ -83,9 +85,10 @@ c.....
      &            raLS(npro),                A0inv(npro,15)
 c
 C.....Additional solid properties
-        real*8, dimension(npro) :: bulkMod, shearMod, det_baf,      
-     &            Ja_def, det_d
-        real*8, dimension(npro,6):: d
+        real*8    bulkMod(npro),             shearMod(npro),
+     &            det_baf(npro),      
+     &            Ja_def(npro),              det_d(npro)
+        real*8    d(npro,6)
 c
         dimension A0(npro,nflow,nflow),      A1(npro,nflow,nflow),
      &            A2(npro,nflow,nflow),      A3(npro,nflow,nflow)
@@ -205,8 +208,9 @@ c
      &               ri,              rmi,             stiff,
      &               con,             rlsli,           compK,
      &               T,               mater,
-     &               b_af(:,intp,:),  det_baf,         det_d,
-     &               d) !added for solid)
+     &               b_af(:,intp,:),  
+     &               det_baf,         det_d,
+     &               d,               shearMod) !added for solid)
         endif
         ttim(15) = ttim(15) + secs(0.0)
 c

@@ -1161,8 +1161,8 @@ clean: phSolver/compressible/CMakeFiles/compressible.dir/clean
 # Target rules for target phSolver/compressible/CMakeFiles/phastaC.exe.dir
 
 # All Build rule for target.
-phSolver/compressible/CMakeFiles/phastaC.exe.dir/all: phastaIO/CMakeFiles/phastaIO.dir/all
 phSolver/compressible/CMakeFiles/phastaC.exe.dir/all: shapeFunction/src/CMakeFiles/shapeFunction.dir/all
+phSolver/compressible/CMakeFiles/phastaC.exe.dir/all: phastaIO/CMakeFiles/phastaIO.dir/all
 phSolver/compressible/CMakeFiles/phastaC.exe.dir/all: phSolver/common/CMakeFiles/common.dir/all
 phSolver/compressible/CMakeFiles/phastaC.exe.dir/all: phSolver/compressible/CMakeFiles/compressible.dir/all
 	$(MAKE) -f phSolver/compressible/CMakeFiles/phastaC.exe.dir/build.make phSolver/compressible/CMakeFiles/phastaC.exe.dir/depend
