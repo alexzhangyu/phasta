@@ -1,3 +1,0 @@
-/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_test/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/FortranCInterface.dir
-/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_test/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/myfort.dir
-/fasttmp/zhanhy41/Code/scorec_phasta/phasta/build_test/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/symbols.dir
