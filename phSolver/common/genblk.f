@@ -57,7 +57,8 @@ c
             if(input_mode.ge.1) then
               write (fname2,"('connectivity interior',i1)") iblk
             else
-              write (fname2,"('connectivity interior linear tetrahedron')") 
+c              write (fname2,"('connectivity interior linear tetrahedron')")
+              write (fname2,"('connectivity interior linear hexahedron')") ! to input hex mesh
 !              write (fname2,"('connectivity interior?')") 
             endif
 
@@ -83,7 +84,8 @@ c
            if(input_mode.ge.1) then
              write (fname2,"('connectivity interior',i1)") iblk
            else
-             write (fname2,"('connectivity interior linear tetrahedron')") 
+c             write (fname2,"('connectivity interior linear tetrahedron')")
+             write (fname2,"('connectivity interior linear hexahedron')") ! to input hex mesh
 !              write (fname2,"('connectivity interior?')") 
            endif
 
@@ -101,8 +103,8 @@ c
            allocate (ientp(neltp,nshl))
            allocate (ientmp(ibksz,nshl))
            allocate (mattype(intfromfile(1)))
-      write(*,*) 'CHECK', intfromfile(1)
-      write(*,*) 'CHECK mattype:',mattype
+c      write(*,*) 'CHECK', intfromfile(1)
+c      write(*,*) 'CHECK mattype:',mattype
            allocate (neltp_mattype(nummat))
            iientpsiz=neltp*nshl
 
