@@ -1,6 +1,8 @@
         subroutine AsBMFG (y,       x,       shpb,    shglb,
      &                     ienb,    materb,  iBCB,    BCB,
-     &                     res,     rmes,    EGmass)
+     &                     res,     rmes,    EGmass,
+     &                     blk_bdy_b,        blk_bdy_b_dot,
+     &                     blk_bdy_b_af ) !add for solid
 c
 c----------------------------------------------------------------------
 c
@@ -26,6 +28,10 @@ c
 c        
         dimension sgn(npro,nshl)
         integer, intent(in) :: materb
+c.....solid arrays
+        dimension blk_bdy_b(npro,ngaussb,6),        blk_bdy_b_dot(npro,ngaussb,6),
+     &            blk_bdy_b_af(npro,ngaussb,6)
+c
 c
 c.... create the matrix of mode signs for the hierarchic basis 
 c     functions. 
@@ -53,8 +59,19 @@ c
  !  properly from this location.
 c
         call e3b  (ycl,     ycl,     iBCB,    BCB,     shpb,    shglb,
-     &             xlb,     rl,      rml,     sgn,     EGmass,  materb)
+     &             xlb,     rl,      rml,     sgn,     EGmass,  materb,
+     &                     blk_bdy_b,         blk_bdy_b_dot,
+     &                     blk_bdy_b_af ) !add for solid
+c
+c
+c....hard coding for solid debugging
 
+c        rl = zero
+c        rml = zero
+c        EGmass  = zero
+c....end of hard coding for debugging
+c
+c
         !assemble the residual and the modified residual
         call local(res,    rl,     ienb,   nflow,  'scatter ')
         if (Navier .eq. 1 .and. ires.ne.1 )
