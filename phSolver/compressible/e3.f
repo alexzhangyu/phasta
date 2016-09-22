@@ -229,19 +229,19 @@ c
 c.... calculate the least-squares contribution 
 c
         ttim(16) = ttim(16) - secs(0.0)
-        call e3LS   (A1,              A2,            A3,
-     &               rho,             rmu,           cp,
-     &               cv,              con,           T,  
-     &               u1,              u2,            u3,              
-     &               um1,             um2,           um3,              
-     &               rLyi,            dxidx,         tau,  
-     &               ri,              rmi,           rk, 
-     &               dui,             aci,           A0,
-     &               divqi,           shape,         shg,
-     &               EGmass,          stiff,         WdetJ,
-     &               giju,            rTLS,          raLS,
-     &               A0inv,           dVdY,          rerrl,
-     &               compK,           pres,          PTau)
+C        call e3LS   (A1,              A2,            A3,
+C     &               rho,             rmu,           cp,
+C     &               cv,              con,           T,  
+C     &               u1,              u2,            u3,              
+C     &               um1,             um2,           um3,              
+C     &               rLyi,            dxidx,         tau,  
+C     &               ri,              rmi,           rk, 
+C     &               dui,             aci,           A0,
+C     &               divqi,           shape,         shg,
+C     &               EGmass,          stiff,         WdetJ,
+C     &               giju,            rTLS,          raLS,
+C     &               A0inv,           dVdY,          rerrl,
+C     &               compK,           pres,          PTau)
         ttim(16) = ttim(16) + secs(0.0)
 c        
 c....  Discontinuity capturing
