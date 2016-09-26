@@ -23,7 +23,7 @@ c
         alpha_P_s = mat_prop(mater,iprop_solid_1_alphaP, 1)
         bulkMod_s = mat_prop(mater,iprop_solid_1_bulkMod, 1)
         shearMod_s = mat_prop(mater,iprop_solid_1_shearMod, 1)
-!        beta_T  = mat_prop(mater,iprop_solid_1_betaT,  1)
+c        beta_T  = mat_prop(mater,iprop_solid_1_betaT,  1)
 c
         alphaP = alpha_P_s
         betaT  = one /(bulkMod_s * Ja_def) ! double check here
