@@ -573,6 +573,9 @@ c                              a scalar only)
 c       endif
        return
        end
+c
+c
+c
         subroutine e3ivarSclr (ycl,       acl,      acti,     
      &                         shape,    shgl,     xl,      
      &                         T,        cp,
