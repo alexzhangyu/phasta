@@ -329,6 +329,7 @@ c
      &                    (5.0/3.0)* (almBi)**2 *( d(:,5) * u1 + d(:,4) * u2 + d_temp3 * u3))
          stiff(:, 15, 15) = con ! notice the + or -
 c         stiff(:,:,:) = -stiff(:,:,:)
+c         stiff = zero
 c     
 c
 c
