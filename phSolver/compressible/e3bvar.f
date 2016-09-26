@@ -4,7 +4,10 @@
      &                     u1,      u2,      u3,      rho,     ei,
      &                     cp,      rk,      
      &                     rou,     p,       tau1n,   tau2n,   tau3n,
-     &                     heat,    dNadx,   materb)
+     &                     heat,    dNadx,   materb,
+     &                     bdy_bq,            bdy_bq_dot,        bdy_bq_af,
+     &                     bdy_bulkMod,      bdy_shearMod,
+     &                     bdy_det_baf,      bdy_Ja_def)!add for solid
 c
 c----------------------------------------------------------------------
 c
@@ -81,6 +84,14 @@ c
      &            v1(npro,nsd),            v2(npro,nsd)
         integer, intent(in) :: materb
         integer   aa
+c....Solid arrays
+        real*8,dimension(npro,6) :: bdy_bq, bdy_bq_dot, bdy_bq_af
+c...
+        real*8,dimension(npro) :: bdy_bulkMod, bdy_shearMod, bdy_det_baf,
+     &                            bdy_Ja_def
+        real*8,dimension(npro,6,6) :: bdy_AS
+        real*8,dimension(npro,6) :: bdy_d
+c................
 c
 c.... ------------------->  integration variables  <--------------------
 c
@@ -123,14 +134,14 @@ c     &               rk,              rho,                ei,
 c     &               h,               tmp,                cv,
 c     &               cp,              alfap,              betaT,
 c     &               gamb,            c)
-c         if(mat_eos(mater,1).eq.ieos_solid_1) then
-c           call getthm_solid_1(rho, ei, pres, T, npro, materb
+c         if(mat_eos(materb,1).eq.ieos_solid_1) then
+c           call getthm_solid_1_debug(rho, ei, pres, T, npro, materb
 c     &,              h, cv, cp,   alfap, betaT,bulkMod
 c     &,              shearMod, tmp) !add the solid
 c         else     
             call getthm(rho, ei,  pres, T, npro, materb
      &,              h,   cv,  cp,   alfap, betaT, tmp,  tmp)
-c          endif
+c         endif
 c
 c.... ---------------------->  Element Metrics  <-----------------------
 c
@@ -331,6 +342,61 @@ c
           endif
          
         endif
+c
+c.....Prepare the parameters for the solid calculation on the boudary
+c
+      if(mat_eos(materb,1).eq.ieos_solid_1) then
+
+c... assemble the AS matrix
+c initialize the AS matrix
+         bdy_AS = zero !add
+c
+         bdy_AS(:,1,1) = 2 * g1yi(:,2)
+         bdy_AS(:,1,5) = 2 * g3yi(:,2)
+         bdy_AS(:,1,6) = 2 * g2yi(:,2)
+c
+         bdy_AS(:,2,2) = 2 * g2yi(:,3)
+         bdy_AS(:,2,4) = 2 * g3yi(:,3)
+         bdy_AS(:,2,6) = 2 * g1yi(:,3)
+c
+         bdy_AS(:,3,3) = 2 * g3yi(:,4)
+         bdy_AS(:,3,4) = 2 * g2yi(:,4)
+         bdy_AS(:,3,5) = 2 * g1yi(:,4)
+c
+         bdy_AS(:,4,2) = g2yi(:,4)
+         bdy_AS(:,4,3) = g3yi(:,3)
+         bdy_AS(:,4,4) = g2yi(:,3) + g3yi(:,4)
+         bdy_AS(:,4,5) = g1yi(:,3)
+         bdy_AS(:,4,6) = g1yi(:,4)
+c
+         bdy_AS(:,5,1) = g1yi(:,4)
+c         bdy_AS(:,5,3) = g3yi(:,2)
+         bdy_AS(:,5,4) = g2yi(:,2)
+         bdy_AS(:,5,5) = g1yi(:,2) + g3yi(:,4)
+         bdy_AS(:,5,6) = g2yi(:,4)
+c         
+         bdy_AS(:,6,1) = g1yi(:,3)
+c         bdy_AS(:,6,2) = g2yi(:,2)
+         bdy_AS(:,6,4) = g3yi(:,2)
+         bdy_AS(:,6,5) = g3yi(:,3)
+         bdy_AS(:,6,6) = g1yi(:,2) + g2yi(:,3)
+c
+        bdy_d = almBi * bdy_bq + alfBi * Delt(1) * (almBi - gamBi) * bdy_bq_dot
+c
+        call setB_af_boundary(bdy_d, bdy_AS, bdy_bq_af)
+c        
+        call get_det_boundary(bdy_bq_af,bdy_det_baf)
+        bdy_Ja_def= (bdy_det_baf)**0.5      
+c
+c.....Get the thermodynamic properties for solid
+         ithm = 7
+         call getthm_solid_1(rho, ei, pres, T, npro, materb
+     &,              h, cv, cp,   alfap, betaT, bdy_bulkMod
+     &,              bdy_shearMod, bdy_Ja_def) !add the solid
+c
+      endif
+c.....End of the preparision for solid
+c
 c
 c.... -------------------->  Boundary Conditions  <--------------------
 c
@@ -639,4 +705,54 @@ c.... return
 c
         return
         end
+c
+c
+       subroutine setB_af_boundary(d, AS, bq_af)
+c... calculate the left Cauchy-green tensor at time step n+af
+C       implicit none 
+       include "common.h"
+c
+       real*8, dimension(npro,6),intent(in) :: d
+       real*8, dimension(npro,6,6),intent(in) :: AS
+       integer,parameter :: nsize = 6 
+c
+       real*8, dimension(npro,6) :: bq_af
+       real*8, dimension(6,6) :: ident
+       real*8, dimension(6,6) :: temp_matrix
+c..................
+       ident = zero
+        do i = 1, nsize
+        ident(i,i) = one
+        enddo
+c
+        do i = 1, npro
+        temp_matrix(:,:) = almBi * ident(:,:) + gamBi * Delt(1)
+     &                     *alfBi * AS(i,:,:) !check here
+        bq_af(i,:) = matmul(temp_matrix(:,:) , d(i,:))
+        enddo
+c
+c
+       end
+c
+c
+c
+c
+       subroutine get_det_boundary(matr,det_matr)
+c... calculate the determinant of 3 by 3 matrix
+C     implicit none 
+      include "common.h"
+c
+      real*8, dimension(npro,6),intent(in) :: matr
+c
+      real*8, dimension(npro) :: det_matr
+c..................
+      det_matr(:) = matr(:,1) * matr(:,2) * matr(:,3) + matr(:,6) * matr(:,4) 
+     &          * matr(:,5) + matr(:,5) * matr(:,6) * matr(:,4) 
+     &          - matr(:,1) * matr(:,4) * matr(:,4) - matr(:,5) * matr(:,2)
+     &          * matr(:,5) - matr(:,6) * matr(:,6) * matr(:,3)
+c
+       end
+c
+c
+
 
