@@ -1,5 +1,6 @@
        subroutine e3b (yl,      ycl,  iBCB,    BCB,     shpb,    shglb,
-     &                 xlb,     rl,   rml,     sgn,     EGmass,  materb)
+     &                 xlb,     rl,   rml,     sgn,     EGmass,  materb,
+     &                 bdy_b,   bdy_b_dot,     bdy_b_af ) !add for solid
 c
 c----------------------------------------------------------------------
 c
@@ -93,7 +94,13 @@ c
         dimension xmudum(npro,ngauss)
         integer   aa, b
         integer, intent(in) :: materb
-
+c....solid arrays
+        real*8, dimension(npro,ngaussb,6) :: bdy_b, bdy_b_dot, bdy_b_af     
+C.....Additional solid properties
+        real*8    bdy_bulkMod(npro),             bdy_shearMod(npro),
+     &            bdy_det_baf(npro),      
+     &            bdy_Ja_def(npro)
+c
         ttim(40) = ttim(40) - secs(0.0)
 
 c
@@ -134,7 +141,11 @@ c
      &               rho,             ei,           cp,
      &               rk,              rou,          p,
      &               Fv2,             Fv3,          Fv4,
-     &               Fh5,             dNadx,        materb)
+     &               Fh5,             dNadx,        materb,
+     &               bdy_b(:,intp,:), bdy_b_dot(:,intp,:), bdy_b_af(:,intp,:),
+     &               bdy_bulkMod,     bdy_shearMod,
+     &               bdy_det_baf,     bdy_Ja_def)!add for solid           
+
 c
 c.... ires = 1 or 3
 c
@@ -197,6 +208,28 @@ c.... ------------------------>  viscous flux <------------------------
 c
 c.... floating viscous flux
 c
+c.......adding the expression for solid
+       if(mat_eos(materb,1).eq.ieos_solid_1) then
+         tau1n = bnorm(:,1) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * (1.0/3.0) * 
+     &               (2.0 * bdy_b_af(:,intp,1) - bdy_b_af(:,intp,2) - bdy_b_af(:,intp,3)) )
+     &        + bnorm(:,2) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
+     &               bdy_b_af(:,intp,6) )
+     &        + bnorm(:,3) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
+     &               bdy_b_af(:,intp,5) )
+        tau2n = bnorm(:,1) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * 
+     &               bdy_b_af(:,intp,6) )
+     &        + bnorm(:,2) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
+     &               (1.0/3.0) *(-bdy_b_af(:,intp,1) + 2.0* bdy_b_af(:,intp,2) - bdy_b_af(:,intp,3)) )
+     &        + bnorm(:,3) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * 
+     &               bdy_b_af(:,intp,4) )
+        tau3n = bnorm(:,1) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * 
+     &               bdy_b_af(:,intp,5) )
+     &        + bnorm(:,2) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * 
+     &               bdy_b_af(:,intp,4) )
+     &        + bnorm(:,3) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
+     &               (1.0/3.0) *(-bdy_b_af(:,intp,1) - bdy_b_af(:,intp,2) + 2.0* bdy_b_af(:,intp,3)) )
+
+       else
         tau1n = bnorm(:,1) * (rlm2mu* g1yi(:,2) + rlm   *g2yi(:,3) 
      &                                          + rlm   *g3yi(:,4))
      &        + bnorm(:,2) * (rmu   *(g2yi(:,2) + g1yi(:,3)))
@@ -209,7 +242,14 @@ c
      &        + bnorm(:,2) * (rmu   *(g3yi(:,3) + g2yi(:,4)))
      &        + bnorm(:,3) * (rlm   * g1yi(:,2) + rlm   *g2yi(:,3) 
      &                                          + rlm2mu*g3yi(:,4))
+      endif
+c..... end of adding the expression for solid
 c
+c....hardcoding the tau1n to tau3n zero for solid debugging
+c        tau1n = zero
+c        tau2n = zero
+c        tau3n = zero
+c....end of solid debugging
         where (.not.btest(iBCB(:,1),2) )
            Fv2 = tau1n          ! wherever traction is not set, use the
            Fv3 = tau2n          ! viscous flux calculated from the field
