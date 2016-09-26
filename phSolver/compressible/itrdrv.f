@@ -721,6 +721,11 @@ c
             call itrUpdate( yold,  acold,   y,    ac)
 c
 c
+c.....Update the mesh motion(disp)for solid blocks
+c            call itrCorrectElasSolid (x, yold)
+c.....End of updating the mesh motion in solid
+c
+c
 c.....Update the solid arrays at the end of the timestep
       call itrupdate_b !add            
 c...-------------> HARDCODED <-----------------------
@@ -847,7 +852,7 @@ c.... print out the updated mesh and mesh quality for mesh-elastic solve
 c
                if (impl(2) .eq. 1) then 
                    call write_field(
-     &                       myrank,'a'//char(0),'coord'//char(0),5,
+     &                       myrank,'a'//char(0),'motion_coords'//char(0),13,
      &                       x,     'd'//char(0), numnp, nsd, lstep)
                    call write_field(
      &                       myrank,'a'//char(0),'meshQ'//char(0), 5, 
