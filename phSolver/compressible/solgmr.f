@@ -522,6 +522,10 @@ c.... set up tolerance of the Hessenberg's problem
 c
       epsnrm = etol * unorm
 c
+c       call rstat (res, ilwork) 
+c      if(myrank.eq.master) then
+c            write(*,*)'residual after sbd-preconditioning'
+c      endif
 c.... ------------------------>  GMRES Loop  <-------------------------
 c
 c.... loop through GMRES cycles
@@ -670,6 +674,7 @@ c.... check for convergence
 c     
             ntotGM = ntotGM + 1
             echeck=abs(eBrg(iKs+1))
+c         write(*,'(a,i2,a,i4,2(x,e24.16))')'[',myrank,']', iKs, echeck, epsnrm !check the linear convergence
             if (echeck .le. epsnrm.and. iKs .ge. minIters) exit
 c     
 c.... end of GMRES iteration loop
