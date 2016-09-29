@@ -228,7 +228,7 @@ void countfieldstowriterestart()
   }
 
   if (inpdat.impl[1] == 1) {
-    nfields = nfields + 2; 
+    nfields = nfields + 5;/* adding three for solid*/ 
   }
 
   outpar.nsynciofieldswriterestart = nfields;
