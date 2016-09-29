@@ -107,6 +107,13 @@ c
 !        logical  exMc
 !        real*8 vBC, vBCg
         real*8 vortmax, vortmaxg
+c
+c......For visualization of element-wise left Cauchy deformation tensor B
+        real*8 elmb1(numel,3)
+        real*8 elmb2(numel,3)
+c......Tracking the nodal displacment field
+        real*8 disp_solid_temp(numnp,nsd)
+c........
 
        iprec=0 !PETSc - Disable PHASTA's BDiag. TODO: Preprocssor Switch
 
@@ -159,15 +166,9 @@ c
         time   = 0
         yold   = y
         acold  = ac
-C c......hard coded for the initialzation for arrays used for solid
-C         b    = zero 
-C         b_ac = zero
-C         b(:,:,1)=1.0
-
-C         b(:,:,2)=1.0
-C         b(:,:,3)=1.0
-C         b_af = b
-C c......end of the hard coded initialization for solid
+C c......initialzation for tracking the nodal disp field for solid
+        disp_solid_temp = zero 
+C c......end of initialization for solid nodal disp field
 c
 !Blower Setup
        call BC_init(Delt, lstep, BC)  !Note: sets BC_enable
@@ -725,9 +726,21 @@ c.....Update the mesh motion(disp)for solid blocks
 c            call itrCorrectElasSolid (x, yold)
 c.....End of updating the mesh motion in solid
 c
+c.....Track the nodal disp field for solid
+           call itrCorrectElasSolid (disp_solid_temp, yold)
+c.....End of track
+c
 c
 c.....Update the solid arrays at the end of the timestep
-      call itrupdate_b !add            
+c      call itrupdate_b !add
+C
+c......initialzation for element-wise LCG tensor
+        elmb1 = zero
+        elmb2 = zero 
+c......end of initialization for element-wise LCG tensor
+
+      call itrupdate_b(elmb1,elmb2) !show elm-wise solid arrays
+c             
 c...-------------> HARDCODED <-----------------------
 c
 c            call itrBC (y,  ac,  iBC,  BC,  iper, ilwork)
@@ -884,6 +897,21 @@ c
      &                      myrank, 'a'//char(0), 'errors'//char(0), 6, 
      &                        rerr, 'd'//char(0), nshg, 10, lstep)
                endif
+c.....write the elm-wise solid array into restart file
+                 call write_field(
+     &                       myrank,'a'//char(0),'elm_b1'//char(0), 6, 
+     &                       elmb1, 'd'//char(0), numel, 3,   lstep)
+                 call write_field(
+     &                       myrank,'a'//char(0),'elm_b2'//char(0), 6, 
+     &                       elmb2, 'd'//char(0), numel, 3,   lstep)
+
+c.....
+c.....write the solid nodal displacment field into restart file
+                 call write_field(
+     &                       myrank,'a'//char(0),'disp_solid'//char(0), 10, 
+     &                       disp_solid_temp, 'd'//char(0), numnp, 3,   lstep)
+c
+c
 c.....Hard coded of writing the solid arrays
 c                 call write_field(
 c     &                      myrank, 'a'//char(0), 'leftCG'//char(0), 6, 
