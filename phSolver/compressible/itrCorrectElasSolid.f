@@ -1,4 +1,4 @@
-      subroutine itrCorrectElasSolid (x, y)
+      subroutine itrCorrectElasSolid (old_x, y)
 c....Update the displacement within solid at end of each time step
 c       
       
@@ -7,12 +7,14 @@ c      implicit none
       use mattype_m
       include "common.h"
 c
-      real*8  x(numnp,nsd)
+      real*8  old_x(numnp,nsd)
       real*8  y(nshg,ndof)
       real*8  temp_count(nshg,nsd)
       integer:: mater_s, npro_s, nshl_s
       integer:: mater_sb
-
+c.....initialize the count array      
+      temp_count = zero
+c..
 c    
 c.....for interior blocks
          blocks_loop: do iblk = 1, nelblk
@@ -23,7 +25,6 @@ c
 c.....save the temp
               npro_s = SIZE(mien(iblk)%p,1)
               nshl_s = SIZE(mien(iblk)%p,2)
-              temp_count = zero
 c.....set the global number of solid node within this block to 1.0
               do ipro = 1, npro_s !loop over all elements within solid
                 do ishl =1, nshl_s !loop over all local dof
@@ -31,15 +32,17 @@ c.....set the global number of solid node within this block to 1.0
                 
                 enddo
               enddo
-c......
-              temp_count(:,:) = temp_count(:,:) *
-     &                          y( :,1:nsd )
-              x = x + temp_count * Delt(1)
 
            endif
 c..
         enddo blocks_loop 
 c
-c
+c......adding the displacment from solution field
+              do ith =1,nsd
+              temp_count(:,ith) = temp_count(:,ith) *
+     &                          y( :,ith)
+              enddo
+             old_x = old_x + temp_count * Delt(1)
+
       return
       end subroutine itrCorrectElasSolid
