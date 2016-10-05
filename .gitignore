@@ -1,0 +1,4 @@
+build_test/
+doConfigureGccMpich
+phSolver/common/#new_interface.c#
+phSolver/compressible/getthm_solid_1_debug.f
