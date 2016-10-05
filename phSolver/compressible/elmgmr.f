@@ -507,7 +507,9 @@ c
      &                 mattyp,              res,
      &                 rmes,                BDiag,
      &                 qres,                EGmass,
-     &                 rerr,                umesh )
+     &                 rerr,                umesh,
+     &                 b(iblk)%p,           b_dot(iblk)%p,
+     &                 b_af(iblk)%p) !need to add the arguments for solid
           if(lhs.eq.1) then
 c
 c.... satisfy the BC's on the implicit LHS
@@ -543,6 +545,7 @@ c
 c.... loop over the boundary elements
 c
         do iblk = 1, nelblb
+c        do iblk = 1, 0 !only for solid debug
 c
 c.... set up the parameters
 c
@@ -582,7 +585,9 @@ c
      &                 mienb(iblk)%p,           mattyp,
      &                 miBCB(iblk)%p,           mBCB(iblk)%p,
      &                 res,                     rmes, 
-     &                 EGmass)
+     &                 EGmass,
+     &                 bdy_b(iblk)%p,           bdy_b_dot(iblk)%p,
+     &                 bdy_b_af(iblk)%p) !add the arguments for solid
           if(lhs == 1 .and. iLHScond > 0) then
             call fillSparseC_BC(mienb(iblk)%p, EGmass, 
      &                   lhsk, row, col)
@@ -699,9 +704,6 @@ c
           endif
 c
         enddo
-c 
-c      write(*,*) 'umesh   65: ',umesh(65,:)
-c      write(*,*) 'umesh 2871: ',umesh(2871,:)
 c
         deallocate(sum_vi_area)
 c
@@ -744,6 +746,10 @@ c
 c.... satisfy the BCs on the residual
 c
       call bc3Res (y,  iBC,  BC,  res,  iper, ilwork)
+c.....hardcoding for solid debugging
+c      res(:,3) = zero
+c      res(:,4) = zero
+c.....end of solid debugging
 c
 c.... satisfy the BCs on the block-diagonal preconditioner
 c

@@ -29,6 +29,7 @@ void populate_eos_map
 {
   eos_map.insert(map<string,int>::value_type("ideal_gas", ieos_ideal_gas));
   eos_map.insert(map<string,int>::value_type("liquid_1",  ieos_liquid_1));
+  eos_map.insert(map<string,int>::value_type("solid_1",  ieos_solid_1));
 }
 
 int input_fform(phSolver::Input& inp)
@@ -698,6 +699,9 @@ int input_fform(phSolver::Input& inp)
     if((string)inp.GetValue("Time Integration Rule") == "First Order")
       inpdat.rhoinf[0] = -1 ;
     else inpdat.rhoinf[0] = (double)inp.GetValue("Time Integration Rho Infinity");
+    if((string)inp.GetValue("Time Integration Rule for solid") == "First Order")
+      inpdat.rhoinf_B[0] = -1 ;
+    else inpdat.rhoinf_B[0] = (double)inp.GetValue("Time Integration Rho Infinity_B");
     if((string)inp.GetValue("Predictor at Start of Step")=="Same Velocity")
       genpar.ipred = 1;
     if((string)inp.GetValue("Predictor at Start of Step")=="Zero Acceleration")

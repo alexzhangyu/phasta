@@ -12,11 +12,14 @@
      &                     rmu,     rlm,     rlm2mu,
      &                     con,     rlsl,    rlsli, 
      &                     xmudmi,  sforce,  cv,
-     &                     mater,   uml,     divum )
+     &                     mater,   uml,     divum,
+     &                     bq,       bq_dot, bq_af,
+     &                     bulkMod, shearMod,d,   
+     &                     det_baf, det_d,   Ja_def) !added the solid arrays
 c
 c----------------------------------------------------------------------
 c
-c  This routine computes the variables at integration point.
+c  This routine computes the variables at integration point. ! remeber to add notation
 c
 c input:
 c  yl     (npro,nshl,nflow)     : primitive variables (NO SCALARS)
@@ -59,6 +62,8 @@ c Zdenek Johan, Winter 1991. (Fortran 90)
 c Kenneth Jansen, Winter 1997. Primitive Variables
 c----------------------------------------------------------------------
 c
+c        use eqn_state_m
+        use pointer_data
         include "common.h"
 c
 c  passed arrays
@@ -84,6 +89,15 @@ c
      &            rlm2mu(npro),              con(npro), 
      &            Sclr(npro)
 c
+c....Solid arrays
+       real*8, dimension(npro,6) :: bq,bq_dot,bq_af
+c...
+        real*8,dimension(npro) :: bulkMod,shearMod,det_baf,Ja_def,     
+     &            det_d
+        real*8,dimension(npro,6) :: d
+c        real*8, dimension(npro,ngauss) :: Ja_def_quad,det_d_quad
+        real*8, dimension(npro,6,6) :: AS
+c................
         dimension tmp(npro),  dxdxi(npro,nsd,nsd),  sgn(npro,nshl)
         dimension rlsl(npro,nshl,6),         rlsli(npro,6),
      &            xmudmi(npro,ngauss)
@@ -127,7 +141,7 @@ c
         
         ithm = 6
          call getthm(rho, ei, dui(:,1), dui(:,5), npro, mater
-     &,              tmp, tmp, tmp, tmp, tmp, tmp, tmp)
+     &,              tmp, tmp, tmp, tmp, tmp, tmp, tmp) 
 c
         dui(:,1) = rho
         dui(:,2) = rho * dui(:,2)
@@ -363,6 +377,62 @@ c
 c
         enddo
       endif
+c.....Prepare the parameters for the solid calculation
+c
+      if(mat_eos(mater,1).eq.ieos_solid_1) then
+
+c... assemble the AS matrix
+c initialize the AS matrix
+         AS = zero !add
+c
+         AS(:,1,1) = 2 * g1yi(:,2)
+         AS(:,1,5) = 2 * g3yi(:,2)
+         AS(:,1,6) = 2 * g2yi(:,2)
+c
+         AS(:,2,2) = 2 * g2yi(:,3)
+         AS(:,2,4) = 2 * g3yi(:,3)
+         AS(:,2,6) = 2 * g1yi(:,3)
+c
+         AS(:,3,3) = 2 * g3yi(:,4)
+         AS(:,3,4) = 2 * g2yi(:,4)
+         AS(:,3,5) = 2 * g1yi(:,4)
+c
+         AS(:,4,2) = g2yi(:,4)
+         AS(:,4,3) = g3yi(:,3)
+         AS(:,4,4) = g2yi(:,3) + g3yi(:,4)
+         AS(:,4,5) = g1yi(:,3)
+         AS(:,4,6) = g1yi(:,4)
+c
+         AS(:,5,1) = g1yi(:,4)
+         AS(:,5,3) = g3yi(:,2)
+         AS(:,5,4) = g2yi(:,2)
+         AS(:,5,5) = g1yi(:,2) + g3yi(:,4)
+         AS(:,5,6) = g2yi(:,4)
+c         
+         AS(:,6,1) = g1yi(:,3)
+         AS(:,6,2) = g2yi(:,2)
+         AS(:,6,4) = g3yi(:,2)
+         AS(:,6,5) = g3yi(:,3)
+         AS(:,6,6) = g1yi(:,2) + g2yi(:,3)
+c
+        d = almBi * bq + alfBi * Delt(1) * (almBi - gamBi) * bq_dot !remeber to add in e3
+c
+        call setB_af(d, AS, bq_af)
+c        
+        call get_det(bq_af,det_baf) !remeber to add in e3
+        Ja_def= (det_baf)**0.5 !remeber to add in e3
+c        call approx_elm_prop(Ja_def_quad, Ja_def) !approximate one property over one elm
+c        
+        call get_det(d,det_d) !remeber to add in e3
+c        call approx_elm_prop(det_d_quad,det_d)
+c.....Get the thermodynamic properties for solid
+         ithm = 7
+         call getthm_solid_1(rho, ei, pres, T, npro, mater
+     &,              h, cv, cp,   alfap, betaT,bulkMod
+     &,              shearMod, Ja_def) !add the solid
+c
+      endif
+c.....End of the preparision for solid
 c
 c.... u^m_{i,i} divum at integral point
 c
@@ -503,6 +573,9 @@ c                              a scalar only)
 c       endif
        return
        end
+c
+c
+c
         subroutine e3ivarSclr (ycl,       acl,      acti,     
      &                         shape,    shgl,     xl,      
      &                         T,        cp,
@@ -659,7 +732,7 @@ c
      &               rk,              rho,             tmp,
      &               tmp,             tmp,             tmp,
      &               cp,              tmp,             tmp,
-     &               tmp,             tmp)
+     &               tmp)!not consistent with current getthm!
 c
         if (iconvsclr.eq.2) rho=one
 c
@@ -753,5 +826,79 @@ c
        ttim(20) = ttim(20) + tmr()
        return
        end
-
-
+  
+c
+c
+c
+       subroutine setB_af (d, AS, bq_af)
+c... calculate the left Cauchy-green tensor at time step n+af
+C       implicit none 
+       include "common.h"
+c
+       real*8, dimension(npro,6),intent(in) :: d
+       real*8, dimension(npro,6,6),intent(in) :: AS
+       integer,parameter :: nsize = 6 
+c
+       real*8, dimension(npro,6) :: bq_af
+       real*8, dimension(6,6) :: ident
+       real*8, dimension(6,6) :: temp_matrix
+c..................
+       ident = zero
+        do i = 1, nsize
+        ident(i,i) = one
+        enddo
+c
+        do i = 1, npro
+        temp_matrix(:,:) = almBi * ident(:,:) + gamBi * Delt(1)
+     &                     *alfBi * AS(i,:,:) !check here
+        bq_af(i,:) = matmul(temp_matrix(:,:) , d(i,:))
+        enddo
+c
+c
+       end
+c
+c
+c
+c
+       subroutine get_det(matr,det_matr)
+c... calculate the determinant of 3 by 3 matrix
+C     implicit none 
+      include "common.h"
+c
+      real*8, dimension(npro,6),intent(in) :: matr
+c
+      real*8, dimension(npro) :: det_matr
+c..................
+      det_matr(:) = matr(:,1) * matr(:,2) * matr(:,3) + matr(:,6) * matr(:,4) 
+     &          * matr(:,5) + matr(:,5) * matr(:,6) * matr(:,4) 
+     &          - matr(:,1) * matr(:,4) * matr(:,4) - matr(:,5) * matr(:,2)
+     &          * matr(:,5) - matr(:,6) * matr(:,6) * matr(:,3)
+c
+       end
+c
+c
+c
+c      subroutine approx_elm_prop(proper,approx_proper)
+c
+c... approximate one property over one element
+C     implicit none 
+c        include "common.h"
+c
+c        real*8, dimension(npro,ngauss),intent(in) :: proper
+c
+c        real*8, dimension(npro) :: approx_proper
+c        real*8 :: sum_temp
+c..................
+c        approx_proper = zero
+c        sum_temp = zero
+c.... loop through the integration points
+c
+c        do intp = 1, ngauss
+c          sum_temp = sum_temp + Qwt(lcsyst,intp)
+c          approx_proper(:) = approx_proper(:) + proper(:,intp) * Qwt(lcsyst,intp)
+c        enddo
+c        approx_proper(:) = (one/sum_temp) * approx_proper(:)
+c
+c
+c
+c        end

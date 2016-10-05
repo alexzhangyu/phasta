@@ -64,7 +64,8 @@ c
             if(input_mode.ge.1)then
                write (fname2,"('connectivity boundary',i1)") iblk
             else
-               write (fname2,"('connectivity boundary linear tetrahedron')")
+c               write (fname2,"('connectivity boundary linear tetrahedron')")
+               write (fname2,"('connectivity boundary linear hexahedron')") !to input the hex mesh
             endif
  
             call phio_readheader(fhandle, fname2 // char(0),
@@ -87,7 +88,8 @@ c
             if(input_mode.ge.1)then
                write (fname2,"('connectivity boundary',i1)") iblk
             else
-               write (fname2,"('connectivity boundary linear tetrahedron')")
+c               write (fname2,"('connectivity boundary linear tetrahedron')")
+               write (fname2,"('connectivity boundary linear hexahedron')")!to input hex mesh
             endif
            
            ! Synchronization for performance monitoring, as some parts do not include some topologies
@@ -140,7 +142,8 @@ c
             if(input_mode.ge.1)then
                write (fname2,"('nbc codes',i1)") iblk
             else
-               write (fname2,"('nbc codes linear tetrahedron')")
+c               write (fname2,"('nbc codes linear tetrahedron')")
+               write (fname2,"('nbc codes linear hexahedron')")!to input hex mesh
             endif
 
            call phio_readheader(fhandle, fname2 // char(0),
@@ -155,7 +158,8 @@ c
             if(input_mode.ge.1)then
                write (fname2,"('nbc values',i1)") iblk
             else
-               write (fname2,"('nbc values linear tetrahedron')")
+c               write (fname2,"('nbc values linear tetrahedron')")
+               write (fname2,"('nbc values linear hexahedron')")!to input hex mesh
             endif
 
            call phio_readheader(fhandle, fname2 // char(0),

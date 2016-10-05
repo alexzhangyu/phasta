@@ -2,7 +2,8 @@
      &                     shp,     shgl,    ien,     
      &                     mater,   res,     rmes,    
      &                     BDiag,   qres,    EGmass,   
-     &                     rerr,    umesh )
+     &                     rerr,    umesh,   blk_b,       blk_b_dot,
+     &                     blk_b_af ) !need to add the path for solid
 c
 c----------------------------------------------------------------------
 c
@@ -26,8 +27,11 @@ c
      &            rmes(nshg,nflow),         BDiag(nshg,nflow,nflow),
      &            qres(nshg,idflx)
       integer, intent(in) :: mater
-
 c
+c.....solid arrays
+        dimension blk_b(npro,ngauss,6),        blk_b_dot(npro,ngauss,6),
+     &            blk_b_af(npro,ngauss,6)
+c....          
         dimension ycl(npro,nshl,ndofl),     acl(npro,nshl,ndof),
      &            xl(npro,nenl,nsd),        ytargetl(npro,nshl,nflow),
      &            rl(npro,nshl,nflow),      rml(npro,nshl,nflow),
@@ -80,7 +84,8 @@ c
         call e3  (ycl,     ycl,     acl,     shp,
      &            shgl,    xl,      rl,      rml,   xmudmi,
      &            BDiagl,  ql,      sgn,     rlsl,  EGmass,
-     &            rerrl,   ytargetl, mater,  uml)
+     &            rerrl,   ytargetl, mater,  uml,   blk_b,
+     &           blk_b_dot,   blk_b_af) !added the solid arrays
 
         ttim(31) = ttim(31) + secs(0.0)
 c

@@ -38,6 +38,14 @@ c
         rlm2mu = rlm + two * rmu
 c
         con = mat_prop(mater,icon,1)
+c       hard coded for solid, need to check
+        if(mat_eos(mater,1).eq. ieos_solid_1)then
+         rmu = 0.0
+         rlm = -pt66 * rmu
+         rlm2mu = rlm + two * rmu
+         icon = 8
+         con = mat_prop(mater,icon,1)
+        endif    
 c
 c        if (iLES .gt. 0 .or. iRANS.eq.0) then
 c          call error ('getdiff ', 'ERROR: Turbulence Viscosity is NOT supported!', 0)

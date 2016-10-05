@@ -13,7 +13,7 @@ c
 c  Define the Hulbert parameters
 c  second order if between (and including) 0 and 1 otherwise backward Euler
 c
-      if( rhoinf(itseq).lt.0.or.rhoinf(itseq).gt.1) then ! backward Euler
+      if ( (rhoinf(itseq).lt.0) .or. (rhoinf(itseq).gt.1) ) then ! backward Euler
          almi   = one
          alfi   = one
          gami   = one
@@ -22,6 +22,17 @@ c
          almi   = (three-rhoinf(itseq))/(one+rhoinf(itseq))/two
          alfi   = one/(one+rhoinf(itseq))
          gami   = pt5+almi-alfi
+      endif
+c....control generalized alpha method for solid
+c  second order if between (and including) 0 and 1 otherwise backward Euler
+      if( (rhoinf_B(itseq).lt.0) .or. (rhoinf_B(itseq).gt.1)) then ! backward Euler
+         almBi   = one
+         alfBi   = one
+         gamBi   = one
+      else           !second order family
+         almBi   = (three-rhoinf_B(itseq))/(one+rhoinf_B(itseq))/two
+         alfBi   = one/(one+rhoinf_B(itseq))
+         gamBi   = pt5+almBi-alfBi
       endif
 c     
 c.... set the jacobian type
@@ -35,7 +46,7 @@ c
 c protect from ipred=4 and rhoi=0
 c
       if(ipred.eq.4 .and. rhoinf(itseq) .eq. 0.0 ) ipred=3
-      
+C      
 c
 c.... set the global time increment and the CFL data
 c

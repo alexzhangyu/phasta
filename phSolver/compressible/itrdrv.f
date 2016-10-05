@@ -20,6 +20,11 @@ c  iBC    (nshg)                : BC codes
 c  BC     (nshg,ndofBC)         : BC constraint parameters
 c  iper   (nshg)                : periodicity table
 c
+c  ! for solid
+c  b      (npro,ngauss,6)       : left Cauchy green tensor
+c  b_ac   (npro,ngauss,6)       : time derivative of left Cauchy green tensor
+c  b      (npro,ngauss,6)       : b at time step n+af
+c
 c shape functions:
 c  shp    (nshape,ngauss)        : interior element shape functions
 c  shgl   (nsd,nshape,ngauss)    : local shape function gradients
@@ -38,7 +43,6 @@ c
       use wallData
       use fncorpmod
       use bc3lhs_m
-c      use mesh_motion_m
 
         include "common.h"
         include "mpif.h"
@@ -50,7 +54,8 @@ c
      &            x(numnp,nsd),            iBC(nshg),
      &            BC(nshg,ndofBC),         ilwork(nlwork),
      &            iper(nshg),              uold(nshg,nsd)
-c
+c    
+c 
         dimension res(nshg,nflow),         
      &            rest(nshg),              solinc(nshg,ndof)
 c     
@@ -102,6 +107,13 @@ c
 !        logical  exMc
 !        real*8 vBC, vBCg
         real*8 vortmax, vortmaxg
+c
+c......For visualization of element-wise left Cauchy deformation tensor B
+        real*8 elmb1(numel,3)
+        real*8 elmb2(numel,3)
+c......Tracking the nodal displacment field
+        real*8 disp_solid_temp(numnp,nsd)
+c........
 
        iprec=0 !PETSc - Disable PHASTA's BDiag. TODO: Preprocssor Switch
 
@@ -154,7 +166,10 @@ c
         time   = 0
         yold   = y
         acold  = ac
-
+C c......initialzation for tracking the nodal disp field for solid
+        disp_solid_temp = zero 
+C c......end of initialization for solid nodal disp field
+c
 !Blower Setup
        call BC_init(Delt, lstep, BC)  !Note: sets BC_enable
 ! fix the yold values to the reset BC
@@ -322,8 +337,7 @@ c============ Start the loop of time steps============================c
         deltaInlInv=one/(0.125*0.0254)
         do 2000 istp = 1, nstp
 c
-c      umesh = zero
-c            call temp_mesh_motion(x,umesh,time,delt(1),istp,numnp,nsd,myrank)
+c            call temp_mesh_motion(x,umesh,time,delt(1),istp,numnp,nsd)
 c
 
          
@@ -393,6 +407,7 @@ c
 c.... -----------------------> predictor phase <-----------------------
 c
             call itrPredict(   yold,    acold,    y,   ac )
+            call itrBC (y,  ac,  iBC,  BC,  iper, ilwork)
 c
 c...-------------> HARDCODED <-----------------------
 c
@@ -500,7 +515,7 @@ c                        write(*,*) 'lhs=',lhs
      &                       solinc,        rerr,          umesh)
                     endif
                       else if (mod(impl(1),100)/10 .eq. 2) then ! mfg solve
-c     
+c'     
 c.... preconditioned matrix-free GMRES solver
 c     
                         lhs=0
@@ -595,7 +610,7 @@ c
      &                    iper,          ilwork,
      &                    shp,           shgl,
      &                    shpb,          shglb, solinc(1,isclr+5))
-c    
+c'    
                   endif  ! endif usingPETSc for scalar
 c
                   else if(isolve.eq.10) then ! this is a mesh-elastic solve
@@ -611,7 +626,7 @@ c
                      call itrBCElas(umesh,  disp,  iBC, 
      &                              BC(:,ndof+2:ndof+5),
      &                              iper,   ilwork         )
-c
+c                         
 c.... call to SolGMRElas ... For mesh-elastic solve
 c
                      call SolGMRElas (x,        disp,      iBC,    BC,
@@ -654,7 +669,7 @@ c                       call itrBC (y,  ac,  iBC,  BC, iper, ilwork)
                         fct3=one/alfi
                         acold(:,7) = acold(:,7) 
      &                             + (ac(:,7)-acold(:,7))*fct2
-                        yold(:,7)  = yold(:,7)  
+                        yold(:,7)  = yold(:,7)    
      &                             + (y(:,7)-yold(:,7))*fct3  
                         call itrBCSclr (  yold,  acold,  iBC,  BC, 
      &                                    iper,  ilwork)
@@ -705,6 +720,27 @@ c
                almi =almit  
             endif          
             call itrUpdate( yold,  acold,   y,    ac)
+c
+c
+c.....Update the mesh motion(disp)for solid blocks
+c            call itrCorrectElasSolid (x, yold)
+c.....End of updating the mesh motion in solid
+c
+c.....Track the nodal disp field for solid
+           call itrCorrectElasSolid (disp_solid_temp, yold)
+c.....End of track
+c
+c
+c.....Update the solid arrays at the end of the timestep
+c      call itrupdate_b !add
+C
+c......initialzation for element-wise LCG tensor
+        elmb1 = zero
+        elmb2 = zero 
+c......end of initialization for element-wise LCG tensor
+
+      call itrupdate_b(elmb1,elmb2) !show elm-wise solid arrays
+c             
 c...-------------> HARDCODED <-----------------------
 c
 c            call itrBC (y,  ac,  iBC,  BC,  iper, ilwork)
@@ -829,7 +865,7 @@ c.... print out the updated mesh and mesh quality for mesh-elastic solve
 c
                if (impl(2) .eq. 1) then 
                    call write_field(
-     &                       myrank,'a'//char(0),'coord'//char(0),5,
+     &                       myrank,'a'//char(0),'motion_coords'//char(0),13,
      &                       x,     'd'//char(0), numnp, nsd, lstep)
                    call write_field(
      &                       myrank,'a'//char(0),'meshQ'//char(0), 5, 
@@ -861,7 +897,31 @@ c
      &                      myrank, 'a'//char(0), 'errors'//char(0), 6, 
      &                        rerr, 'd'//char(0), nshg, 10, lstep)
                endif
+c.....write the elm-wise solid array into restart file
+                 call write_field(
+     &                       myrank,'a'//char(0),'elm_b1'//char(0), 6, 
+     &                       elmb1, 'd'//char(0), numel, 3,   lstep)
+                 call write_field(
+     &                       myrank,'a'//char(0),'elm_b2'//char(0), 6, 
+     &                       elmb2, 'd'//char(0), numel, 3,   lstep)
 
+c.....
+c.....write the solid nodal displacment field into restart file
+                 call write_field(
+     &                       myrank,'a'//char(0),'disp_solid'//char(0), 10, 
+     &                       disp_solid_temp, 'd'//char(0), numnp, 3,   lstep)
+c
+c
+c.....Hard coded of writing the solid arrays
+c                 call write_field(
+c     &                      myrank, 'a'//char(0), 'leftCG'//char(0), 6, 
+c     &                        b, 'd'//char(0), nshg, 6, lstep)
+C
+c                 call write_field(
+c     &                      myrank, 'a'//char(0), 'leftCGDot'//char(0), 9, 
+c     &                        b_dot, 'd'//char(0), nshg, 6, lstep)
+c......End of hard coded for solid
+c
 c the following is a future way to have the number of steps in the header...done for posix but not yet for syncio
 c
 c              call write_field2(myrank,'a'//char(0),'ybar'//char(0),
@@ -884,9 +944,6 @@ c         tcorewc2 = secs(0.0)
          endif
         
 c     call wtime
-
-      call destroyWallData
-      call destroyfncorp
 
  3000 continue !end of NTSEQ loop
 c     

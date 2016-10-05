@@ -5,8 +5,8 @@
 #include "phio_posix.h"
 #include "phio_base.h"
 
-grstream geomRestartStream;
-rstream restartStream;
+extern grstream geomRestartStream;
+extern rstream restartStream;
 
 static struct phio_ops stream_ops = {
   stream_openfile,
