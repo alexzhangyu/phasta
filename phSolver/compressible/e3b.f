@@ -52,6 +52,9 @@ c Zdenek Johan, Winter 1991.  (Fortran 90)
 c Anilkumar Karanam Spring 2000 (Modified for Hierarchic Hexes)
 c----------------------------------------------------------------------
 c
+        use solid_def_m
+        use solid_m
+c
         include "common.h"
 c
         dimension yl(npro,nshl,nflow),          iBCB(npro,ndiBCB),
@@ -96,9 +99,12 @@ c
      &            shape(npro,nshl),        shdrv(npro,nsd,nshl)
 c
         dimension xmudum(npro,ngauss)
-        integer   aa, b
+        integer   iaa, ib
         integer, intent(in) :: materb
-
+c.....Additional solid properties
+        real*8    bdy_bulkMod(npro),             bdy_shearMod(npro),
+     &            bdy_det_baf(npro),             bdy_bq_af(npro,6)
+c......
         ttim(40) = ttim(40) - secs(0.0)
 
 c
@@ -207,6 +213,32 @@ c
 c.... ------------------------>  viscous flux <------------------------
 c
 c.... floating viscous flux
+c.......adding the expression for solid
+       if(mat_eos(materb,1).eq.ieos_solid_1) then
+         bdy_det_baf = det_baf
+         bdy_shearMod = shearMod
+         bdy_bq_af = bdy_b_af(iblk_solid)%p(:,intp,:)
+c          
+         tau1n = bnorm(:,1) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * (1.0/3.0) * 
+     &               (2.0 * bdy_bq_af(:,1) - bdy_bq_af(:,2) - bdy_bq_af(:,3)) )
+     &        + bnorm(:,2) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
+     &               bdy_bq_af(:,6) )
+     &        + bnorm(:,3) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
+     &               bdy_bq_af(:,5) )
+        tau2n = bnorm(:,1) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * 
+     &               bdy_bq_af(:,6) )
+     &        + bnorm(:,2) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
+     &               (1.0/3.0) *(-bdy_bq_af(:,1) + 2.0* bdy_bq_af(:,2) - bdy_bq_af(:,3)) )
+     &        + bnorm(:,3) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * 
+     &               bdy_bq_af(:,4) )
+        tau3n = bnorm(:,1) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * 
+     &               bdy_bq_af(:,5) )
+     &        + bnorm(:,2) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod * 
+     &               bdy_bq_af(:,4) )
+     &        + bnorm(:,3) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
+     &               (1.0/3.0) *(-bdy_bq_af(:,1) - bdy_bq_af(:,2) + 2.0* bdy_bq_af(:,3)) )
+
+       else
 c
         tau1n = bnorm(:,1) * (rlm2mu* g1yi(:,2) + rlm   *g2yi(:,3) 
      &                                          + rlm   *g3yi(:,4))
@@ -220,6 +252,8 @@ c
      &        + bnorm(:,2) * (rmu   *(g3yi(:,3) + g2yi(:,4)))
      &        + bnorm(:,3) * (rlm   * g1yi(:,2) + rlm   *g2yi(:,3) 
      &                                          + rlm2mu*g3yi(:,4))
+      endif
+c..... end of adding the expression for solid
 c
         where (.not.btest(iBCB(:,1),2) )
            Fv2 = tau1n          ! wherever traction is not set, use the
@@ -243,19 +277,19 @@ c
 
 
         if(iLHScond > 0) then !compute contributions to the LHS matrix
-          do aa = 1, nshl
-            dNadn(:,aa) = dNadx(:,aa,1)*bnorm(:,1) 
-     &                  + dNadx(:,aa,2)*bnorm(:,2) 
-     &                  + dNadx(:,aa,3)*bnorm(:,3)
+          do iaa = 1, nshl
+            dNadn(:,iaa) = dNadx(:,iaa,1)*bnorm(:,1) 
+     &                  + dNadx(:,iaa,2)*bnorm(:,2) 
+     &                  + dNadx(:,iaa,3)*bnorm(:,3)
           enddo
         
           !EGmass(e, b, a) using the newer nomenclature, i.e. b indexes
           !the matrix row and a indexes the matrix column. 
 
           !Calculate \kappa
-          do aa = 1,nshl
-            do b = 1,nshl
-              EGmass(:,b, aa) = con * WdetJb * shape(:,b) * dNadn(:,aa)
+          do iaa = 1,nshl
+            do ib = 1,nshl
+              EGmass(:,ib, iaa) = con * WdetJb * shape(:,ib) * dNadn(:,iaa)
             enddo
           enddo
           

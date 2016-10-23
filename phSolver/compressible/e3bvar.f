@@ -51,6 +51,41 @@ c----------------------------------------------------------------------
 c
         include "common.h"
 c
+        interface
+          subroutine getthm (rho_,ei_,p_,T_,npro_,mater_
+     &,                  h_,  cv_,cp_,alphaP_,betaT_,gamb_,c_
+     &,                  Ja_def_, bulkMod_, shearMod_)
+            use eqn_state_m
+            use solid_def_m
+            implicit none
+            real*8, dimension(npro_), target, intent(out) :: rho_,ei_,h_,cv_,cp_,alphaP_,betaT_,gamb_,c_
+            real*8, dimension(npro_), target, intent(out) :: bulkMod_, shearMod_
+            real*8, dimension(npro_), target, intent(in) :: p_,T_, Ja_def_
+            integer, intent(in) :: npro_, mater_
+          end subroutine getthm
+          subroutine e3bvar_solid(bdy_Ja_def_,         bdy_det_baf_,  
+     &                            g1yi_,     g2yi_,    g3yi_,
+     &                            npro_,     nsd_,     almBi_,   alfBi_,
+     &                            gamBi_,    intp_,    Delt_)
+             use solid_func_m
+             implicit none
+             real*8, dimension(npro_,nsd_), target, intent(in) :: g1yi_,g2yi_,g3yi_
+             real*8, dimension(npro_), target :: bdy_Ja_def_
+             real*8, dimension(npro_), target :: bdy_det_baf_
+             real*8, intent(in) :: Delt_
+             integer, intent(in) :: npro_, nsd_
+             integer, intent(in) :: intp_
+             real*8, intent(in) :: almBi_, alfBi_, gamBi_
+             real*8, dimension(npro_,6) :: bdy_d 
+          end subroutine e3bvar_solid
+        end interface
+c
+
+
+
+
+
+c
         dimension yl(npro,nshl,nflow),      BCB(npro,nshlb,ndBCB),
      &            ycl(npro,nshl,ndof),
      &            shpb(npro,nshl),
@@ -87,59 +122,13 @@ c
         integer, intent(in) :: materb
         integer   aa
 c
-c.... ------------------->  integration variables  <--------------------
-c
-c.... compute the primitive variables at the integration point
-c
-        pres = zero
-        u1   = zero
-        u2   = zero
-        u3   = zero
-        um1  = zero
-        um2  = zero
-        um3  = zero
-        T    = zero
-c
-        do n = 1, nshlb
-          nodlcl = lnode(n)
-c
-          pres = pres + shpb(:,nodlcl) * yl(:,nodlcl,1)
-          u1   = u1   + shpb(:,nodlcl) * yl(:,nodlcl,2)
-          u2   = u2   + shpb(:,nodlcl) * yl(:,nodlcl,3)
-          u3   = u3   + shpb(:,nodlcl) * yl(:,nodlcl,4)
-          T    = T    + shpb(:,nodlcl) * yl(:,nodlcl,5)
-c
-c.... Mesh velocity at integral point on boundary
-c
-          um1  = um1  + shpb(:,nodlcl) * uml(:,nodlcl,1)
-          um2  = um2  + shpb(:,nodlcl) * uml(:,nodlcl,2)
-          um3  = um3  + shpb(:,nodlcl) * uml(:,nodlcl,3)
-        enddo
-c
-c.... calculate the specific kinetic energy
-c
-        rk = pt5 * ( u1**2 + u2**2  + u3**2 )
-c
-c.... get the thermodynamic properties
-c
-        if (iLSet .ne. 0)then
-           temp = zero
-           isc=abs(iRANS)+6
-           do n = 1, nshlb
-              temp = temp + shpb(:,n) * ycl(:,n,isc)
-           enddo
-        endif
+c....Solid arrays
+c...
+        real*8,dimension(npro) :: bdy_bulkMod, bdy_shearMod,
+     &                            bdy_det_baf, bdy_Ja_def
+c................
 
-        ithm = 6
-        if (Navier .eq. 1) ithm = 7
-c        call getthm (pres,            T,                  temp,
-c     &               rk,              rho,                ei,
-c     &               h,               tmp,                cv,
-c     &               cp,              alfap,              betaT,
-c     &               gamb,            c)
-         call getthm(rho, ei,  pres, T, npro, materb
-     &,              h,   cv,  cp,   alfap, betaT, tmp,  tmp)
-c
+
 c.... ---------------------->  Element Metrics  <-----------------------
 c
 c.... compute the deformation gradient
@@ -310,6 +299,70 @@ c
      &                dxidxb(:,3,3) * gl3yi(:,5)
 c
 c.... end grad-v
+c
+c.... ------------------->  integration variables  <--------------------
+c
+c.... compute the primitive variables at the integration point
+c
+        pres = zero
+        u1   = zero
+        u2   = zero
+        u3   = zero
+        um1  = zero
+        um2  = zero
+        um3  = zero
+        T    = zero
+c
+        do n = 1, nshlb
+          nodlcl = lnode(n)
+c
+          pres = pres + shpb(:,nodlcl) * yl(:,nodlcl,1)
+          u1   = u1   + shpb(:,nodlcl) * yl(:,nodlcl,2)
+          u2   = u2   + shpb(:,nodlcl) * yl(:,nodlcl,3)
+          u3   = u3   + shpb(:,nodlcl) * yl(:,nodlcl,4)
+          T    = T    + shpb(:,nodlcl) * yl(:,nodlcl,5)
+c
+c.... Mesh velocity at integral point on boundary
+c
+          um1  = um1  + shpb(:,nodlcl) * uml(:,nodlcl,1)
+          um2  = um2  + shpb(:,nodlcl) * uml(:,nodlcl,2)
+          um3  = um3  + shpb(:,nodlcl) * uml(:,nodlcl,3)
+        enddo
+c
+c.... calculate the specific kinetic energy
+c
+        rk = pt5 * ( u1**2 + u2**2  + u3**2 )
+c
+c.... get the thermodynamic properties
+c
+        if (iLSet .ne. 0)then
+           temp = zero
+           isc=abs(iRANS)+6
+           do n = 1, nshlb
+              temp = temp + shpb(:,n) * ycl(:,n,isc)
+           enddo
+        endif
+c-----> SOLID CALCULATIONS <------------
+c
+      if(mat_eos(materb,1).eq.ieos_solid_1) then
+          call e3bvar_solid(bdy_Ja_def,        bdy_det_baf, 
+     &                      g1yi,     g2yi,    g3yi,
+     &                      npro,     nsd,     almBi,   alfBi,
+     &                      gamBi,    intp,    Delt(1))
+      endif
+c----->END OF SOLID CALCULATIONS<--------
+
+        ithm = 6
+        if (Navier .eq. 1) ithm = 7
+c        call getthm (pres,            T,                  temp,
+c     &               rk,              rho,                ei,
+c     &               h,               tmp,                cv,
+c     &               cp,              alfap,              betaT,
+c     &               gamb,            c)
+         call getthm(rho, ei,  pres, T, npro, materb
+     &,              h,   cv,  cp,   alfap, betaT, tmp,  tmp, bdy_Ja_def, bdy_bulkMod, bdy_shearMod)
+c
+
 c
           !Compute the gradient of the shape function for heat flux's 
           !contribution to lhsk
