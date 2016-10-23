@@ -17,7 +17,7 @@ c
 c
         implicit none
 c
-        integer :: almBi, alfBi, gamBi
+        real*8 :: almBi, alfBi, gamBi
 c        integer :: intp_s
         
 c
@@ -36,7 +36,7 @@ c
         d(:,:) = almBi * b(iblk_solid)%p(:,intp_s,:)
      &+      alfBi * Delt * (almBi - gamBi) 
      &*      b_dot(iblk_solid)%p(:,intp_s,:)
-        call setB_af
+        call setB_af(d, AS, b_af(iblk_solid)%p(:,intp_s,:))
         call get_det(b_af(iblk_solid)%p(:,intp_s,:),det_baf)
         Ja_def= (det_baf)**0.5
         call get_det(d,det_d)
@@ -83,11 +83,15 @@ c
 c
       end subroutine calc_as_matrix
 c
-      subroutine setB_af
+      subroutine setB_af(d, AS, bq_af)
 c... calculate the left Cauchy-green tensor at time step n+af
        implicit none 
 c
        integer,parameter :: nsize = 6 
+c
+       real*8, dimension(npro,6),intent(in) :: d
+       real*8, dimension(npro,6,6),intent(in) :: AS
+       real*8, dimension(npro,6) :: bq_af
 c
        real*8, dimension(6,6) :: ident
        real*8, dimension(6,6) :: temp_matrix
@@ -101,7 +105,7 @@ c
         do i = 1, npro
         temp_matrix(:,:) = almBi * ident(:,:) + gamBi * Delt
      &                     *alfBi * AS(i,:,:) !check here
-        b_af(iblk_solid)%p(i,intp_s,:) = matmul(temp_matrix(:,:) , d(i,:))
+        bq_af(i,:) = matmul(temp_matrix(:,:) , d(i,:))
         enddo
 c
 c
