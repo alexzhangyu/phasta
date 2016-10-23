@@ -104,7 +104,9 @@ c
 !        logical  exMc
 !        real*8 vBC, vBCg
         real*8 vortmax, vortmaxg
-
+c......Tracking the nodal displacment field
+        real*8 disp_solid_temp(numnp,nsd)
+c........
        iprec=0 !PETSc - Disable PHASTA's BDiag. TODO: Preprocssor Switch
 
        call findTurbWall(iTurbWall)
@@ -161,6 +163,11 @@ c
         time   = 0
         yold   = y
         acold  = ac
+c......initialzation for tracking the nodal disp field for solid
+        if (i_SOLID ==1 )then
+          disp_solid_temp = zero
+        endif 
+c......end of initialization for solid nodal disp field
 
 !Blower Setup
        call BC_init(Delt, lstep, BC)  !Note: sets BC_enable
@@ -709,7 +716,7 @@ c... update B array for solid blocks...
 c
 c           if (isolid .eq. 1) then
 c
-              call update_solid_blocks
+              call update_solid_blocks( Delt(1), disp_solid_temp, yold )
 c
 c           endif
 c
