@@ -150,8 +150,7 @@ c
         call genint
         call genint_if
 c.....allocate and initialize solid arrays
-c        call alloc_solid (lcblk, lcblkb, nelblk, nelblb,
-c     &                    nint,  nintb,  MAXTOP, i_iniSolid) !check
+        call alloc_solid (i_iniSolid) !check
 c.....
         ichem = 0
 c
