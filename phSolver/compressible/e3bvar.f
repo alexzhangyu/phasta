@@ -726,8 +726,8 @@ c..................
         enddo
 c
         do i = 1, npro
-        temp_matrix(:,:) = almBi * ident(:,:) + gamBi * Delt(1)
-     &                     *alfBi * AS(i,:,:) !check here
+        temp_matrix(:,:) = (one/almBi) * ident(:,:) + ( gamBi * Delt(1)
+     &                     *alfBi/(almBi)**2 ) * AS(i,:,:) !check here
         bq_af(i,:) = matmul(temp_matrix(:,:) , d(i,:))
         enddo
 c
