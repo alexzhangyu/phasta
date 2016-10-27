@@ -116,23 +116,23 @@ c.... read and generate the essential boundary conditions (BC array)
 c
         call genBC  (iBC,   BC,   point2x,
      &               point2ilwork, point2iper)
-c=====hardcoding for solid test1 to hack the comp2 BC on surrounding surfaces
-        do i = 1,nshg
-         if  ( (abs(x(i,2)) .lt. 0.000001)  .or.
-     &       (abs(x(i,2)-0.2) .lt. 0.000001) .or.
-     &       (abs(x(i,3)) .lt. 0.000001)  .or. 
-     &       (abs(x(i,3)-0.2) .lt. 0.000001) ) then
- 
-c     &        .or. (x(i,2) .eq. 0.0) .or. (x(i,2) .eq. 0.2)
-c     &        .or. (x(i,3) .eq. 0.0) .or. (x(i,3) .eq. 0.2)) then 
-                ! iBC(i) = 50
-                 iBC(i) = IBSET(iBC(i),4)
-                 iBC(i) = IBSET(iBC(i),5)
-                 BC(i,4:5) = 0.0
-         endif
-        enddo
-c
-c=====end of hardcoding for solid test1
+cc=====hardcoding for solid test1 to hack the comp2 BC on surrounding surfaces
+c        do i = 1,nshg
+c         if  ( (abs(x(i,2)) .lt. 0.000001)  .or.
+c     &       (abs(x(i,2)-0.2) .lt. 0.000001) .or.
+c     &       (abs(x(i,3)) .lt. 0.000001)  .or. 
+c     &       (abs(x(i,3)-0.2) .lt. 0.000001) ) then
+c 
+cc     &        .or. (x(i,2) .eq. 0.0) .or. (x(i,2) .eq. 0.2)
+cc     &        .or. (x(i,3) .eq. 0.0) .or. (x(i,3) .eq. 0.2)) then 
+c                ! iBC(i) = 50
+c                 iBC(i) = IBSET(iBC(i),4)
+c                 iBC(i) = IBSET(iBC(i),5)
+c                 BC(i,4:5) = 0.0
+c         endif
+c        enddo
+cc
+cc=====end of hardcoding for solid test1
         deallocate(nBC)
 
 c=========================================================================================
