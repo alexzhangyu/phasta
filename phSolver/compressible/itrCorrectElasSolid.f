@@ -1,4 +1,4 @@
-      subroutine itrCorrectElasSolid (old_x, y)
+      subroutine itrCorrectElasSolid (old_x1,old_x2, y)
 c....Update the displacement within solid at end of each time step
 c       
       
@@ -7,7 +7,8 @@ c      implicit none
       use mattype_m
       include "common.h"
 c
-      real*8  old_x(numnp,nsd)
+      real*8  old_x1(numnp,nsd)
+      real*8  old_x2(numnp,nsd)
       real*8  y(nshg,ndof)
       real*8  temp_count(nshg,nsd)
       integer:: mater_s, npro_s, nshl_s
@@ -42,7 +43,7 @@ c......adding the displacment from solution field
               temp_count(:,ith) = temp_count(:,ith) *
      &                          y( :,ith)
               enddo
-             old_x = old_x + temp_count * Delt(1)
-
+             old_x1 = old_x1 + temp_count * Delt(1)
+             old_x2 = old_x2 + temp_count * Delt(1)
       return
       end subroutine itrCorrectElasSolid

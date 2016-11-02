@@ -720,16 +720,21 @@ c
                almi =almit  
             endif          
             call itrUpdate( yold,  acold,   y,    ac)
+c           
+c...-------------> HARDCODED <-----------------------
 c
+c            call itrBC (y,  ac,  iBC,  BC,  iper, ilwork)
+      call tempitrBC (y,ac, iBC, BC, iper, ilwork, x, umesh)
+c
+c----------------> END HARDCODE <--------------------
 c
 c.....Update the mesh motion(disp)for solid blocks
 c            call itrCorrectElasSolid (x, yold)
 c.....End of updating the mesh motion in solid
 c
 c.....Track the nodal disp field for solid
-           call itrCorrectElasSolid (disp_solid_temp, yold)
+           call itrCorrectElasSolid (disp_solid_temp, x, yold)
 c.....End of track
-c
 c
 c.....Update the solid arrays at the end of the timestep
 c      call itrupdate_b !add
@@ -740,13 +745,7 @@ c......initialzation for element-wise LCG tensor
 c......end of initialization for element-wise LCG tensor
 
       call itrupdate_b(elmb1,elmb2) !show elm-wise solid arrays
-c             
-c...-------------> HARDCODED <-----------------------
-c
-c            call itrBC (y,  ac,  iBC,  BC,  iper, ilwork)
-      call tempitrBC (y,ac, iBC, BC, iper, ilwork, x, umesh)
-c
-c----------------> END HARDCODE <--------------------
+c........             
 c
 c Elaine-SPEBC      
             if((irscale.ge.0).and.(myrank.eq.master)) then
