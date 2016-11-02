@@ -1,7 +1,7 @@
       subroutine update_solid_blocks(dt, old_x, y)
 c
         use conpar_m
-        use time_m
+        use timdat_m
         use solid_m
         use matdat_def_m
         use number_def_m

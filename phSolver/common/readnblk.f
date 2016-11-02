@@ -30,7 +30,7 @@ c
       
       end module
 
-      subroutine readnblk(i_iniSolid)
+      subroutine readnblk
       use iso_c_binding 
       use readarrays
       use fncorpmod
@@ -39,6 +39,7 @@ c
       use syncio
       use posixio
       use streamio
+      use solid_m
       include "common.h"
 
       real*8, target, allocatable :: xread(:,:), qread(:,:), acread(:,:)
@@ -62,7 +63,6 @@ c
       integer :: ierr_io, numprocs, itmp, itmp2
       integer :: ignored
       integer :: fileFmt
-      integer :: i_iniSolid !solid initialization flag
       character*255 fname2, temp2
       character*64 temp1
       type(c_ptr) :: handle
@@ -536,11 +536,13 @@ c
             write(*,*) warning
          endif
          acold=zero
-c.... set flag to intialize solid arrays
-         i_iniSolid = 1 
-c.....End of setting flag for solid arrays
       endif
-
+c
+c... read solid part
+c
+      call read_restart_solid
+c
+c
 c read in ALE stuff
 c read in coordinate at n time step      
       intfromfile=0

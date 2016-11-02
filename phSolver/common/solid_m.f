@@ -1,10 +1,7 @@
-      module solid_m
-c
+      module solid_data_m
         use pointer_data
-c
+        use outpar_m
         implicit none
-c
-        integer :: iblk_solid
 c
         type (r3d), dimension(MAXBLK2) ::  b !for solid,left Cauchy_green tensor,added
         type (r3d), dimension(MAXBLK2) ::  b_dot!time derivative of b,added
@@ -14,78 +11,233 @@ c
         type (r3d), dimension(MAXBLK2) ::  bdy_b_af! b at time step n+af on the boudary,added
 c
         integer, pointer :: is_solid(:)
+        integer, parameter :: b_size = 6
 c
-      contains
+        type solid_t
+          logical :: is_active, restart
+          integer :: nel,nelb
+        end type solid_t
 c
-        subroutine alloc_solid(i_iniSolid) !check
-        use matdat_def_m
-        use number_def_m
-        use elmpar_m
-        use blkdat_m
-        use intpt_m
+        integer :: b_array_size
+        real*8, dimension(:), pointer :: temp_b, temp_b_dot, temp_b_af  ! temp arrays to read b, b_dot and b_af
+        real*8, dimension(:), pointer :: bdy_temp_b, bdy_temp_b_dot, bdy_temp_b_af  ! on the boundary...
+c
+        type(solid_t) :: solid_p
+c
+      end module solid_data_m
+c
+      module solid_m
+c
+        use solid_data_m
         implicit none
 c
-        integer :: i_iniSolid
+        contains
 c
-        integer :: mattyp_s, lcsyst_s, npro_s, ngauss_s
-        integer :: mattyp_sb, lcsyst_sb, npro_sb, ngauss_sb
-        integer :: iblk
+        subroutine init_block(b,bdot,baf,tempb,tempbdot,tempbaf)
+          use intpt_m
+          use propar_m
+          implicit none
+          real*8, dimension(:,:,:), pointer, intent(out) :: b,bdot,baf
+          real*8, dimension(:), pointer, intent(in) :: tempb,tempbdot,tempbaf
+          integer :: ib,ifirst,ilast,incr
+          do intp = 1,ngauss
+            do ib = 1,b_size
+              ifirst = ib + (intp-1)*ngauss
+              incr   = ngauss*b_size
+              ilast  = ifirst + (npro-1)*incr
+              b(1:npro,intp,ib)    = tempb(ifirst:ilast:incr)
+              bdot(1:npro,intp,ib) = tempbdot(ifirst:ilast:incr)
+              baf(1:npro,intp,ib)  = tempbaf(ifirst:ilast:incr)
+            enddo
+          enddo
+        end subroutine init_block
+c
+        subroutine dump_block(tempb,tempbdot,tempbaf,b,bdot,baf)
+          use intpt_m
+          use propar_m
+          implicit none
+          real*8, dimension(:), pointer, intent(out) :: tempb,tempbdot,tempbaf
+          real*8, dimension(:,:,:), pointer, intent(in) :: b,bdot,baf
+          integer :: ib,ifirst,ilast,incr
+          do intp = 1,ngauss
+            do ib = 1,b_size
+              ifirst = ib + (intp-1)*ngauss
+              incr   = ngauss*b_size
+              ilast  = ifirst + (npro-1)*incr
+              tempb(ifirst:ilast:incr)    = b(1:npro,intp,ib)
+              tempbdot(ifirst:ilast:incr) = bdot(1:npro,intp,ib)
+              tempbaf(ifirst:ilast:incr)  = baf(1:npro,intp,ib)
+            enddo
+          enddo
+        end subroutine dump_block
+c
+        subroutine malloc_solid
+          use matdat_def_m
+          use number_def_m
+          use elmpar_m
+          use blkdat_m
+          use intpt_m
+          implicit none
+          integer :: mattype, iblk, npro
 c
 c.... allocate space for solid arrays 
- 
-       blocks_loop: do iblk = 1, nelblk
-         mattyp_s = lcblk(7,iblk)
-         lcsyst_s = lcblk(3,iblk)
-         ngauss_s = nint(lcsyst_s)
-         npro_s = lcblk(1,iblk+1) - lcblk(1,iblk)
-!for solid block only
-         if (mat_eos(mattyp_s,1).eq.ieos_solid_1)then
-           allocate (b(iblk)%p(npro_s,ngauss_s,6))!for solid
-           allocate (b_dot(iblk)%p(npro_s,ngauss_s,6)) !for solid
-           allocate (b_af(iblk)%p(npro_s,ngauss_s,6)) !for solid
-c......... these arrays need initialization
-           if (i_iniSolid .eq. 1)then
-              b(iblk)%p    = zero 
-              b_dot(iblk)%p = zero
-              b(iblk)%p(:,:,1)= one
-              b(iblk)%p(:,:,2)= one
-              b(iblk)%p(:,:,3)= one
-              b_af(iblk)%p = b(iblk)%p
-           endif
 c
+          solid_p%nel = 0
+          b_array_size = 0  ! keep this size for later write_field...
+c
+          blocks_loop: do iblk = 1, nelblk
+c
+            mattype = lcblk(i_mattype,iblk)
+            lcsyst = lcblk(3,iblk)
+            ngauss = nint(lcsyst)
+            npro = lcblk(1,iblk+1) - lcblk(1,iblk)
+c
+            if (mat_eos(mattype,1).eq.ieos_solid_1)then
+c
+              allocate (b(iblk)%p(npro,ngauss,b_size))
+              allocate (b_dot(iblk)%p(npro,ngauss,b_size))
+              allocate (b_af(iblk)%p(npro,ngauss,b_size))
+c
+              solid_p%nel = solid_p%nel + npro
+              b_array_size = b_array_size + npro*ngauss*b_size
+c
+              if (solid_p%restart) then
+c
+                call init_block(b(iblk)%p,b_dot(iblk)%p,b_af(iblk)%p,temp_b,temp_b_dot,temp_b_af)
+c
+              else
+c
+                b(iblk)%p(:,:,:)= one
+                b_af(iblk)%p(:,:,:) = one
+c
+              endif
+            else
+              cycle   
+            endif
+c
+          enddo blocks_loop
+c
+          if (solid_p%restart) then
+            deallocate(temp_b)
+            deallocate(temp_b_dot)
+            deallocate(temp_b_af)
           endif
+c
+          solid_p%nelb = 0
+c
+          boundary_blocks_loop: do iblk = 1, nelblb
+c
+            mattype = lcblkb(i_mattype,iblk)
+            lcsyst = lcblkb(3,iblk)
+            ngauss = nintb(lcsyst)
+            npro = lcblkb(1,iblk+1) - lcblkb(1,iblk)
+c
+            if (mat_eos(mattype,1).eq.ieos_solid_1)then
+c
+              allocate (bdy_b(iblk)%p(npro,ngaussb,b_size))
+              allocate (bdy_b_dot(iblk)%p(npro,ngaussb,b_size))
+              allocate (bdy_b_af(iblk)%p(npro,ngaussb,b_size))
+c
+              solid_p%nelb = solid_p%nelb + npro
+c
+              if (solid_p%restart) then
+c
+                call init_block(bdy_b(iblk)%p,bdy_b_dot(iblk)%p,bdy_b_af(iblk)%p,bdy_temp_b,bdy_temp_b_dot,bdy_temp_b_af)
+c
+              else
+c
+                bdy_b(iblk)%p(:,:,:)= one
+                bdy_b_af(iblk)%p(:,:,:) = one
+c
+              endif
+            else
+              cycle
+            endif
 c..
-      enddo blocks_loop
+            if (solid_p%restart) then
+              deallocate(bdy_temp_b)
+              deallocate(bdy_temp_b_dot)
+              deallocate(bdy_temp_b_af)
+            endif
+c
+          enddo boundary_blocks_loop
 c
 c
-      boundary_ blocks_loop: do iblk = 1, nelblb
-         mattyp_sb = lcblkb(7,iblk)
-         lcsyst_sb = lcblkb(3,iblk)
-         ngauss_sb = nintb(lcsyst_sb)
-         npro_sb = lcblkb(1,iblk+1) - lcblkb(1,iblk)
-!for solid block only
-         if (mat_eos(mattyp_sb,1).eq.ieos_solid_1)then
-           allocate (bdy_b(iblk)%p(npro_sb,ngauss_sb,6))!for solid
-           allocate (bdy_b_dot(iblk)%p(npro_sb,ngauss_sb,6)) !for solid
-           allocate (bdy_b_af(iblk)%p(npro_sb,ngauss_sb,6)) !for solid
-c......... these arrays need initialization
-           if (i_iniSolid .eq. 1)then
-             bdy_b(iblk)%p    = zero
-             bdy_b_dot(iblk)%p = zero
-             bdy_b(iblk)%p(:,:,1)= one
-             bdy_b(iblk)%p(:,:,2)= one
-             bdy_b(iblk)%p(:,:,3)= one
-             bdy_b_af(iblk)%p = bdy_b(iblk)%p
-           endif
-c
-          endif
-c..
-      enddo boundary_blocks_loop
-c
-        end subroutine alloc_solid
+        end subroutine malloc_solid
 c
         subroutine free_solid
 c
         end subroutine free_solid
+c
+        subroutine read_field(fieldtag,b)
+          use iso_c_binding 
+          use phio
+          implicit none
+          character(len=*), intent(in) :: fieldtag
+          real*8, pointer, intent(out) :: b(:)
+          character(len=1024) :: dataInt, dataDbl
+          integer, target :: intfromfile(50) ! integers read from headers
+          intfromfile=0
+          call phio_readheader(fhandle,
+     &     c_char_'trim(fieldtag)' // char(0),
+     &     c_loc(intfromfile), 1, dataInt, iotype)
+          if (intfromfile(1) > 0) then
+            allocate(b(intfromfile(1)))
+            call phio_readdatablock(fhandle,
+     &       c_char_'trim(fieldtag)' // char(0),
+     &       c_loc(b), intfromfile(1), dataDbl, iotype)
+          endif
+        end subroutine read_field
+c
+        subroutine read_restart_solid
+          use iso_c_binding 
+          use phio
+          implicit none
+          call read_field('solid b',temp_b)
+          call read_field('solid b_dot',temp_b_dot)
+          call read_field('solid b_af',temp_b_af)
+          if (associated(temp_b)) then
+            solid_p%is_active = .true.
+            solid_p%restart   = .true.
+          endif
+        end subroutine read_restart_solid
+c
+        subroutine write_restart_solid
+          use matdat_def_m
+          use number_def_m
+          use elmpar_m
+          use blkdat_m
+          use intpt_m
+          use workfc_m
+          use timdat_m
+          implicit none
+          integer :: mattype, iblk, npro, b_len
+c
+          allocate(temp_b(b_array_size))
+          allocate(temp_b_dot(b_array_size))
+          allocate(temp_b_af(b_array_size))
+c
+          b_len = 0
+          blocks_loop: do iblk = 1, nelblk
+c
+            mattype = lcblk(i_mattype,iblk)
+            lcsyst = lcblk(3,iblk)
+            ngauss = nint(lcsyst)
+            npro = lcblk(1,iblk+1) - lcblk(1,iblk)
+c
+            if (mat_eos(mattype,1).eq.ieos_solid_1)then
+              call dump_block(temp_b,temp_b_dot,temp_b_af,b(iblk)%p,b_dot(iblk)%p,b_af(iblk)%p)
+            endif
+c
+          enddo blocks_loop
+c
+          call write_field(myrank,'a'//char(0),'solid b'//char(0),7,
+     &     temp_b,'d'//char(0),b_array_size,1,lstep)
+c
+          deallocate(temp_b)
+          deallocate(temp_b_dot)
+          deallocate(temp_b_af)
+c
+        end subroutine write_restart_solid
 c
       end module solid_m

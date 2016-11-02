@@ -22,8 +22,6 @@ c
         character*8  date
         character*80 card
 c
-        integer :: i_iniSolid !solid initialization flag
-c
 c assigned in phasta.cc
 c        numpe=npe
 c        myrank=mrank
@@ -36,8 +34,7 @@ c        myrank=mrank
 c
 c.... read in and block all data
 c
-        i_iniSolid = 0 !set the flag to be zero
-        call readnblk(i_iniSolid)
+        call readnblk()
 c
 c.... open the echo file (echo closed at exit)
 c
@@ -149,8 +146,13 @@ c.... generate the spatial integration rules
 c
         call genint
         call genint_if
+c
 c.....allocate and initialize solid arrays
-        call alloc_solid (i_iniSolid) !check
+c
+        solid_p%is_active = any(mat_eos(:,1) .eq. ieos_solid_1)
+c
+        if (solid_p%is_active)
+     &   call malloc_solid
 c.....
         ichem = 0
 c
