@@ -5,7 +5,9 @@ c
 c-----------------------------------------------------------------------
       subroutine itrSetup ( y,  acold ) 
       
+      use solid_m
       include "common.h"
+     
       
       real*8     y(nshg,ndof),  acold(nshg,ndof)
       
@@ -22,6 +24,10 @@ c
          almi   = (three-rhoinf(itseq))/(one+rhoinf(itseq))/two
          alfi   = one/(one+rhoinf(itseq))
          gami   = pt5+almi-alfi
+      endif
+c
+      if( solid_p%is_active ) then
+        call itrSetupSolid
       endif
 c     
 c.... set the jacobian type

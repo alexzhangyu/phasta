@@ -108,7 +108,15 @@ c
               else
 c
                 b(iblk)%p(:,:,:)= one
+                b(iblk)%p(:,:,4)= zero
+                b(iblk)%p(:,:,5)= zero
+                b(iblk)%p(:,:,6)= zero
                 b_af(iblk)%p(:,:,:) = one
+                b_af(iblk)%p(:,:,4) = zero
+                b_af(iblk)%p(:,:,5) = zero
+                b_af(iblk)%p(:,:,6) = zero
+c
+                b_dot(iblk)%p(:,:,:) = zero
 c
               endif
             else
@@ -147,7 +155,15 @@ c
               else
 c
                 bdy_b(iblk)%p(:,:,:)= one
+                bdy_b(iblk)%p(:,:,4)= zero
+                bdy_b(iblk)%p(:,:,5)= zero
+                bdy_b(iblk)%p(:,:,6)= zero
                 bdy_b_af(iblk)%p(:,:,:) = one
+                bdy_b_af(iblk)%p(:,:,4) = zero
+                bdy_b_af(iblk)%p(:,:,5) = zero
+                bdy_b_af(iblk)%p(:,:,6) = zero
+c
+                bdy_b_dot(iblk)%p(:,:,:) = zero
 c
               endif
             else
@@ -239,5 +255,29 @@ c
           deallocate(temp_b_af)
 c
         end subroutine write_restart_solid
+c
+c
+       subroutine itrSetupSolid
+c
+       use inpdat_m
+       use timdat_m
+       use genpar_m
+       use number_def_m
+       implicit none
+c
+c  Setting the generalized alpha method parameters for solid
+c
+      if( rhoinf_B(itseq).lt.0.or.rhoinf_B(itseq).gt.1) then ! backward Euler
+         almBi   = one
+         alfBi   = one
+         gamBi   = one
+         ipred  = 1
+      else           !second order family
+         almBi   = (three-rhoinf(itseq))/(one+rhoinf(itseq))/two
+         alfBi   = one/(one+rhoinf(itseq))
+         gamBi   = pt5+almi-alfi
+      endif
+c    
+        end subroutine itrSetupSolid
 c
       end module solid_m
