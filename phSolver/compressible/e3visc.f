@@ -77,238 +77,256 @@ c
         d_temp1(:) = 2.0/3.0*d(:,1) - 1.0/3.0*d(:,2) - 1.0/3.0*d(:,3)
         d_temp2(:) = -1.0/3.0*d(:,1) + 2.0/3.0*d(:,2) - 1.0/3.0*d(:,3)
         d_temp3(:) = -1.0/3.0*d(:,1) - 1.0/3.0*d(:,2) + 2.0/3.0*d(:,3)
+c
 c.... K11
 c
-         stiff(:, 2, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
-     $                    ( (4.0/3.0)*d(:,1) - (5.0/3.0)* (almBi)**2 * d_temp1 )  
-         stiff(:, 2, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 2, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     $                    ( (4.0/3.0)*d(:,1) - (5.0/3.0)* (almBi)**(-2) * d_temp1 )  
+         stiff(:, 2, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      $                    (-2.0/3.0)*d(:,6)
-         stiff(:, 2, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 2, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    (-2.0/3.0)*d(:,5)
-         stiff(:, 3, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    (d(:,6)- (5.0/3.0)* (almBi)**2 * d(:,6))
-         stiff(:, 3, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 3, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    (d(:,6)- (5.0/3.0)* (almBi)**(-2) * d(:,6))
+         stiff(:, 3, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,1) )
-         stiff(:, 4, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    (d(:,5)- (5.0/3.0)* (almBi)**2 * d(:,5))
-         stiff(:, 4, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 4, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    (d(:,5)- (5.0/3.0)* (almBi)**(-2) * d(:,5))
+         stiff(:, 4, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,1))
-         stiff(:, 5, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 5, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (4.0/3.0)*d(:,1) * u1 + d(:,6) * u2 + d(:,5) * u3 - 
-     &                    (5.0/3.0)* (almBi)**2 *( d_temp1 * u1 + d(:,6) * u2 + d(:,5) * u3) )
-         stiff(:, 5, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+     &                    (5.0/3.0)* (almBi)**(-2) *( d_temp1 * u1 + d(:,6) * u2 + d(:,5) * u3) )
+         stiff(:, 5, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (-2.0/3.0)*d(:,6) * u1 + d(:,1) * u2 )
-         stiff(:, 5, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 5, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( (-2.0/3.0)*d(:,5) * u1 + d(:,1) * u3 )
          stiff(:, 5, 5) = con ! notice the + or -
 c     
 c.... K12
 c     
-         stiff(:, 2, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 2, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (4.0/3.0)*d(:,6) )  
-         stiff(:, 2, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( (-2.0/3.0)*d(:,2) - (5.0/3.0)* (almBi)**2 * d_temp1 )
-         stiff(:, 2, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 2, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( (-2.0/3.0)*d(:,2) - (5.0/3.0)* (almBi)**(-2) * d_temp1 )
+         stiff(:, 2, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (-2.0/3.0)*d(:,4) )
-         stiff(:, 3, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 3, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    (d(:,2))
-         stiff(:, 3, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
-     &                    ( d(:,6) - (5.0/3.0)* (almBi)**2 * d(:,6) )
-         stiff(:, 4, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 3, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                    ( d(:,6) - (5.0/3.0)* (almBi)**(-2) * d(:,6) )
+         stiff(:, 4, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,4) )
-         stiff(:, 4, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
-     &                    ( 0.0 - (5.0/3.0)* (almBi)**2 * d(:,5) )    
-         stiff(:, 4, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 4, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                    ( 0.0 - (5.0/3.0)* (almBi)**(-2) * d(:,5) )    
+         stiff(:, 4, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,6) )
-          stiff(:, 5, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+          stiff(:, 5, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (4.0/3.0)*d(:,6) * u1 + d(:,2) * u2 + d(:,4) * u3 )
-          stiff(:, 5, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( (-2.0/3.0)*d(:,2) * u1 + d(:,6) * u2 - (5.0/3.0)* (almBi)**2 *
+          stiff(:, 5, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( (-2.0/3.0)*d(:,2) * u1 + d(:,6) * u2 - (5.0/3.0)* (almBi)**(-2) *
      &                    ( d_temp1 * u1 + d(:,6) * u2 + d(:,5) * u3) )
-         stiff(:, 5, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 5, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (-2.0/3.0)*d(:,4) * u1 + d(:,6) * u3 )
-c
+c         stiff(:, 5, 10) = con ! notice the + or -
+c     
 c.... K13
 c     
-         stiff(:, 2,12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 2,12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (4.0 /3.0)*d(:,5) )  
-         stiff(:, 2,13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 2,13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (-2.0 /3.0)*d(:,4) )
-         stiff(:, 2,14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( (-2.0 /3.0)*d(:,3) - (5.0/3.0)* (almBi)**2 * d_temp1)
-         stiff(:, 3,12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 2,14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( (-2.0 /3.0)*d(:,3) - (5.0/3.0)* (almBi)**(-2) * d_temp1)
+         stiff(:, 3,12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    (d(:,4))
-         stiff(:, 3,13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 3,13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,5) )
-         stiff(:, 3,14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
-     &                    ( - (5.0/3.0)* (almBi)**2 * d(:,6) )   
-         stiff(:, 4,12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 3,14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                    ( - (5.0/3.0)* (almBi)**(-2) * d(:,6) )   
+         stiff(:, 4,12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,3) )  
-         stiff(:, 4,14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( d(:,5)- (5.0/3.0)* (almBi)**2 * d(:,5) )
-         stiff(:, 5,12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 4,14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( d(:,5)- (5.0/3.0)* (almBi)**(-2) * d(:,5) )
+         stiff(:, 5,12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (4.0 /3.0)*d(:,5) * u1 + d(:,4) * u2 + d(:,3) * u3 )
-         stiff(:, 5,13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 5,13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (-2.0 /3.0)*d(:,4) * u1 + d(:,5) * u2  )
-         stiff(:, 5,14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
-     &                    ( (-2.0 /3.0)*d(:,3) * u1 + d(:,5) * u3 - (5.0/3.0)* (almBi)**2 *
+         stiff(:, 5,14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                    ( (-2.0 /3.0)*d(:,3) * u1 + d(:,5) * u3 - (5.0/3.0)* (almBi)**(-2) *
      &                    ( d_temp1 * u1 + d(:,6) * u2 + d(:,5) * u3))
+c         stiff(:, 5,15) = con ! notice the + or -
 c     
 c.... K21
 c     
-         stiff(:, 7, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    (d(:,6)- (5.0/3.0)* (almBi)**2 * d(:,6))
-         stiff(:, 7, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*d(:,1)
-         stiff(:, 8, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ((-2.0/3.0)*d(:,1) - (5.0/3.0)* (almBi)**2 * d_temp2 )  
-        stiff(:, 8, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 7, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    (d(:,6)- (5.0/3.0)* (almBi)**(-2) * d(:,6))
+         stiff(:, 7, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    (d(:,1))
+         stiff(:, 8, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ((-2.0/3.0)*d(:,1) - (5.0/3.0)* (almBi)**(-2) * d_temp2 )  
+         stiff(:, 8, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                     (4.0/3.0)*d(:,6)
-         stiff(:, 8, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 8, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                     (-2.0/3.0)*d(:,5)
-         stiff(:, 9, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
-     &                    (- (5.0/3.0)* (almBi)**2 * d(:,4))
-         stiff(:, 9, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 9, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                    (- (5.0/3.0)* (almBi)**(-2) * d(:,4))
+         stiff(:, 9, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    d(:,5)
-         stiff(:, 9, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 9, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    d(:,6)
-         stiff(:, 10, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
-     &                    ( d(:,6) * u1 + (-2.0/3.0)*d(:,1) * u2 - (5.0/3.0)* (almBi)**2 *
+         stiff(:, 10, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                    ( d(:,6) * u1 + (-2.0/3.0)*d(:,1) * u2 - (5.0/3.0)* (almBi)**(-2) *
      &                    ( d(:,6) * u1 + d_temp2 * u2 + d(:,4) * u3) )
-         stiff(:, 10, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 10, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    (d(:,1) * u1 + (4.0/3.0)*d(:,6) * u2 +d(:,5) * u3)
-         stiff(:, 10, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 10, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ((-2.0/3.0)*d(:,5) * u2 +d(:,6) * u3)
+c         stiff(:, 10, 5) = con ! notice the + or -
 c     
 c.... K22
-     
-         stiff(:, 7, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+c     
+         stiff(:, 7, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,2) )
-         stiff(:, 7, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( d(:,6) -(5.0/3.0)* (almBi)**2 * d(:,6) )
-         stiff(:, 8, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 7, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( d(:,6) -(5.0/3.0)* (almBi)**(-2) * d(:,6) )
+         stiff(:, 8, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( -(2.0/3.0)*d(:,6) )
-         stiff(:, 8, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( (4.0/3.0)*d(:,2) -(5.0/3.0)* (almBi)**2 * d_temp2 )
-         stiff(:, 8, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 8, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( (4.0/3.0)*d(:,2) -(5.0/3.0)* (almBi)**(-2) * d_temp2 )
+         stiff(:, 8, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (-2.0/3.0)*d(:,4) )   
-         stiff(:, 9, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                     ( d(:,4) -(5.0/3.0)* (almBi)**2 * d(:,4))
-         stiff(:, 9, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+!         stiff(:, 4, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+!    &                     ( 0 )
+         stiff(:, 9, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                     ( d(:,4) -(5.0/3.0)* (almBi)**(-2) * d(:,4))
+         stiff(:, 9, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                     ( d(:,2) )
-         stiff(:, 10, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 10, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,2) * u1 + (-2.0/3.0)*d(:,6) * u2 )
-         stiff(:, 10, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 10, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    (d(:,6) * u1 + (4.0/3.0)*d(:,2) * u2 +d(:,4) * u3 -
-     &                    (5.0/3.0)* (almBi)**2 *( d(:,6) * u1 + d_temp2 * u2 + d(:,4) * u3))
-         stiff(:, 10, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+     &                    (5.0/3.0)* (almBi)**(-2) *( d(:,6) * u1 + d_temp2 * u2 + d(:,4) * u3))
+         stiff(:, 10, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ((-2.0/3.0)*d(:,4) * u2 +d(:,2) * u3)
          stiff(:, 10, 10) = con ! notice the + or -
 c     
 c.... K23
 c     
-         stiff(:, 7, 12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 7, 12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,4) )
-         stiff(:, 7, 13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 7, 13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,5) )
-         stiff(:, 7, 14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( 0.0 -(5.0/3.0)* (almBi)**2 * d(:,6) )
-         stiff(:, 8, 12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 7, 14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( 0.0 -(5.0/3.0)* (almBi)**(-2) * d(:,6) )
+         stiff(:, 8, 12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( -(2.0/3.0)*d(:,5) )
-         stiff(:, 8, 13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 8, 13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (4.0/3.0)*d(:,4) )
-         stiff(:, 8, 14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( (-2.0/3.0)*d(:,3) -(5.0/3.0)* (almBi)**2 * d_temp2 )   
-         stiff(:, 9, 13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 8, 14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( (-2.0/3.0)*d(:,3) -(5.0/3.0)* (almBi)**(-2) * d_temp2 )   
+!         stiff(:, 4, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+!    &                     ( 0 )
+         stiff(:, 9, 13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                     ( d(:,3) )
-         stiff(:, 9, 14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                     ( d(:,4) -(5.0/3.0)* (almBi)**2 * d(:,4))
-         stiff(:, 10, 12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 9, 14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                     ( d(:,4) -(5.0/3.0)* (almBi)**(-2) * d(:,4))
+         stiff(:, 10, 12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,4) * u1 + (-2.0/3.0)*d(:,5) * u2 )
-         stiff(:, 10, 13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 10, 13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    (d(:,5) * u1 + (4.0/3.0)*d(:,4) * u2 +d(:,3) * u3 )
-         stiff(:, 10, 14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 10, 14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ((-2.0/3.0)*d(:,3) * u2 +d(:,4) * u3 -
-     &                    (5.0/3.0)* (almBi)**2 *( d(:,6) * u1 + d_temp2 * u2 + d(:,4) * u3))
+     &                    (5.0/3.0)* (almBi)**(-2) *( d(:,6) * u1 + d_temp2 * u2 + d(:,4) * u3))
+c         stiff(:, 10, 15) = con ! notice the + or -
 c     
 c.... K31
 c
-         stiff(:, 12, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( d(:,5) - (5.0/3.0)* (almBi)**2 *d(:,5) )
-         stiff(:, 12, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 12, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( d(:,5) - (5.0/3.0)* (almBi)**(-2) *d(:,5) )
+         stiff(:, 12, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,1) )
-         stiff(:, 13, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( 0.0 - (5.0/3.0)* (almBi)**2 *d(:,4))
-         stiff(:, 13, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 13, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( 0.0 - (5.0/3.0)* (almBi)**(-2) *d(:,4))
+         stiff(:, 13, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,5) )
-         stiff(:, 13, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 13, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,6) )
-         stiff(:, 14, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( (-2.0/3.0)*d(:,1) - (5.0/3.0)* (almBi)**2 *d_temp3 )   
-         stiff(:, 14, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 14, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( (-2.0/3.0)*d(:,1) - (5.0/3.0)* (almBi)**(-2) *d_temp3 )   
+!         stiff(:, 4, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+!    &                     ( 0 )
+         stiff(:, 14, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                     ( (-2.0/3.0)*d(:,6) )
-         stiff(:, 14, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 14, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                     ( (4.0/3.0)*d(:,5) )
-         stiff(:, 15, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 15, 2) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,5) * u1 + (-2.0/3.0)*d(:,1) * u3 -
-     &                    (5.0/3.0)* (almBi)**2 *( d(:,5) * u1 + d(:,4) * u2 + d_temp3 * u3) )
-         stiff(:, 15, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+     &                    (5.0/3.0)* (almBi)**(-2) *( d(:,5) * u1 + d(:,4) * u2 + d_temp3 * u3) )
+         stiff(:, 15, 3) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,5) * u2 +(-2.0/3.0)*d(:,6) * u3 )     
-         stiff(:, 15, 4) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 15, 4) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    (d(:,1) * u1 + (4.0/3.0)*d(:,5) * u3 +d(:,6) * u2 )
+c         stiff(:, 15, 5) = con ! notice the + or -     
 c
 c.... K32
 c     
-         stiff(:, 12, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 12, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,4) )
-         stiff(:, 12, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( 0.0 - (5.0/3.0)* (almBi)**2 *d(:,5) )
-         stiff(:, 12, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 12, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( 0.0 - (5.0/3.0)* (almBi)**(-2) *d(:,5) )
+         stiff(:, 12, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( d(:,6) )
-         stiff(:, 13, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                     ( d(:,4) - (5.0/3.0)* (almBi)**2 *d(:,4) )
-         stiff(:, 13, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 13, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                     ( d(:,4) - (5.0/3.0)* (almBi)**(-2) *d(:,4) )
+         stiff(:, 13, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                     ( d(:,2) )
-         stiff(:, 14, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 14, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( -(2.0/3.0)*d(:,6) )
-         stiff(:, 14, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( -(2.0/3.0)*d(:,2) - (5.0/3.0)* (almBi)**2 *d_temp3)
-         stiff(:, 14, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 14, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
+     &                    ( -(2.0/3.0)*d(:,2) - (5.0/3.0)* (almBi)**(-2) *d_temp3)
+         stiff(:, 14, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*
      &                    ( (4.0/3.0)*d(:,4) )   
-         stiff(:, 15, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+C !         stiff(:, 4, 2) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+C !    &                     ( 0 )
+         stiff(:, 15, 7) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,4) * u1 + (-2.0/3.0)*d(:,6) * u3 )
-         stiff(:, 15, 8) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 15, 8) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,4) * u2 + (-2.0/3.0)*d(:,2) * u3 -
-     &                    (5.0/3.0)* (almBi)**2 *( d(:,5) * u1 + d(:,4) * u2 + d_temp3 * u3))
-         stiff(:, 15, 9) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+     &                    (5.0/3.0)* (almBi)**(-2) *( d(:,5) * u1 + d(:,4) * u2 + d_temp3 * u3))
+         stiff(:, 15, 9) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,6) * u1 + d(:,2) * u2 + (4.0/3.0)*d(:,4) * u3)
+c         stiff(:, 15, 10) = con ! notice the + or -
 c     
 c.... K33
 c     
-         stiff(:, 12, 12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 12, 12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( d(:,3) )
-         stiff(:, 12, 14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( d(:,5)-(5.0/3.0)* (almBi)**2 * d(:,5)  )
-         stiff(:, 13, 13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+!         stiff(:, 2, 3) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+!     &                    ( d(:,5) )
+         stiff(:, 12, 14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                    ( d(:,5)-(5.0/3.0)* (almBi)**(-2) * d(:,5)  )
+         stiff(:, 13, 13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                     ( d(:,3) )
-         stiff(:, 13, 14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                     ( d(:,4) -(5.0/3.0)* (almBi)**2 * d(:,4))
-         stiff(:, 14, 12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 13, 14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                     ( d(:,4) -(5.0/3.0)* (almBi)**(-2) * d(:,4))
+         stiff(:, 14, 12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( -(2.0/3.0)*d(:,5) )
-         stiff(:, 14, 13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
+         stiff(:, 14, 13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
      &                    ( -(2.0/3.0)*d(:,4) )
-         stiff(:, 14, 14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*
-     &                    ( (4.0/3.0)*d(:,3) -(5.0/3.0)* (almBi)**2 * d_temp3 )   
-         stiff(:, 15, 12) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 14, 14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)* 
+     &                    ( (4.0/3.0)*d(:,3) -(5.0/3.0)* (almBi)**(-2) * d_temp3 )   
+         stiff(:, 15, 12) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*  
      &                    ( d(:,3) * u1 + (-2.0/3.0)*d(:,5) * u3 )
-         stiff(:, 15, 13) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 15, 13) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*  
      &                    ( d(:,3) * u2 + (-2.0/3.0)*d(:,4) * u3 )
-         stiff(:, 15, 14) = ShearMod * (almBi * det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)* 
+         stiff(:, 15, 14) = ShearMod * (det_d)**(-5.0/6.0) * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)*  
      &                    (d(:,5) * u1 + d(:,4) * u2 + (4.0/3.0)*d(:,3) * u3 -
-     &                    (5.0/3.0)* (almBi)**2 *( d(:,5) * u1 + d(:,4) * u2 + d_temp3 * u3))
+     &                    (5.0/3.0)* (almBi)**(-2) *( d(:,5) * u1 + d(:,4) * u2 + d_temp3 * u3))
          stiff(:, 15, 15) = con ! notice the + or -
 c         stiff(:,:,:) = -stiff(:,:,:)
-c
-c
+c         stiff = zero
+c     
 c......end of modification for solid
         else
 c......if the blocks are liquid and gas
