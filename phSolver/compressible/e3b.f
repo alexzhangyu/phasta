@@ -53,6 +53,8 @@ c Anilkumar Karanam Spring 2000 (Modified for Hierarchic Hexes)
 c----------------------------------------------------------------------
 c
         use e3_param_m
+        use solid_data_m
+        use e3_solid_m
 c
         include "common.h"
 c

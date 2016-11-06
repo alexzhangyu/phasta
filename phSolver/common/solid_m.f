@@ -137,7 +137,7 @@ c
 c
             mattype = lcblkb(i_mattype,iblk)
             lcsyst = lcblkb(3,iblk)
-            ngauss = nintb(lcsyst)
+            ngaussb = nintb(lcsyst)
             npro = lcblkb(1,iblk+1) - lcblkb(1,iblk)
 c
             if (mat_eos(mattype,1).eq.ieos_solid_1)then

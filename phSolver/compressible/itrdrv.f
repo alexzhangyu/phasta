@@ -715,11 +715,11 @@ c
 c
 c... update B array for solid blocks...
 c
-c           if (isolid .eq. 1) then
+           if (solid_p%is_active) then
 c
               call update_solid_blocks( Delt(1), disp_solid_temp, yold )
 c
-c           endif
+           endif
 c
 c Elaine-SPEBC      
             if((irscale.ge.0).and.(myrank.eq.master)) then
