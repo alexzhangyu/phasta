@@ -40,6 +40,7 @@ c
       use fncorpmod
       use if_velocity_m
       use solid_m
+      use probe_m
 c
         include "common.h"
         include "mpif.h"
@@ -147,6 +148,7 @@ c.... open history and aerodynamic forces files
 c
         if (myrank .eq. master) then
           open (unit=ihist,  file=fhist,  status='unknown')
+          open (unit=iconserv,file=fconserv,status='unknown')
           inquire(file=fforce, exist=alive)
           if (alive .and. (lstep .gt. 0) ) then 
             open (unit=iforce, file=fforce, status='old', position='append')
@@ -691,6 +693,7 @@ c
 c
                   endif ! end of switch for flow or scalar or mesh-elastic update
                endif            !end of switch between solve or update
+c
             enddo               ! loop over sequence in step
         if((istop.lt.0).and.(iMoreRANS.lt.5)) then
             iMoreRANS=iMoreRANS+1
@@ -735,7 +738,10 @@ c
             ntoutv=max(ntout,100) 
             !boundary flux output moved after the error calculation so
             !everything can be written out in a single chunk of code -
-            !Nicholas Mati
+c
+            if (conservation_probe == 1)
+     &       call probe_conservation(y,x,shp,shgl)
+c
             
             !dump TIME SERIES
             if (exts) then
@@ -979,6 +985,7 @@ c
       if (myrank .eq. master) then
          close (ihist)
          close (iforce)
+         close (iconserv)
              
          if(exMC) then 
            call MC_writeState(lstep) 

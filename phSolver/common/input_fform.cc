@@ -40,11 +40,12 @@ void populate_dg_vi_ramp
   this_map.insert(map<string,int>::value_type("Linear", idg_linear_ramp));
 }
 
-void populate_dg_vi_model
+void populate_dg_phaseChange_model
 (map<string,int>& this_map)
 {
+  this_map.insert(map<string,int>::value_type("None", idg_no_vi));
   this_map.insert(map<string,int>::value_type("Constant", idg_const_vi));
-  this_map.insert(map<string,int>::value_type("Pressure-Based", idg_vi_model1));
+  this_map.insert(map<string,int>::value_type("Vieille's-Burning", idg_vieilles_burning));
 }
 
 int input_fform(phSolver::Input& inp)
@@ -54,7 +55,7 @@ int input_fform(phSolver::Input& inp)
   int i,j, n_tmp;
   map<string,int> eos_map;
   map<string,int> DG_vi_ramp;
-  map<string,int> DG_vi_model;
+  map<string,int> DG_phaseChange_model;
 
   try {
     if(workfc.myrank==workfc.master) {
@@ -390,6 +391,18 @@ int input_fform(phSolver::Input& inp)
     outpar.iv_rankpercore = inp.GetValue("Ranks per core");
     outpar.iv_corepernode = inp.GetValue("Cores per node");
 
+    if ( (string)inp.GetValue("Conservation Probe") == "No" ){
+        outpar.conservation_probe = 0;
+    }
+    else if ( (string)inp.GetValue("Conservation Probe") == "Yes" ){
+        outpar.conservation_probe = 1;
+    }
+    else {
+      cout << " Conservation Probe: Only Legal Values (Yes, No) ";
+      cout << endl;
+      exit(1);
+    }
+
     turbvari.iramp=0;
     if((string)inp.GetValue("Ramp Inflow") == "True") turbvari.iramp=1;
     if(turbvari.iramp == 1) {
@@ -532,22 +545,23 @@ int input_fform(phSolver::Input& inp)
     //DG interface input parameters
     populate_dg_vi_ramp(DG_vi_ramp);
     sbuf = (string)inp.GetValue("DG Interface Velocity Ramping");
-    e3if_dat.vi_ramping = DG_vi_ramp[sbuf];
+    dgifinp.vi_ramping = DG_vi_ramp[sbuf];
     if (sbuf == "Linear")
-      e3if_dat.ramp_time = (double)inp.GetValue("DG Interface Ramping Time");
+      dgifinp.ramp_time = (double)inp.GetValue("DG Interface Ramping Time");
 
-    populate_dg_vi_model(DG_vi_model);
-    sbuf = (string)inp.GetValue("DG Interface Velocity Model");
-    e3if_dat.vi_model = DG_vi_model[sbuf];
+    populate_dg_phaseChange_model(DG_phaseChange_model);
+    sbuf = (string)inp.GetValue("Phase Change Model");
+    dgifinp.phase_change_model = DG_phaseChange_model[sbuf];
     if (sbuf == "Constant")
-      e3if_dat.vi_mag = (double)inp.GetValue("DG Interface Velocity Magnitude");
-    else if (sbuf == "Pressure-Based") {
-      e3if_dat.dgif_alpha = (double)inp.GetValue("DG Interface Velocity alpha");
-      e3if_dat.dgif_beta = (double)inp.GetValue("DG Interface Velocity beta");}
+      dgifinp.vi_mag = (double)inp.GetValue("DG Interface Velocity Magnitude");
+    else if (sbuf == "Vieille's-Burning") {
+      dgifinp.burn_rate_exp   = (double)inp.GetValue("Burn Rate Exponent alpha");
+      dgifinp.burn_rate_coeff = (double)inp.GetValue("Burn Rate Coefficient beta");
+      dgifinp.burn_rate_pref  = (double)inp.GetValue("Burn Rate Reference Pressure");}
 
-    e3if_dat.s = (double)inp.GetValue("DG Interface Stability Factor");
-    e3if_dat.e = (double)inp.GetValue("DG Interface Kinematic Condition epsilon");
-    e3if_dat.h = (double)inp.GetValue("DG Interface Kinematic Condition h");
+    dgifinp.s = (double)inp.GetValue("DG Interface Stability Factor");
+    dgifinp.e = (double)inp.GetValue("DG Interface Kinematic Condition epsilon");
+    dgifinp.h = (double)inp.GetValue("DG Interface Kinematic Condition h");
 
 //for mesh-elastic--------------------------------------------
     vec = inp.GetValue("Mesh Elastic Youngs Modulus");

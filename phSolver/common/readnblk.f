@@ -56,7 +56,7 @@ c
       character*30 fmt1
       character*255 fname1,fnamer,fnamelr
       character*255 warning
-      integer igeomBAK, ibndc, irstin, ierr
+      integer igeomBAK, ierr
       integer, target :: intfromfile(50) ! integers read from headers
       integer :: descriptor, descriptorG, GPID, color, nfields
       integer ::  numparts, nppf
@@ -540,8 +540,10 @@ c
 c
 c... read solid part
 c
-      call read_restart_solid
+      solid_p%is_active = any(mat_eos(:,1) .eq. ieos_solid_1)
 c
+      if (solid_p%is_active) 
+     &  call read_restart_solid
 c
 c read in ALE stuff
 c read in coordinate at n time step      

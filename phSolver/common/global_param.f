@@ -154,12 +154,9 @@ c mattyp        : material type ( = 0 for fluid; = 1 for solid )
 c iftpid(MAXBLK): holds the interface topological combination
 c
       module elmpar_m
-c
         use iso_c_binding
         use global_const_m
-c
         implicit none
-c
 	      integer, target ::  nelblk, nelblb, nelblif
         integer :: lelCat, lcsyst, iorder, nenb,   
      &                  ndofl,  nsymdl, nenl,   nfacel,
@@ -167,13 +164,11 @@ c
      &                  nenbl,  intind, mattyp,
      &                  mattyp0, mattyp1, 
      &                  iftpid(MAXBLK)
-c
         common /elmpar/ lelCat, lcsyst, iorder, nenb,   
      &                  nelblk, nelblb, nelblif,
      &                  ndofl,  nsymdl, nenl,   nfacel,
      &                  nenbl,  intind, mattyp,
      &                  iftpid
-c
       end module elmpar_m
 c
 c----------------------------------------------------------------------
@@ -347,6 +342,19 @@ c
         common /timer3/ cpu,cpu0,nacess
       end module timer3_m
 c
+      module dgifinp_m
+        use iso_c_binding
+        implicit none
+        integer, parameter :: no_ramp = 1, linear_ramp = 2
+        integer, parameter :: no_vi = 1, const_vi = 2, vieilles_burning=3
+        integer(c_int) :: phase_change_model, vi_ramping
+        real(c_double) :: ramp_time, vi_mag, dgif_alpha, dgif_beta, dgif_s, dgif_e, dgif_h
+        real(c_double) :: burn_rate_exp, burn_rate_coeff, burn_rate_pref
+        common /dgifinp/ phase_change_model,vi_ramping,
+     &                   ramp_time,vi_mag,dgif_s,dgif_e,dgif_h,
+     &                   burn_rate_exp, burn_rate_coeff, burn_rate_pref
+      end module dgifinp_m
+c
 c----------------------------------------------------------------------
 c
 c.... common /outpar/   : output parameters
@@ -364,7 +372,7 @@ c
         implicit none
         integer(c_int) :: ntout,ioform,iowflux,iofieldv,ioybar,nstepsincycle,nphasesincycle,
      &    ncycles_startphaseavg,ivort,icomputevort,nsynciofiles,nsynciofieldswriterestart,
-     &    iv_rankpercore,iv_corepernode,input_mode,output_mode
+     &    iv_rankpercore,iv_corepernode,input_mode,output_mode,conservation_probe
         real(c_double) :: ro,vel,temper,press,entrop
         character(len=80) :: iotype
         common /outpar/ ro,     vel,    temper, press,  entrop, ntout,
@@ -373,7 +381,7 @@ c
      &                  ncycles_startphaseavg, ivort, icomputevort,
      &                  nsynciofiles, nsynciofieldswriterestart, 
      &                  iv_rankpercore, iv_corepernode, 
-     &                  input_mode, output_mode
+     &                  input_mode, output_mode, conservation_probe
       end module outpar_m
 c
       module workfc_m
@@ -382,3 +390,63 @@ c
         integer(c_int) :: master, numpe, myrank
 	      common /workfc/ master, numpe, myrank
       end module workfc_m
+c
+c----------------------------------------------------------------------
+c
+c.... common /io    /   : io channels
+c
+c iin           : input  (main parameters)          [INPUT.DAT]
+c igeom         : input  (problem geometry)         [GEOM.DAT]
+c ipar          : in/out (spectral mapping)         [PARTITION.DAT]
+c ibndc         : input  (problem boundary cond.)   [BC.DAT]
+c imat          : input  (element material types)   [MATERIAL.DAT]
+c iecho         : output (echo of input)            [ECHO.DAT]
+c iout          : output (result output)            [OUTPUT.lstep]
+c ichmou        : output (chemistry output)         [OUTCHM.lstep]
+c irstin        : input  (input restart)            [RESTAR.INP]
+c irstou        : output (output restart)           [RESTAR.OUT]
+c ihist         : output (history output)           [HISTOR.DAT]
+c iflux         : output (boundary flux)            [FLUX.lstep]
+c ierror        : output (error messages)           [ERROR.DAT]
+c itable        : input  (equilibrium chemistry)    [TABLE.DAT]
+c iforce        : output (aerodynamic forces)       [FORCES.DAT]
+c
+      module mio_m
+        use iso_c_binding
+        implicit none
+        integer(c_int) :: iin,    igeom,  ipar,   ibndc,  imat,   iecho,
+     &                  iout,   ichmou, irstin, irstou, ihist,  iflux,
+     &                  ierror, itable, iforce, igraph, itime, iconserv
+        common /mio    / iin,    igeom,  ipar,   ibndc,  imat,   iecho,
+     &                  iout,   ichmou, irstin, irstou, ihist,  iflux,
+     &                  ierror, itable, iforce, igraph, itime, iconserv
+      end module mio_m
+c
+c----------------------------------------------------------------------
+c
+c.... common /ioname/   : io file names
+c
+c fin           : input.dat
+c fgeom         : geom.dat
+c fpar          : partition.dat
+c fbndc         : bc.dat
+c fmat          : material.dat
+c fecho         : echo.dat
+c frstin        : restar.inp
+c frstou        : restar.out
+c fhist         : histor.dat
+c ferror        : error.dat
+c ftable        : table.dat
+c fforce        : forces.dat
+c
+      module mioname_m
+        use iso_c_binding
+        implicit none
+        character*80    fin,    fgeom,  fpar,   fbndc,  fmat,   fecho,
+     &                  frstin, frstou, fhist,  ferror, ftable, fforce,
+     &                  fgraph, ftime, fconserv
+        common /mioname/ fin,    fgeom,  fpar,   fbndc,  fmat,   fecho,
+     &                  frstin, frstou, fhist,  ferror, ftable, fforce,
+     &                  fgraph, ftime, fconserv
+      end module mioname_m
+c
