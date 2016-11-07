@@ -38,6 +38,7 @@ c
       use e3_param_m
       use e3_solid_m
       use solid_m
+      use intpt_m
 c
       include "common.h"
 c
@@ -542,7 +543,7 @@ c
 c....if this is the solid block, modify the momentum and energy equation
         if (mat_eos(mater,1).eq.ieos_solid_1)then
 c
-         bq_af(:,:)= b_af(iblk_solid)%p(:,intp_s,:)
+         bq_af(:,:)= b_af(iblk_solid)%p(:,intp,:)
 c.... diffusive flux in x1-direction
 
 c         rmi(:,1) = zero ! already initialized
