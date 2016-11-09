@@ -223,6 +223,7 @@ c
 c.... calculate the least-squares contribution 
 c
         ttim(16) = ttim(16) - secs(0.0)
+        if(mat_eos(mater,1).ne.ieos_solid_1) then
         call e3LS   (A1,              A2,            A3,
      &               rho,             rmu,           cp,
      &               cv,              con,           T,  
@@ -236,6 +237,7 @@ c
      &               giju,            rTLS,          raLS,
      &               A0inv,           dVdY,          rerrl,
      &               compK,           pres,          PTau)
+        endif
         ttim(16) = ttim(16) + secs(0.0)
 c        
 c....  Discontinuity capturing

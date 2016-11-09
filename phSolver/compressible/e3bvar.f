@@ -53,6 +53,7 @@ c Zdenek Johan, Winter 1991.  (Fortran 90)
 c----------------------------------------------------------------------
 c
         use e3_param_m
+        use e3_solid_func_m 
 c
         include "common.h"
 c
@@ -66,12 +67,12 @@ c
             real*8, dimension(npro_), target, intent(in) :: p_,T_
             integer, intent(in) :: npro_, mater_
           end subroutine getthm
-          subroutine e3bvar_solid(g1yi_,g2yi_,g3yi_,almBi_,alfBi_,gamBi_)
-            use e3_solid_func_m
-            implicit none
-            real*8, dimension(npro,nflow), target, intent(in) :: g1yi_,g2yi_,g3yi_
-            real*8, intent(in) :: almBi_, alfBi_, gamBi_
-          end subroutine e3bvar_solid
+c          subroutine e3bvar_solid(g1yi_,g2yi_,g3yi_,almBi_,alfBi_,gamBi_)
+c            use e3_solid_func_m
+c            implicit none
+c            real*8, dimension(npro,nflow), target, intent(in) :: g1yi_,g2yi_,g3yi_
+c            real*8, intent(in) :: almBi_, alfBi_, gamBi_
+c         end subroutine e3bvar_solid
         end interface
 c
 
@@ -112,8 +113,9 @@ c
 c
 c....Solid arrays
 c...
-        real*8,dimension(npro) :: bulkMod,shearMod,det_baf,Ja_def,det_d
-        real*8,dimension(npro,6) :: d
+c        real*8,dimension(npro) :: bulkMod,shearMod,det_baf,Ja_def,det_d
+c        real*8,dimension(npro,6) :: d
+
 c
 c.... ---------------------->  Element Metrics  <-----------------------
 c
@@ -361,7 +363,11 @@ c
 c-----> SOLID CALCULATIONS <------------
 c
       if(mat_eos(mater,1).eq.ieos_solid_1) then
-          call e3bvar_solid(g1yi,g2yi,g3yi,almBi,alfBi,gamBi)
+        dudx = g1yi(:,2:4)
+        dudy = g2yi(:,2:4)
+        dudz = g3yi(:,2:4)
+        call calc_solid_bdy
+c          call e3bvar_solid(g1yi,g2yi,g3yi,almBi,alfBi,gamBi)
       endif
 c
 c------> END SOLID <--------------------

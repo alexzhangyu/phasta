@@ -6,20 +6,27 @@ c
         implicit none
 c
         integer :: iblk_solid
+        integer :: iblk_first
+        integer :: iblk_last
 c
         real*8, dimension(:,:), pointer :: d
         real*8, dimension(:), pointer :: det_d, det_baf
         real*8, dimension(:), pointer :: bulkMod, shearMod, Ja_def
+        real*8, dimension(:,:), pointer :: dudx, dudy, dudz
 c
         contains
 c
         subroutine e3_malloc_solid
+          use global_const_m
 c
           call e3_malloc
 c
           allocate(d(npro,b_size))
           allocate(det_d(npro),det_baf(npro))
           allocate(Ja_def(npro),bulkMod(npro),shearMod(npro))
+          allocate(dudx(npro,nsd))
+          allocate(dudy(npro,nsd))
+          allocate(dudz(npro,nsd))
 c
         end subroutine e3_malloc_solid
 c
@@ -30,6 +37,7 @@ c
           deallocate(d)
           deallocate(det_d,det_baf)
           deallocate(Ja_def,bulkMod,shearMod)
+          deallocate(dudx,dudy,dudz)
 c
         end subroutine e3_mfree_solid
 c
@@ -47,7 +55,6 @@ c
 c
         implicit none
 c
-        real*8, dimension(:,:), pointer :: dudx, dudy, dudz
         real*8, dimension(:,:,:), pointer :: AS
 c
       contains
