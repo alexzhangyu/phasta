@@ -106,9 +106,6 @@ c
 !        logical  exMc
 !        real*8 vBC, vBCg
         real*8 vortmax, vortmaxg
-c......Tracking the nodal displacment field
-        real*8 disp_solid_temp(numnp,nsd)
-c........
        iprec=0 !PETSc - Disable PHASTA's BDiag. TODO: Preprocssor Switch
 
        call findTurbWall(iTurbWall)
@@ -167,7 +164,8 @@ c
         yold   = y
         acold  = ac
 c......initialzation for tracking the nodal disp field for solid
-        if (i_SOLID ==1 )then
+        if ( (iSOLID ==1) .and. (solid_p%is_active) )then
+          allocate(disp_solid_temp(numnp,nsd))
           disp_solid_temp = zero
         endif 
 c......end of initialization for solid nodal disp field
@@ -720,7 +718,7 @@ c... update B array for solid blocks...
 c
            if (solid_p%is_active) then
 c
-              call update_solid_blocks( Delt(1), disp_solid_temp, yold )
+              call update_solid_blocks(x, yold )
 c
            endif
 c
@@ -861,6 +859,11 @@ c
       if (solid_p%is_active) call write_restart_solid
 c
                  endif
+                 if (iSOLID == 1)then
+                   call write_field(
+     &                  myrank,'a'//char(0),'disp_solid'//char(0), 10, 
+     &                  disp_solid_temp, 'd'//char(0), numnp, 3,   lstep)
+                 endif  
 c... end writing
                  output_mode = -1
                endif
@@ -892,6 +895,12 @@ c
 c
                if (solid_p%is_active)
      &           call write_restart_solid
+c
+               if (iSOLID == 1)then
+                 call write_field(
+     &                myrank,'a'//char(0),'disp_solid'//char(0), 10, 
+     &                disp_solid_temp, 'd'//char(0), numnp, 3,   lstep)
+                endif
 
                !Write the distance to wall field in each restart
                if((istep==nstp) .and. (irans < 0 )) then !d2wall is allocated

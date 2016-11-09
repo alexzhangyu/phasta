@@ -1,4 +1,4 @@
-      subroutine update_solid_blocks(dt, old_x, y)
+      subroutine update_solid_blocks(old_x, y)
 c
         use conpar_m
         use timdat_m
@@ -8,10 +8,11 @@ c
         use blkdat_m
         use elmpar_m, only: nelblk, nelblb
         use pointer_data, only: mien
+        use inpdat_m
 c
         implicit none
 c
-       integer :: iblk
+       integer :: iblk,ipro,ishl
        integer :: mater_s
        integer :: mater_sb
        integer :: npro_temp, npro_b_temp
@@ -21,6 +22,7 @@ c
        real*8  old_x(numnp,nsd)
        real*8  y(nshg,ndof)
 c
+       dt = Delt(1)
 c.....for interior blocks
          do iblk = 1, nelblk
            mater_s = lcblk(7,iblk)
@@ -38,9 +40,16 @@ c.....Do the update
      &+                           (one - one/gamBi) * b_dot(iblk)%p(:,:,:)
      &+                           one/(alfBi * gamBi * dt) * b_af(iblk)%p(:,:,:)
               b(iblk)%p(:,:,:) = (one/alfBi) * (b_af(iblk)%p(:,:,:) - b(iblk)%p(:,:,:) )
-     &+                          b(iblk)%p(:,:,:)  
-c....Track the displacment for solid
-              call trackncorrectSolid( iblk, npro_temp, nshl_temp, dt, old_x, y)
+     &+                          b(iblk)%p(:,:,:)
+c
+c.....set the global number of solid node within this block to 1.0     
+              allocate( is_solid(nshg))
+              is_solid = zero                          
+              do ipro = 1, npro_temp !loop over all elements within solid      
+                do ishl =1, nshl_temp !loop over all local dof                 
+                  is_solid( mien(iblk)%p( ipro, ishl)) = 1             
+                enddo
+              enddo                                               
 c
 cc.....fill the elm-wise solid arrays
 
@@ -51,7 +60,11 @@ c
 c.....end of updates
            endif
 c..
-        enddo 
+        enddo
+c....Track the displacment for solid
+       call trackncorrectSolid( dt, old_x, y)
+c
+        deallocate(is_solid) 
 
 c.....for boundary blocks
          do iblk = 1, nelblb

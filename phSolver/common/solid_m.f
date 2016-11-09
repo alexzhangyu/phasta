@@ -12,6 +12,7 @@ c
 c
         integer, pointer :: is_solid(:)
         integer, parameter :: b_size = 6
+        real*8, dimension(:,:),pointer::disp_solid_temp !track the solid displacement field
 c
         type solid_t
           logical :: is_active, restart
