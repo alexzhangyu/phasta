@@ -1,5 +1,5 @@
-      subroutine allocate_initial_solid (i_iniSolid)
-c... calculate the left Cauchy-green tensor at time step n+af
+       subroutine allocate_initial_solid(i_iniSolid)
+c...   calculate the left Cauchy-green tensor at time step n+af
 C       implicit none 
        use pointer_data
 c       use mattype_m
@@ -33,7 +33,7 @@ c......... these arrays need initialization
 c
           endif
 c..
-      enddo blocks_loop
+       enddo blocks_loop
 c
 c
 c

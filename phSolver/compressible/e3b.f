@@ -1,6 +1,6 @@
        subroutine e3b (yl,      ycl,  iBCB,    BCB,     shpb,    shglb,
      &                 xlb,     rl,   rml,     sgn,     EGmass,  materb,
-     &                 bdy_b,   bdy_b_dot,     bdy_b_af ) !add for solid
+     &                 bdy_b,   bdy_b_dot,     bdy_b_af,EGmass_bs ) !add for solid
 c
 c----------------------------------------------------------------------
 c
@@ -101,6 +101,12 @@ C.....Additional solid properties
      &            bdy_det_baf(npro),      
      &            bdy_Ja_def(npro)
 c
+       real*8, dimension(npro,6):: bdy_d
+       real*8, dimension(npro)::bdy_det_d
+       real*8, dimension(npro,nedof,nedof)::EGmass_bs !for solid
+       real*8, dimension(npro,nedof,nedof)::EGmass_bs_temp !for solid
+       integer :: i_setLHS
+c
         ttim(40) = ttim(40) - secs(0.0)
 
 c
@@ -144,7 +150,8 @@ c
      &               Fh5,             dNadx,        materb,
      &               bdy_b(:,intp,:), bdy_b_dot(:,intp,:), bdy_b_af(:,intp,:),
      &               bdy_bulkMod,     bdy_shearMod,
-     &               bdy_det_baf,     bdy_Ja_def)!add for solid           
+     &               bdy_det_baf,     bdy_Ja_def,
+     &               bdy_d,           bdy_det_d)!add for solid           
 
 c
 c.... ires = 1 or 3
@@ -157,6 +164,7 @@ c
           tau2n = zero
           tau3n = zero
           heat  = zero
+          EGmass_bs_temp = zero !for solid,storing
 c
 c.... ------------------------->  convective  <------------------------
 c
@@ -228,6 +236,20 @@ c.......adding the expression for solid
      &               bdy_b_af(:,intp,4) )
      &        + bnorm(:,3) * ( (bdy_det_baf)**(-5.0/6.0) * bdy_ShearMod *
      &               (1.0/3.0) *(-bdy_b_af(:,intp,1) - bdy_b_af(:,intp,2) + 2.0* bdy_b_af(:,intp,3)) )
+c
+        if ( lhs .eq. 1 )then !where traction is not assigned for solid        
+          call getLHS_bs(shape,         dNadx,  bdy_d,  bdy_det_d,
+     &                   bdy_shearMod,  u1,     u2,     u3,
+     &                   WdetJb,        con,    bnorm,  lnode,
+     &                   EGmass_bs_temp)
+          do i_setLHS = 1, npro
+             if(.not.btest(iBCB(i_setLHS,1),2) )then !only for the element where traction is set
+               EGmass_bs(i_setLHS,:,:) = EGmass_bs(i_setLHS,:,:)+ EGmass_bs_temp(i_setLHS,:,:)
+
+             endif
+          enddo
+
+        endif
 
        else
         tau1n = bnorm(:,1) * (rlm2mu* g1yi(:,2) + rlm   *g2yi(:,3) 
@@ -242,7 +264,12 @@ c.......adding the expression for solid
      &        + bnorm(:,2) * (rmu   *(g3yi(:,3) + g2yi(:,4)))
      &        + bnorm(:,3) * (rlm   * g1yi(:,2) + rlm   *g2yi(:,3) 
      &                                          + rlm2mu*g3yi(:,4))
+c
+ 
+c
+
       endif
+
 c..... end of adding the expression for solid
 c
 c....hardcoding the tau1n to tau3n zero for solid debugging

@@ -383,6 +383,7 @@ c
         real*8, allocatable :: tmpshp(:,:), tmpshgl(:,:,:)
         real*8, allocatable :: tmpshpb(:,:), tmpshglb(:,:,:)
         real*8, allocatable :: EGmass(:,:,:)
+        real*8, allocatable :: EGmass_bs(:,:,:) !for LHS from solid boundary integral
 c
         real*8, dimension(:,:,:), pointer :: egmassif00,egmassif01,egmassif10,egmassif11
         real*8, pointer :: sum_vi_area(:,:)    ! interface velocity weighted by interfacea area
@@ -576,7 +577,16 @@ c
           else
              allocate (EGmass(1,1,1))
           endif
-          
+c
+c.....for solid block only
+          if ( lhs.eq.1 .and.(mat_eos(mattyp,1).eq.ieos_solid_1) ) then
+             allocate (EGmass_bs(npro,nedof,nedof))
+             EGmass_bs = zero
+          else
+             allocate (EGmass_bs(1,1,1))
+          endif
+c.....end for solid
+c          
           tmpshpb(1:nshl,:) = shpb(lcsyst,1:nshl,:)
           tmpshglb(:,1:nshl,:) = shglb(lcsyst,:,1:nshl,:)
 
@@ -587,15 +597,27 @@ c
      &                 res,                     rmes, 
      &                 EGmass,
      &                 bdy_b(iblk)%p,           bdy_b_dot(iblk)%p,
-     &                 bdy_b_af(iblk)%p) !add the arguments for solid
+     &                 bdy_b_af(iblk)%p,        EGmass_bs) !add the arguments for solid
           if(lhs == 1 .and. iLHScond > 0) then
             call fillSparseC_BC(mienb(iblk)%p, EGmass, 
-     &                   lhsk, row, col)
+     &                   lhsk, row, col)       
           endif
-
+c
+c.....for solid blocks only
+c          if ( lhs.eq.1 .and.(mat_eos(mattyp,1).eq.ieos_solid_1) ) then
+c            call fillsparseC( mienb(iblk)%p, EGmass_bs,
+c     1                        lhsK, row, col)
+c          endif
+c.....end for solid blocks
+c
           deallocate (EGmass)
           deallocate (tmpshpb)
           deallocate (tmpshglb)
+c......for solid only
+          if (allocated(EGmass_bs)) then
+            deallocate(EGmass_bs)
+          endif
+c
         enddo   !end of boundary element loop
     
 !ifdef DEBUG !Nicholas Mati

@@ -2,7 +2,7 @@
      &                     ienb,    materb,  iBCB,    BCB,
      &                     res,     rmes,    EGmass,
      &                     blk_bdy_b,        blk_bdy_b_dot,
-     &                     blk_bdy_b_af ) !add for solid
+     &                     blk_bdy_b_af,     EGmass_bs ) !add for solid
 c
 c----------------------------------------------------------------------
 c
@@ -31,6 +31,8 @@ c
 c.....solid arrays
         dimension blk_bdy_b(npro,ngaussb,6),        blk_bdy_b_dot(npro,ngaussb,6),
      &            blk_bdy_b_af(npro,ngaussb,6)
+c
+        real*8, dimension(npro,nedof,nedof)::EGmass_bs
 c
 c
 c.... create the matrix of mode signs for the hierarchic basis 
@@ -61,7 +63,7 @@ c
         call e3b  (ycl,     ycl,     iBCB,    BCB,     shpb,    shglb,
      &             xlb,     rl,      rml,     sgn,     EGmass,  materb,
      &                     blk_bdy_b,         blk_bdy_b_dot,
-     &                     blk_bdy_b_af ) !add for solid
+     &                     blk_bdy_b_af,      EGmass_bs ) !add for solid
 c
 c
 c....hard coding for solid debugging

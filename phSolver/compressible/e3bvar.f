@@ -7,7 +7,8 @@
      &                     heat,    dNadx,   materb,
      &                     bdy_bq,            bdy_bq_dot,        bdy_bq_af,
      &                     bdy_bulkMod,      bdy_shearMod,
-     &                     bdy_det_baf,      bdy_Ja_def)!add for solid
+     &                     bdy_det_baf,      bdy_Ja_def,  
+     &                     bdy_d,            bdy_det_d)!add for solid
 c
 c----------------------------------------------------------------------
 c
@@ -91,6 +92,7 @@ c...
      &                            bdy_Ja_def
         real*8,dimension(npro,6,6) :: bdy_AS
         real*8,dimension(npro,6) :: bdy_d
+        real*8,dimension(npro) :: bdy_det_d
 c................
 c
 c.... ------------------->  integration variables  <--------------------
@@ -316,7 +318,7 @@ c.... end grad-v
 c
           !Compute the gradient of the shape function for heat flux's 
           !contribution to lhsk
-          if(iLHScond > 0) then
+          if(iLHScond > 0 .or. (mat_eos(materb,1).eq.ieos_solid_1)) then
             dNadx = zero
             
             !dNdx(a,i) = dN_a / dx_i
@@ -370,13 +372,13 @@ c
          bdy_AS(:,4,6) = g1yi(:,4)
 c
          bdy_AS(:,5,1) = g1yi(:,4)
-c         bdy_AS(:,5,3) = g3yi(:,2)
+         bdy_AS(:,5,3) = g3yi(:,2)
          bdy_AS(:,5,4) = g2yi(:,2)
          bdy_AS(:,5,5) = g1yi(:,2) + g3yi(:,4)
          bdy_AS(:,5,6) = g2yi(:,4)
 c         
          bdy_AS(:,6,1) = g1yi(:,3)
-c         bdy_AS(:,6,2) = g2yi(:,2)
+         bdy_AS(:,6,2) = g2yi(:,2)
          bdy_AS(:,6,4) = g3yi(:,2)
          bdy_AS(:,6,5) = g3yi(:,3)
          bdy_AS(:,6,6) = g1yi(:,2) + g2yi(:,3)
@@ -388,6 +390,7 @@ c
         call get_det_boundary(bdy_bq_af,bdy_det_baf)
         bdy_Ja_def= (bdy_det_baf)**0.5      
 c
+        call get_det_boundary(bdy_d,bdy_det_d)
 c.....Get the thermodynamic properties for solid
          ithm = 7
          call getthm_solid_1(rho, ei, pres, T, npro, materb
