@@ -370,13 +370,13 @@ c
          bdy_AS(:,4,6) = g1yi(:,4)
 c
          bdy_AS(:,5,1) = g1yi(:,4)
-c         bdy_AS(:,5,3) = g3yi(:,2)
+         bdy_AS(:,5,3) = g3yi(:,2)
          bdy_AS(:,5,4) = g2yi(:,2)
          bdy_AS(:,5,5) = g1yi(:,2) + g3yi(:,4)
          bdy_AS(:,5,6) = g2yi(:,4)
 c         
          bdy_AS(:,6,1) = g1yi(:,3)
-c         bdy_AS(:,6,2) = g2yi(:,2)
+         bdy_AS(:,6,2) = g2yi(:,2)
          bdy_AS(:,6,4) = g3yi(:,2)
          bdy_AS(:,6,5) = g3yi(:,3)
          bdy_AS(:,6,6) = g1yi(:,2) + g2yi(:,3)
