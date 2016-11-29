@@ -67,6 +67,7 @@ C<--- END HARD CODE
                write (fname2,"('connectivity boundary',i1)") iblk
             else
                write (fname2,"('connectivity boundary linear tetrahedron')")
+c               write (fname2,"('connectivity boundary linear hexahedron')")
             endif
  
             call phio_readheader(fhandle, fname2 // char(0),
@@ -90,6 +91,7 @@ C<--- END HARD CODE
                write (fname2,"('connectivity boundary',i1)") iblk
             else
                write (fname2,"('connectivity boundary linear tetrahedron')")
+c               write (fname2,"('connectivity boundary linear hexahedron')")
             endif
            
            ! Synchronization for performance monitoring, as some parts do not include some topologies
@@ -128,8 +130,10 @@ c.... Read the boundary material type
 c
            if(input_mode.gt.1)then
              write (fname2,"('material type boundary linear tetrahedron',i1)") iblk
+c             write (fname2,"('material type boundary linear hexahedron',i1)") iblk
            else
              write( fname2,"('material type boundary linear tetrahedron')")
+c             write( fname2,"('material type boundary linear hexahedron')")
            endif
 C           call MPI_BARRIER(MPI_COMM_WORLD, ierr)
            call phio_readheader(fhandle, fname2 // char(0),
@@ -144,6 +148,7 @@ C           call MPI_BARRIER(MPI_COMM_WORLD, ierr)
                write (fname2,"('nbc codes',i1)") iblk
             else
                write (fname2,"('nbc codes linear tetrahedron')")
+c               write (fname2,"('nbc codes linear hexahedron')")
             endif
 
            call phio_readheader(fhandle, fname2 // char(0),
@@ -159,6 +164,7 @@ C           call MPI_BARRIER(MPI_COMM_WORLD, ierr)
                write (fname2,"('nbc values',i1)") iblk
             else
                write (fname2,"('nbc values linear tetrahedron')")
+c               write (fname2,"('nbc values linear hexahedron')")
             endif
 
            call phio_readheader(fhandle, fname2 // char(0),

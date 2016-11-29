@@ -61,6 +61,7 @@ C<--- END HARD CODE
               write (fname2,"('connectivity interior',i1)") iblk
             else
               write (fname2,"('connectivity interior linear tetrahedron')") 
+c              write (fname2,"('connectivity interior linear hexahedron')") ! to input hex mesh
 !              write (fname2,"('connectivity interior?')") 
             endif
 
@@ -87,6 +88,7 @@ C<--- END HARD CODE
              write (fname2,"('connectivity interior',i1)") iblk
            else
              write (fname2,"('connectivity interior linear tetrahedron')") 
+c             write (fname2,"('connectivity interior linear hexahedron')") ! to input hex mesh
 !              write (fname2,"('connectivity interior?')") 
            endif
 
@@ -119,6 +121,7 @@ C           call MPI_Barrier(MPI_COMM_WORLD,ierr)
              write(fname2,"('material type interior',i1)") iblk
            else
              write(fname2,"('material type interior linear tetrahedron')")
+c             write(fname2,"('material type interior elinear hexahedron')")
            endif
 c
 C           call MPI_Barrier(MPI_COMM_WORLD,ierr) 
