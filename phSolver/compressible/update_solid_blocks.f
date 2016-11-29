@@ -9,6 +9,7 @@ c
         use elmpar_m, only: nelblk, nelblb
         use pointer_data, only: mien
         use inpdat_m
+        use intpt_m, only: nint
 c
         implicit none
 c
@@ -17,12 +18,30 @@ c
        integer :: mater_sb
        integer :: npro_temp, npro_b_temp
        integer :: nshl_temp
+       integer :: iel_temp, lcsyst_temp, ngauss_temp
        real*8 :: dt
 c
        real*8  old_x(numnp,nsd)
        real*8  y(nshg,ndof)
 c
+c......passing or initialize parameters
        dt = Delt(1)
+       allocate( is_solid(nshg))
+       is_solid = zero
+c
+       allocate(elm_b1(numel) )  
+       allocate(elm_b2(numel) )  
+       allocate(elm_b3(numel) )  
+       allocate(elm_b4(numel) )  
+       allocate(elm_b5(numel) )  
+       allocate(elm_b6(numel) )
+       elm_b1 = zero  
+       elm_b2 = zero
+       elm_b3 = zero
+       elm_b4 = zero
+       elm_b5 = zero
+       elm_b6 = zero
+      
 c.....for interior blocks
          do iblk = 1, nelblk
            mater_s = lcblk(7,iblk)
@@ -31,9 +50,9 @@ c.....for interior blocks
 c.....save the temp
               npro_temp = SIZE(b(iblk)%p,1)
               nshl_temp = SIZE(mien(iblk)%p,2)
-c              iel_temp = lcblk(1,iblk)
-c              lcsyst_temp = lcblk(3,iblk)
-c              ngauss_temp = nint(lcsyst_temp)
+              iel_temp = lcblk(1,iblk)
+              lcsyst_temp = lcblk(3,iblk)
+              ngauss_temp = nint(lcsyst_temp)
 c
 c.....Do the update
               b_dot(iblk)%p(:,:,:)  =  -one/(alfBi * gamBi * dt)* b(iblk)%p(:,:,:)
@@ -43,20 +62,20 @@ c.....Do the update
      &+                          b(iblk)%p(:,:,:)
 c
 c.....set the global number of solid node within this block to 1.0     
-              allocate( is_solid(nshg))
-              is_solid = zero                          
+                                      
               do ipro = 1, npro_temp !loop over all elements within solid      
                 do ishl =1, nshl_temp !loop over all local dof                 
                   is_solid( mien(iblk)%p( ipro, ishl)) = 1             
                 enddo
               enddo                                               
 c
-cc.....fill the elm-wise solid arrays
+c.....fill the elm-wise solid arrays
 
-c              call fillelmb( elmb1, elmb2, iel_temp,    npro_temp,
-c     &                       lcsyst_temp,  ngauss_temp, b(iblk)%p )
-cc.....end of fill elm-wise solid arrays
-c
+              call fillelmb( iel_temp,     npro_temp,
+     &                       lcsyst_temp,  ngauss_temp,
+     &                       b(iblk)%p )
+c.....end of fill elm-wise solid arrays
+
 c.....end of updates
            endif
 c..

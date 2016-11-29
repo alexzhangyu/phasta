@@ -863,6 +863,24 @@ c
                    call write_field(
      &                  myrank,'a'//char(0),'disp_solid'//char(0), 10, 
      &                  disp_solid_temp, 'd'//char(0), numnp, 3,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b1'//char(0), 6, 
+     &                       elm_b1, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b2'//char(0), 6, 
+     &                       elm_b2, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b3'//char(0), 6, 
+     &                       elm_b3, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b4'//char(0), 6, 
+     &                       elm_b4, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b5'//char(0), 6, 
+     &                       elm_b5, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b6'//char(0), 6, 
+     &                       elm_b6, 'd'//char(0), numel, 1,   lstep)
                  endif  
 c... end writing
                  output_mode = -1
@@ -900,6 +918,25 @@ c
                  call write_field(
      &                myrank,'a'//char(0),'disp_solid'//char(0), 10, 
      &                disp_solid_temp, 'd'//char(0), numnp, 3,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b1'//char(0), 6, 
+     &                       elm_b1, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b2'//char(0), 6, 
+     &                       elm_b2, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b3'//char(0), 6, 
+     &                       elm_b3, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b4'//char(0), 6, 
+     &                       elm_b4, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b5'//char(0), 6, 
+     &                       elm_b5, 'd'//char(0), numel, 1,   lstep)
+                   call write_field(
+     &                       myrank,'a'//char(0),'elm_b6'//char(0), 6, 
+     &                       elm_b6, 'd'//char(0), numel, 1,   lstep)
+  
                 endif
 
                !Write the distance to wall field in each restart

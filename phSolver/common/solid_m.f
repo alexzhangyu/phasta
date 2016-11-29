@@ -13,6 +13,8 @@ c
         integer, pointer :: is_solid(:)
         integer, parameter :: b_size = 6
         real*8, dimension(:,:),pointer::disp_solid_temp !track the solid displacement field
+        real*8, dimension(:),pointer :: elm_b1, elm_b2, elm_b3,
+     &                          elm_b4, elm_b5, elm_b6 ! element averaged b array
 c
         type solid_t
           logical :: is_active, restart
@@ -279,5 +281,58 @@ c
       endif
 c    
         end subroutine itrSetupSolid
+c
+c
+
+       subroutine fillelmb( iel,      npro_s,
+     &                      lcsyst_s,   ngauss_s,
+     &                      blk_b)
+c....fill the elm-wise solid array
+c       
+      use solid_data_m, only: elm_b1, elm_b2, elm_b3,
+     &                   elm_b4, elm_b5, elm_b6
+      use intpt_m, only: intp, Qwt
+      use number_def_m  
+      implicit none
+c
+      real*8 blk_b(npro_s,ngauss_s,6)
+      real*8 sum_temp(npro_s)
+      integer::npro_s, iel 
+      integer::lcsyst_s, ngauss_s
+      integer::ilast, ith
+c
+      sum_temp = zero !initialization
+c
+      ilast = iel+npro_s-1
+c    
+c.....loop over all quadrature point
+         quad_loop: do intp = 1, ngauss_s
+c
+                   elm_b1(iel:ilast) = elm_b1(iel:ilast)
+     &                                 + blk_b(:,intp,1)* Qwt(lcsyst_s,intp)
+                   elm_b2(iel:ilast) = elm_b2(iel:ilast)
+     &                                 + blk_b(:,intp,2)* Qwt(lcsyst_s,intp)
+                   elm_b3(iel:ilast) = elm_b3(iel:ilast)
+     &                                 + blk_b(:,intp,3)* Qwt(lcsyst_s,intp)
+                   elm_b4(iel:ilast) = elm_b4(iel:ilast)
+     &                                 + blk_b(:,intp,4)* Qwt(lcsyst_s,intp)
+                   elm_b5(iel:ilast) = elm_b5(iel:ilast)
+     &                                 + blk_b(:,intp,5)* Qwt(lcsyst_s,intp)
+                   elm_b6(iel:ilast) = elm_b6(iel:ilast)
+     &                                 + blk_b(:,intp,6)* Qwt(lcsyst_s,intp)
+                   sum_temp(:) = sum_temp(:) + Qwt(lcsyst_s,intp)
+c..
+        enddo quad_loop 
+c.. Normalize the elm-wise field
+        elm_b1(iel:ilast) = elm_b1(iel:ilast)/sum_temp(:)
+        elm_b2(iel:ilast) = elm_b2(iel:ilast)/sum_temp(:)
+        elm_b3(iel:ilast) = elm_b3(iel:ilast)/sum_temp(:)
+        elm_b4(iel:ilast) = elm_b4(iel:ilast)/sum_temp(:)
+        elm_b5(iel:ilast) = elm_b5(iel:ilast)/sum_temp(:)
+        elm_b6(iel:ilast) = elm_b6(iel:ilast)/sum_temp(:)
+c
+c
+       return
+       end subroutine fillelmb
 c
       end module solid_m

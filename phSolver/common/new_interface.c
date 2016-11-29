@@ -233,8 +233,10 @@ void countfieldstowriterestart()
   }
 
   if (conpar.iSOLID == 1) {
-//HARDCODED BY Yu, 3 fields added: elmB1, elmB2, disp_solid
-    nfields = nfields + 2; 
+//HARDCODED BY Yu, 8 fields added: elm_b1, elm_b2, elm_b3,//
+//                                 elm_b4, elm_b4, elm_b4,//
+//                                 disp_solid, b_temp//
+    nfields = nfields + 8; 
   }
 
   outpar.nsynciofieldswriterestart = nfields;
