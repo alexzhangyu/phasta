@@ -85,6 +85,10 @@ c
         allocate(AS(npro,6,6))
 c
         call calc_as_matrix
+c.......debug
+cc        AS(:,5,3) = zero
+cc        AS(:,6,2) = zero
+c.......debug
         d(:,:) = almBi * bdy_b(iblk_solid)%p(:,intp,:)
      &+      alfBi * Delt(1) * (almBi - gamBi) 
      &*      bdy_b_dot(iblk_solid)%p(:,intp,:)
@@ -173,6 +177,7 @@ c
          real*8, dimension(6,6) :: ident
          real*8, dimension(6,6) :: temp_matrix
          integer :: i
+
 c
          ident = zero
          do i = 1, nsize
@@ -183,6 +188,7 @@ c
           temp_matrix(:,:) = (one/almBi) * ident(:,:) + ( gamBi * Delt(1)
      &                     *alfBi/(almBi)**2 ) * AS(i,:,:) !check here
           bdy_b_af(iblk_solid)%p(i,intp,:) = matmul(temp_matrix(:,:) , d(i,:))
+
          enddo
 c
        end subroutine setB_af_bdy
