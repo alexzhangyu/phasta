@@ -3,7 +3,8 @@
      &                     rmu,     rlm,     rlm2mu,
      &                     u1,      u2,      u3,      
      &                     ri,      rmi,     stiff,
-     &                     con,     rlsli,   compK)
+     &                     con,     rlsli,   compK,
+     &                     Pres)
 c
 c----------------------------------------------------------------------
 c
@@ -60,7 +61,7 @@ c
      &     f5(npro), f6(npro)
 c     &,     rk(npro) 
 c.....Used for solid calculation
-      real*8, dimension(npro) :: d_temp1,d_temp2,d_temp3
+      real*8, dimension(npro) :: b_temp1,b_temp2,b_temp3
       real*8, dimension(npro,6) :: bq_af
 c.....
       ttim(23) = ttim(23) - secs(0.0)
@@ -75,9 +76,12 @@ c
 c......if this is a solid blk, change the K_ij matrix
         if (mat_eos(mater,1).eq.ieos_solid_1)then
 c
-        d_temp1(:) = 2.0/3.0*d(:,1) - 1.0/3.0*d(:,2) - 1.0/3.0*d(:,3)
-        d_temp2(:) = -1.0/3.0*d(:,1) + 2.0/3.0*d(:,2) - 1.0/3.0*d(:,3)
-        d_temp3(:) = -1.0/3.0*d(:,1) - 1.0/3.0*d(:,2) + 2.0/3.0*d(:,3)
+
+         bq_af(:,:)= b_af(iblk_solid)%p(:,intp,:)
+c
+         b_temp1(:) = 2.0/3.0*bq_af(:,1) - 1.0/3.0*bq_af(:,2) - 1.0/3.0*bq_af(:,3)
+         b_temp2(:) = -1.0/3.0*bq_af(:,1) + 2.0/3.0*bq_af(:,2) - 1.0/3.0*bq_af(:,3)
+         b_temp3(:) = -1.0/3.0*bq_af(:,1) - 1.0/3.0*bq_af(:,2) + 2.0/3.0*bq_af(:,3)
 c
 c.... K11
 c
@@ -308,7 +312,27 @@ c
          stiff(:, 15, 15) = con ! notice the + or -
 c         stiff(:,:,:) = -stiff(:,:,:)
 c         stiff = zero
-c     
+c.......adding the modification for new LHS for solid
+         m1_lhs =  zero
+         m2_lhs =  zero
+         m3_lhs =  zero
+c
+         m1_lhs(:, 2, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * b_temp1(:)      
+         m1_lhs(:, 3, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * bq_af(:,6)      
+         m1_lhs(:, 4, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * bq_af(:,5)      
+         m1_lhs(:, 5, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * ( b_temp1(:)*u1 + bq_af(:,6) * u2 + bq_af(:,5)*u3 ) 
+c
+         m2_lhs(:, 2, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * bq_af(:,6)
+         m2_lhs(:, 3, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * b_temp2(:)      
+         m2_lhs(:, 4, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * bq_af(:,4)      
+         m2_lhs(:, 5, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * ( bq_af(:,6)*u1 +  b_temp2(:)*u2 + bq_af(:,4)*u3 ) 
+c
+         m3_lhs(:, 2, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * bq_af(:,5)     
+         m3_lhs(:, 3, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * bq_af(:,4)      
+         m3_lhs(:, 4, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * b_temp3(:)      
+         m3_lhs(:, 5, 1) = ShearMod * ( 5.0/(3.0 * bulkMod) ) * (- Pres/bulkMod + 1)**(-8.0/3.0) * ( bq_af(:,5)*u1 + bq_af(:,4)*u2 + b_temp3(:)*u3 ) 
+c
+
 c......end of modification for solid
         else
 c......if the blocks are liquid and gas
@@ -524,7 +548,6 @@ c
 c....if this is the solid block, modify the momentum and energy equation
         if (mat_eos(mater,1).eq.ieos_solid_1)then
 c
-         bq_af(:,:)= b_af(iblk_solid)%p(:,intp,:)
 c.... diffusive flux in x1-direction
 
 c         rmi(:,1) = zero ! already initialized

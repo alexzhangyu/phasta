@@ -13,6 +13,9 @@ c
         real*8, dimension(:), pointer :: det_d, det_baf
         real*8, dimension(:), pointer :: bulkMod, shearMod, Ja_def
         real*8, dimension(:,:), pointer :: dudx, dudy, dudz
+        real*8, dimension(:,:,:), pointer :: m1_lhs
+        real*8, dimension(:,:,:), pointer :: m2_lhs
+        real*8, dimension(:,:,:), pointer :: m3_lhs
 c
         contains
 c
@@ -27,6 +30,9 @@ c
           allocate(dudx(npro,nsd))
           allocate(dudy(npro,nsd))
           allocate(dudz(npro,nsd))
+          allocate(m1_lhs(npro,nflow,nflow))
+          allocate(m2_lhs(npro,nflow,nflow))
+          allocate(m3_lhs(npro,nflow,nflow))
 c
         end subroutine e3_malloc_solid
 c
@@ -38,6 +44,9 @@ c
           deallocate(det_d,det_baf)
           deallocate(Ja_def,bulkMod,shearMod)
           deallocate(dudx,dudy,dudz)
+          deallocate(m1_lhs)
+          deallocate(m2_lhs)
+          deallocate(m3_lhs)
 c
         end subroutine e3_mfree_solid
 c
