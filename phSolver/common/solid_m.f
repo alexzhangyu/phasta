@@ -275,9 +275,9 @@ c
          gamBi   = one
          ipred  = 1
       else           !second order family
-         almBi   = (three-rhoinf(itseq))/(one+rhoinf(itseq))/two
-         alfBi   = one/(one+rhoinf(itseq))
-         gamBi   = pt5+almi-alfi
+         almBi   = (three-rhoinf_B(itseq))/(one+rhoinf_B(itseq))/two
+         alfBi   = one/(one+rhoinf_B(itseq))
+         gamBi   = pt5+almBi-alfBi
       endif
 c    
         end subroutine itrSetupSolid
