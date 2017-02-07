@@ -41,6 +41,7 @@ c
       use if_velocity_m
       use solid_m
       use probe_m
+      use timedependantTraction_m !!solid debugging
 c
         include "common.h"
         include "mpif.h"
@@ -106,6 +107,9 @@ c
 !        logical  exMc
 !        real*8 vBC, vBCg
         real*8 vortmax, vortmaxg
+c......solid debugging
+        real*8, dimension(numnp,nsd) :: ini_x
+c......solid debugging
        iprec=0 !PETSc - Disable PHASTA's BDiag. TODO: Preprocssor Switch
 
        call findTurbWall(iTurbWall)
@@ -263,6 +267,9 @@ c.........................................
         deallocate(vortG)
       endif
 c
+c......solid debugging
+       ini_x = x
+c......solid debugging
 c.... loop through the time sequences
 c
         do 3000 itsq = 1, ntseq
@@ -338,6 +345,11 @@ c============ Start the loop of time steps============================c
 !        edamp3=0.05
         deltaInlInv=one/(0.125*0.0254)
         do 2000 istp = 1, nstp
+c
+c.......solid debugging..............
+        call settimedepandantflux(ini_x)
+
+c.......end of solid debugging........
 c
         if(iramp.eq.1) 
      &        call BCprofileScale(vbc_prof,BC,yold)
@@ -718,7 +730,10 @@ c... update B array for solid blocks...
 c
            if (solid_p%is_active) then
 c
-              call update_solid_blocks(x, yold )
+c              call update_solid_blocks(x, yold )
+c....... solid debug
+              call update_solid_blocks(x, yold, umesh )
+c....... solid debug
 c
            endif
 c
