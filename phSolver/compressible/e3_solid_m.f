@@ -86,8 +86,8 @@ c
 c
         call calc_as_matrix
 c.......debug
-cc        AS(:,5,3) = zero
-cc        AS(:,6,2) = zero
+c        AS(:,5,3) = zero
+c        AS(:,6,2) = zero
 c.......debug
         d(:,:) = almBi * bdy_b(iblk_solid)%p(:,intp,:)
      &+      alfBi * Delt(1) * (almBi - gamBi) 
@@ -145,12 +145,14 @@ c
 c
 c... calculate the left Cauchy-green tensor at time step n+af
 c
+         use function_and_complex
          implicit none 
 c
          integer,parameter :: nsize = 6 
 c
          real*8, dimension(6,6) :: ident
          real*8, dimension(6,6) :: temp_matrix
+         real*8, dimension(6) :: temp_baf
          integer :: i
 c
          ident = zero
@@ -162,6 +164,10 @@ c
           temp_matrix(:,:) = (one/almBi) * ident(:,:) + ( gamBi * Delt(1)
      &                     *alfBi/(almBi)**2 ) * AS(i,:,:) !check here
           b_af(iblk_solid)%p(i,intp,:) = matmul(temp_matrix(:,:) , d(i,:))
+c           temp_matrix(:,:) = (almBi) * ident(:,:) - ( gamBi * Delt(1)
+c     &                     *alfBi) * AS(i,:,:) !check here
+c
+c           call lu_solve(temp_matrix, d(i,:), b_af(iblk_solid)%p(i,intp,:), 6)
          enddo
 c
        end subroutine setB_af 
@@ -170,6 +176,7 @@ c
 c
 c... calculate the left Cauchy-green tensor at time step n+af
 c
+         use function_and_complex
          implicit none 
 c
          integer,parameter :: nsize = 6 
@@ -188,7 +195,9 @@ c
           temp_matrix(:,:) = (one/almBi) * ident(:,:) + ( gamBi * Delt(1)
      &                     *alfBi/(almBi)**2 ) * AS(i,:,:) !check here
           bdy_b_af(iblk_solid)%p(i,intp,:) = matmul(temp_matrix(:,:) , d(i,:))
-
+c           temp_matrix(:,:) = (almBi) * ident(:,:) - ( gamBi * Delt(1)
+c     &                     *alfBi) * AS(i,:,:) !check here
+c           call lu_solve(temp_matrix, d(i,:), bdy_b_af(iblk_solid)%p(i,intp,:), 6)
          enddo
 c
        end subroutine setB_af_bdy
@@ -209,5 +218,20 @@ c
      &-             matr(:,6) * matr(:,6) * matr(:,3)
 c
       end subroutine get_det
+c
+c
+      subroutine modify_solid_pres(mater_s)
+c
+        use matdat_def_m
+        use e3_param_m, only:pres
+        implicit none
+c
+        integer, intent(in) :: mater_s
+        real*8 :: pres_ref_s
+c
+        pres_ref_s   = mat_prop(mater_s,iprop_solid_1_p_ref,  1)
+        pres(:) = pres(:) - pres_ref_s
+      end subroutine modify_solid_pres 
+c
 c
       end module e3_solid_func_m
