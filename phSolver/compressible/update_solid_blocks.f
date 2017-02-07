@@ -1,4 +1,4 @@
-      subroutine update_solid_blocks(old_x, y)
+      subroutine update_solid_blocks(old_x, y, old_um)
 c
         use conpar_m
         use timdat_m
@@ -23,6 +23,9 @@ c
 c
        real*8  old_x(numnp,nsd)
        real*8  y(nshg,ndof)
+c..... solid debug
+       real*8  old_um(nshg,nsd)
+c..... solid debug
 c
 c......passing or initialize parameters
        dt = Delt(1)
@@ -81,7 +84,10 @@ c.....end of updates
 c..
         enddo
 c....Track the displacment for solid
-       call trackncorrectSolid( dt, old_x, y)
+c       call trackncorrectSolid( dt, old_x, y)
+c........solid debug
+       call trackncorrectSolid( dt, old_x, y, old_um)
+c........solid debug
 c
         deallocate(is_solid) 
 
