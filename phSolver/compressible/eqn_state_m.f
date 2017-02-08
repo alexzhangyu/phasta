@@ -77,7 +77,11 @@ c
       subroutine getthm6_solid_1
 c
         use e3_solid_m
+        use number_def_m
+        use propar_m 
         implicit none
+c
+        real*8, dimension(npro) :: temp_s
 c
         rho_ref_s = mat_prop(mater,iprop_solid_1_rho_ref,1)
         p_ref_s   = mat_prop(mater,iprop_solid_1_p_ref,  1)
@@ -86,12 +90,19 @@ c
         alpha_P_s = mat_prop(mater,iprop_solid_1_alphaP, 1)
         bulkMod_s = mat_prop(mater,iprop_solid_1_bulkMod, 1)
         shearMod_s = mat_prop(mater,iprop_solid_1_shearMod, 1)
-c        beta_T  = mat_prop(mater,iprop_solid_1_betaT,  1)
 c
-        alphaP = alpha_P_s
-        betaT  = one /(bulkMod_s * Ja_def) ! double check here
-        rho = rho_ref_s * (one - alphaP*(T - T_ref_s) 
-     &                    + betaT*(pres - p_ref_s))
+c        alphaP = alpha_P_s
+c        betaT  = one /(bulkMod_s * Ja_def) ! double check here
+c        rho = rho_ref_s * (one - alphaP*(T - T_ref_s) 
+c     &                    + betaT*(pres - p_ref_s))
+         stress_T_Mod = -three*bulkMod_s*alpha_P_s
+         temp_s = stress_T_Mod *(T - T_ref_s) - bulkMod_s
+     &          + (pres - p_ref_s) 
+         rho = - (rho_ref_s * bulkMod_s)/(temp_s)
+         alphaP = -(one/rho) *(rho_ref_s * bulkMod_s*stress_T_Mod)
+     &          /(stress_T_Mod *(T - T_ref_s) - bulkMod_s)**two
+         betaT = (one/rho) * (rho_ref_s * bulkMod_s)
+     &         /( (pres - p_ref_s)-bulkMod_s )**two
 c        ei  = ( cv_s - pres * alpha_P_s/rho)* T 
 c    &        + (betaT * pres - alphaP * T)/rho * pres
         ei  = cv_s * T

@@ -12,6 +12,7 @@ c
         real*8, dimension(:,:), pointer :: d
         real*8, dimension(:), pointer :: det_d, det_baf
         real*8, dimension(:), pointer :: bulkMod, shearMod, Ja_def
+        real*8, dimension(:), pointer :: stress_T_Mod
         real*8, dimension(:,:), pointer :: dudx, dudy, dudz
 c
         contains
@@ -24,6 +25,7 @@ c
           allocate(d(npro,b_size))
           allocate(det_d(npro),det_baf(npro))
           allocate(Ja_def(npro),bulkMod(npro),shearMod(npro))
+          allocate( stress_T_Mod(npro) )
           allocate(dudx(npro,nsd))
           allocate(dudy(npro,nsd))
           allocate(dudz(npro,nsd))
@@ -37,6 +39,7 @@ c
           deallocate(d)
           deallocate(det_d,det_baf)
           deallocate(Ja_def,bulkMod,shearMod)
+          deallocate(stress_T_Mod)
           deallocate(dudx,dudy,dudz)
 c
         end subroutine e3_mfree_solid
