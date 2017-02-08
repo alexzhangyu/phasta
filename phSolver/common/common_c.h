@@ -99,6 +99,9 @@
 #define idg_no_vi 1
 #define idg_const_vi 2
 #define idg_vieilles_burning 3
+#define idg_clausius_clapeyron 4
+#define idg_cavitation 5
+
 #define idg_no_ramp 1
 #define idg_linear_ramp 2
 
@@ -279,6 +282,8 @@ extern "C" {
     int ncorpsize;
     int iownnodes;
     int usingpetsc;
+    int elasModel;
+    int elasFDC;
   } conpar ;
  
 /*chen Sep 25 2009  Flow Control Parameters*/
@@ -437,6 +442,7 @@ extern "C" {
   extern struct { 
     double epstol[6];  /* 1+ max number of scalars  (beginning of the
                           end of time sequences) */
+    double etolelas;
     double Delt[MAXTS];
     double CFLfl[MAXTS];
     double CFLsl[MAXTS];
@@ -524,6 +530,7 @@ extern "C" {
     double s;
     double e;
     double h;
+    double hfg_liquid, mw_liquid, T_boil_liquid;
     double burn_rate_exp, burn_rate_coeff, burn_rate_pref;
   } dgifinp;
 

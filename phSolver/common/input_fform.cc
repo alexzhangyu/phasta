@@ -46,6 +46,8 @@ void populate_dg_phaseChange_model
   this_map.insert(map<string,int>::value_type("None", idg_no_vi));
   this_map.insert(map<string,int>::value_type("Constant", idg_const_vi));
   this_map.insert(map<string,int>::value_type("Vieille's-Burning", idg_vieilles_burning));
+  this_map.insert(map<string,int>::value_type("Clausius-Clapeyron", idg_clausius_clapeyron));
+  this_map.insert(map<string,int>::value_type("Cavitation", idg_cavitation));
 }
 
 int input_fform(phSolver::Input& inp)
@@ -252,6 +254,18 @@ int input_fform(phSolver::Input& inp)
       cout << endl;
       exit(1);
     }
+
+    if ((string)inp.GetValue("Mesh Elas Model") == "None" ) {
+      conpar.elasModel = 0;
+    } else if ((string)inp.GetValue("Mesh Elas Model") == "Force-driven" ) {
+      conpar.elasModel = 1;
+    } else {
+      cout << " Mesh Elas Model: Only Legal Values ( None, Force-driven )";
+      cout << endl;
+      exit(1);
+    }
+
+    conpar.elasFDC = inp.GetValue("Mesh Elas Force-driven case");
 
     if ((string)inp.GetValue("Solid Phase") == "False" ) {
       conpar.iSOLID = -1;
@@ -558,6 +572,11 @@ int input_fform(phSolver::Input& inp)
       dgifinp.burn_rate_exp   = (double)inp.GetValue("Burn Rate Exponent alpha");
       dgifinp.burn_rate_coeff = (double)inp.GetValue("Burn Rate Coefficient beta");
       dgifinp.burn_rate_pref  = (double)inp.GetValue("Burn Rate Reference Pressure");}
+    else if (sbuf == "Clausius-Clapeyron") {
+      dgifinp.hfg_liquid     = (double)inp.GetValue("Enthalpy of Vaporization");
+      dgifinp.mw_liquid      = (double)inp.GetValue("Molecular Weight of Liquid");
+      dgifinp.T_boil_liquid  = (double)inp.GetValue("Boiling Temperature");}
+      
 
     dgifinp.s = (double)inp.GetValue("DG Interface Stability Factor");
     dgifinp.e = (double)inp.GetValue("DG Interface Kinematic Condition epsilon");
@@ -707,6 +726,7 @@ int input_fform(phSolver::Input& inp)
     solpar.Kspace = inp.GetValue("Number of Krylov Vectors per GMRES Sweep");
     inpdat.LHSupd[0] = inp.GetValue("Number of Solves per Left-hand-side Formation");
     inpdat.epstol[0] = inp.GetValue("Tolerance on Momentum Equations");
+    inpdat.etolelas = inp.GetValue("Tolerance on Mesh Elasticity Equations");
     incomp.prestol = inp.GetValue("Tolerance on ACUSIM Pressure Projection"); 
     incomp.minIters = inp.GetValue("Minimum Number of Iterations per Nonlinear Iteration");
     incomp.maxIters = inp.GetValue("Maximum Number of Iterations per Nonlinear Iteration");

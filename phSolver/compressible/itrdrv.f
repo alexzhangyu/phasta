@@ -95,8 +95,9 @@ c
 c
 c.... For mesh-elastic solve
 c
-       real*8  umesh(nshg,nsd),     meshq(numel), 
-     &         disp(numnp, nsd),    elasDy(nshg,nelas)
+       real*8  umesh(numnp,nsd),    meshq(numel),
+     &         disp(numnp, nsd),    elasDy(nshg,nelas),
+     &         umeshold(numnp, nsd), xold(numnp,nsd)
 
        logical alive
  
@@ -167,12 +168,16 @@ c
         time   = 0
         yold   = y
         acold  = ac
+c
 c......initialzation for tracking the nodal disp field for solid
         if ( (iSOLID ==1) .and. (solid_p%is_active) )then
           allocate(disp_solid_temp(numnp,nsd))
           disp_solid_temp = zero
         endif 
 c......end of initialization for solid nodal disp field
+
+        umeshold = umesh
+        xold   = x
 
 !Blower Setup
        call BC_init(Delt, lstep, BC)  !Note: sets BC_enable
@@ -351,6 +356,15 @@ c.......solid debugging..............
 
 c.......end of solid debugging........
 c
+c.... only used for prescribing time-dependent mesh-elastic BC
+c.... comp3_elas and DG interface share the same iBC, thus, this
+c     call will replace the interface vel with prescribed value
+c     when using Force-driven as Mesh Elas Model in solver.inp
+          if (elasModel .eq. 1) then
+            call timeDependBCElas(x, iBC, BC(:,ndof+2:ndof+4),
+     &                            BC(:,3:5), umeshold)
+          endif
+c
         if(iramp.eq.1) 
      &        call BCprofileScale(vbc_prof,BC,yold)
 
@@ -430,7 +444,7 @@ c
 c
 c....   need itrPredict equivalent for 'disp'
 c
-               call itrPredictElas(disp)
+               call itrPredictElas(disp,umesh,Delt(1))
             endif
 c
 c
@@ -516,6 +530,12 @@ c                        write(*,*) 'lhs=',lhs
      &                       shpb,          shglb,         
      &                       shpif0,        shpif1,        shgif0,        shgif1,
      &                       solinc,        rerr,          umesh)
+c
+c                     call set_if_velocity (BC(:,ndof+2:ndof+4),  iBC, 
+c     &                                umesh,    x,     ilwork,
+c     &                                lcblkif,  nshg,  ndofBC,
+c     &                                nsd,   nelblif,  MAXBLK, nlwork )
+c
                     endif
                       else if (mod(impl(1),100)/10 .eq. 2) then ! mfg solve
 c     
@@ -622,19 +642,30 @@ c
                       iprec=lhs
                       ndofelas = nshl * nelas
 c 
-                       call set_if_velocity (BC(:,ndof+2:ndof+4),  iBC, 
-     &                                umesh,    x,     ilwork,
+                     call set_if_velocity (BC(:,ndof+2:ndof+4),  iBC, 
+     &                                umesh,    disp, x,  Delt(1),   ilwork,
      &                                lcblkif,  nshg,  ndofBC,
      &                                nsd,   nelblif,  MAXBLK, nlwork )
-c 
-                     call itrBCElas(umesh,  disp,  iBC, 
+c
+c.... only used for prescribing time-dependent mesh-elastic BC
+c.... comp3_elas and DG interface share the same iBC, thus, this
+c     call will replace the interface vel with prescribed value
+c     when using Force-driven as Mesh Elas Model in solver.inp
+                   if (elasModel .eq. 1) then
+                     call timeDependBCElas(x, iBC, BC(:,ndof+2:ndof+4), BC(:,3:5),
+     &                                     umeshold)
+                   endif
+c
+c... update displacement and umesh based on iBC and BC
+c
+                     call itrBCElas(umesh,  disp,  iBC,
      &                              BC(:,ndof+2:ndof+5),
-     &                              iper,   ilwork         )
+     &                              iper,   ilwork)
 c
 c.... call to SolGMRElas ... For mesh-elastic solve
 c
                      call SolGMRElas (x,        disp,      iBC,    BC,
-     &                                colm,     rowp,      meshq,  
+     &                                colm,     rowp,      meshq,
      &                                hBrg,     eBrg, 
      &                                yBrg,     Rcos,      Rsin,     iper, 
      &                                ilwork,   shp,       shgl,     elasDy)
@@ -689,7 +720,8 @@ c
 c
 c.... call itrCorrectElas ... and then itrBCElas ...
 c
-                     call itrCorrectElas(disp, elasDy)
+c                     call itrCorrectElas(disp, elasDy)
+                     call itrCorrectElas(xold, x, disp, elasDy)
 c
                      umesh = disp / Delt(1)
 c 
@@ -697,9 +729,10 @@ c
      &                              BC(:,ndof+2:ndof+5),
      &                              iper,   ilwork        )
 c
-                     umesh = disp / Delt(1)
+c                     umesh = disp / Delt(1)
+                     umeshold = umesh
 c
-                     call itrCorrectElas(x, disp)
+c                     call itrCorrectElas(x, disp)
 c
                   endif ! end of switch for flow or scalar or mesh-elastic update
                endif            !end of switch between solve or update
@@ -723,6 +756,7 @@ c
             endif          
 c
             call itrUpdate( yold,  acold,   y,    ac)
+            call itrUpdateElas ( xold, x)
 c
             call itrBC (y,ac, iBC, BC, iper, ilwork, umesh)
 c
@@ -867,13 +901,11 @@ c     &                  xdot,  'd'//char(0), numnp, nsd, lstep)
                    call write_field(
      &                  myrank,'a'//char(0),'meshQ'//char(0), 5, 
      &                  meshq, 'd'//char(0), numel, 1,   lstep)
-                   call write_field(
-     &                  myrank,'a'//char(0),'material_type'//char(0),13,
-     &                  mattype_interior, 'd',numel, 1, lstep)   
 c
       if (solid_p%is_active) call write_restart_solid
 c
                  endif
+c
                  if (iSOLID == 1)then
                    call write_field(
      &                  myrank,'a'//char(0),'disp_solid'//char(0), 10, 
@@ -897,6 +929,10 @@ c
      &                       myrank,'a'//char(0),'elm_b6'//char(0), 6, 
      &                       elm_b6, 'd'//char(0), numel, 1,   lstep)
                  endif  
+c
+                 call write_field(
+     &               myrank,'a'//char(0),'material_type'//char(0),13,
+     &               mattype_interior, 'd',numel, 1, lstep)   
 c... end writing
                  output_mode = -1
                endif

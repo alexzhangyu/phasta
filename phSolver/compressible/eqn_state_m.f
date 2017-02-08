@@ -17,7 +17,7 @@ c
 c
         mw    = mat_prop(mater,iprop_ideal_gas_mw, 1)
         gamma = mat_prop(mater,iprop_ideal_gas_gamma,1)
-        Rgas  = 8314.0d0/mw
+        Rgas  = Ru/mw*1.0d3
         gamma1 = gamma - one
 c
         rho = pres / (Rgas*T)
@@ -140,6 +140,7 @@ c
         cp   => cp0
         alphaP => alfaP0
         betaT => betaT0
+        c     => c0
         mater = mater0
 c
         call getthmif0_ptr
@@ -152,6 +153,7 @@ c
         cp   => cp1
         alphaP => alfaP1
         betaT => betaT1
+        c     => c1
         mater = mater1
 c
         call getthmif1_ptr

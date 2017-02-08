@@ -11,6 +11,11 @@ c
 c
         implicit none
 c
+        abstract interface
+          subroutine calc_vi2
+          end subroutine calc_vi2
+        end interface
+c
         integer, dimension(:,:),   pointer :: sgn0, sgn1
 c
         real*8,  dimension(:,:,:), pointer :: ycl0, ycl1
@@ -35,14 +40,19 @@ c
         real*8,  dimension(:,:,:), pointer :: rl0, rl1      ! residual over the element
         real*8,  dimension(:,:),   pointer :: ri0, ri1      ! residual at the integration point
 c
+        real*8, dimension(:,:,:), pointer :: A0_0,A0_1,A0Na_0, A0Na_1
         real*8, dimension(:,:,:,:), pointer :: Ai0, Ai1, AiNa0, AiNa1, KijNaj0, KijNaj1, KijNajC0, KijNajC1
         real*8, dimension(:,:,:,:,:), pointer :: Kij0, Kij1
         real*8, dimension(:,:,:), pointer :: egmass00, egmass01, egmass10, egmass11
 c
 c... evaluated parameters at the integration point
 c
-        real*8, pointer :: rho0(:), pres0(:), T0(:), ei0(:)  ! density, velocity, pressure, temperature, on elment 0
-        real*8, pointer :: rho1(:), pres1(:), T1(:), ei1(:)  ! density, velocity, pressure, temperature, on elment 1
+        real*8, dimension(:), pointer :: rho0,  rho1     ! density
+     &,                                  pres0, pres1    ! pressure
+     &,                                  T0,    T1       ! temperature
+     &,                                  ei0,   ei1      ! internal energy
+     &,                                  c0,    c1       ! speed of sound
+     &,                                  alpha_LF
         real*8, dimension(:,:), pointer :: u0, u1, um0, um1
 c
         real*8, dimension(:), pointer :: rk0, h0, cp0, alfaP0, betaT0
@@ -85,6 +95,7 @@ c
         type(element_t), dimension(:), pointer :: e0, e1
 c
         procedure(getthm2), pointer :: getthmif0_ptr, getthmif1_ptr
+        procedure(calc_vi2), pointer :: calc_vi_cavitation
 c
       contains
 c
@@ -119,6 +130,8 @@ c
           allocate(rho1(npro),u1(npro,nsd),pres1(npro),T1(npro),ei1(npro),um1(npro,nsd))
           allocate(rk0(npro),h0(npro),cp0(npro),alfaP0(npro),betaT0(npro))
           allocate(rk1(npro),h1(npro),cp1(npro),alfaP1(nprO),betaT1(npro))
+          allocate(c0(npro), c1(npro))
+          allocate(alpha_LF(npro))
 c
           allocate(qpt0(npro),qpt1(npro))
           allocate(var0 (npro), var1 (npro))
@@ -134,6 +147,10 @@ c
             allocate(qpt1(i)%shgl(nsd,nshl1))
           enddo
 c
+          allocate(A0_0(npro,nflow,nflow))
+          allocate(A0_1(npro,nflow,nflow))
+          allocate(A0Na_0(npro,nflow,nflow))
+          allocate(A0Na_1(npro,nflow,nflow))
           allocate(Ai0(npro,nsd,nflow,nflow))
           allocate(Ai1(npro,nsd,nflow,nflow))
           allocate(AiNa0(npro,nsd,nflow,nflow))
@@ -170,6 +187,8 @@ c
           deallocate(rho1,u1,pres1,T1,ei1,um1)
           deallocate(rk0,h0,cp0,alfaP0,betaT0)
           deallocate(rk1,h1,cp1,alfaP1,betaT1)
+          deallocate(c0,c1)
+          deallocate(alpha_LF)
 c
           do i = 1,npro
             deallocate(qpt0(i)%shp,qpt1(i)%shp)
@@ -183,6 +202,8 @@ c
           deallocate(e0,e1)
 c
           deallocate(Ai0,Ai1)
+          deallocate(A0_0,A0_1)
+          deallocate(A0Na_0,A0Na_1)
           deallocate(AiNa0,AiNa1)
           deallocate(Kij0,Kij1)
           deallocate(KijNaj0,KijNaj1)

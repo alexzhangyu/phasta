@@ -51,8 +51,8 @@ c
          do i = 1, ndofBC2
             where (nBC(:) .ne. 0) BCtmp(:,i) = BCinp(nBC(:),i)
          enddo
-         deallocate(BCinp)
       endif
+      deallocate(BCinp) ! even when there is no BC on this partition
             
 c
       if(any(BCtmp(:,12).ne.0)) then
@@ -68,6 +68,7 @@ c
 c.... ----------------------> Wall Normals  <--------------------------
 c (calculate the normal and adjust BCinp to the true normal as needed)
 c
+      nsurf = zero
       if(navier.eq.1)then
          call genwnm (iBC,  BCtmp,   x,   ilwork, iper, nsurf)
       endif

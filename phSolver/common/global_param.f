@@ -46,6 +46,8 @@ c
 c
       integer, parameter :: MAXMAT  = 6, MAXPROP = 10
 c
+      real*8, parameter :: Ru = 8.314d0    ! Universal gas constant [J/mol.K]
+c
       end module global_const_m
 c
 c----------------------------------------------------------------------
@@ -85,17 +87,19 @@ c
      &                  numflx,   ndof,   iALE, iSOLID,
      &                  icoord,   navier,
      &                  irs,      iexec,  necho,  ichem,  iRK,    nedof,
-     &                  ndofelas, nshg,   nnz,    istop,  nflow,  nelas, 
+     &                  ndofelas, nshg,   nnz,    istop,  nflow,  nelas,
      &                  nnz_tot,  idtn,
-     &                  ncorpsize, iownnodes, usingpetsc
+     &                  ncorpsize, iownnodes, usingpetsc,
+     &                  elasModel, elasFDC
         common /conpar/ numnp, numel,  numelb, numelif,
      &                  numpbc,   nen,    nfaces,
      &                  numflx,   ndof,   iALE, iSOLID,
      &                  icoord,   navier,
      &                  irs,      iexec,  necho,  ichem,  iRK,    nedof,
-     &                  ndofelas, nshg,   nnz,    istop,  nflow,  nelas, 
+     &                  ndofelas, nshg,   nnz,    istop,  nflow,  nelas,
      &                  nnz_tot,  idtn,
-     &                  ncorpsize, iownnodes, usingpetsc
+     &                  ncorpsize, iownnodes, usingpetsc,
+     &                  elasModel, elasFDC
       end module conpar_m
 c
 c----------------------------------------------------------------------
@@ -265,6 +269,7 @@ c
 c.... common /inpdat/   : time sequence input data
 c
 c epstol (MAXTS)  : tolerance for GMRES solvers
+c etolelas        : tolerance for Mesh Elas solvers
 c Delt   (MAXTS)  : global time step
 c CFLfl  (MAXTS)  : CFL number for fluid flow
 c CFLsl  (MAXTS)  : CFL number for structural heating
@@ -285,11 +290,12 @@ c
         integer, dimension(MAXTS) :: nstep, niter, impl, loctim
         integer, dimension(6) :: LHSupd
         real*8, dimension(6) :: epstol
+        real*8  :: etolelas
         real*8, dimension(MAXTS) :: Delt, CFLfl, CFLsl, rhoinf, rhoinfS, rhoinf_B
         real*8, dimension(MAXTS,2) :: deltol
-        common /inpdat/ epstol,  Delt,    CFLfl,
-     &                  CFLsl,   nstep,   niter,
-     &                  impl,    rhoinf,  rhoinfS,
+        common /inpdat/ epstol,  etolelas, Delt,    CFLfl,
+     &                  CFLsl,   nstep,    niter,
+     &                  impl,    rhoinf,   rhoinfS,
      &                  rhoinf_B,
      &                  LHSupd,  loctim,  deltol, 
      &                  leslib,     svLSFlag,   svLSType
@@ -346,12 +352,18 @@ c
         use iso_c_binding
         implicit none
         integer, parameter :: no_ramp = 1, linear_ramp = 2
-        integer, parameter :: no_vi = 1, const_vi = 2, vieilles_burning=3
+        integer, parameter :: no_vi = 1, 
+     &                        const_vi = 2, 
+     &                        vieilles_burning=3, 
+     &                        clausius_clapeyron=4,
+     &                        cavitation=5
         integer(c_int) :: phase_change_model, vi_ramping
         real(c_double) :: ramp_time, vi_mag, dgif_alpha, dgif_beta, dgif_s, dgif_e, dgif_h
         real(c_double) :: burn_rate_exp, burn_rate_coeff, burn_rate_pref
+        real(c_double) :: hfg_liquid, mw_liquid, T_boil_liquid
         common /dgifinp/ phase_change_model,vi_ramping,
      &                   ramp_time,vi_mag,dgif_s,dgif_e,dgif_h,
+     &                   hfg_liquid, mw_liquid, T_boil_liquid,
      &                   burn_rate_exp, burn_rate_coeff, burn_rate_pref
       end module dgifinp_m
 c

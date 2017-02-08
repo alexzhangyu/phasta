@@ -39,6 +39,10 @@ c
           sum_vi_area_l1 = zero
 c
           do intp = 1, nqpt
+c      print*, intp,shpif0(:,intp)
+c      print*, intp,shpif1(:,intp)
+c      print*, 'qwtif0: ',intp,qwtif0(intp)
+c      print*, 'qwtif1: ',intp,qwtif1(intp)
 c
             ri0 = zero
             ri1 = zero
@@ -81,7 +85,24 @@ c
             call calc_stiff(prop0, var0, mater0)
             call calc_stiff(prop1, var1, mater1)
 c
+c ... Interface flux 
+c
             call e3if_flux
+c
+c ... Interface velocity calculations...
+c
+c            if     (mat_eos(mater0,1) == ieos_ideal_gas) then
+              call calc_vi(pres0,nv0,u1)
+c            elseif (mat_eos(mater1,1) == ieos_ideal_gas) then
+c              call calc_vi(pres1,nv1,u0)
+c            else
+c              call error ('wrong mater: ', 'calc vi', 0)
+c            endif
+c
+c            call flux_jump
+c
+            call calc_vi_area_node(sum_vi_area_l0,shp0,WdetJif0,nshl0)
+            call calc_vi_area_node(sum_vi_area_l1,shp1,WdetJif1,nshl1)
 c
             call calc_cmtrx
             call calc_y_jump
@@ -99,11 +120,17 @@ c
 c
               call set_lhs_matrices
 c
-             call calc_egmass(egmass00,egmass01,AiNa0,AiNa1,KijNaj0,KijNaj1,KijNajC0,KijNajC1,
-     &         shp0,nv0,nv1,WdetJif0,prop0,nshl0,nshl1)
+             call calc_egmass(egmass00,egmass01,
+     &                         A0_0, A0_1, Ai0, Ai1,
+     &                         Kij0, Kij1,
+     &                         AiNa0,AiNa1,KijNaj0,KijNaj1,KijNajC0,KijNajC1,
+     &                         shp0,nv0,nv1,WdetJif0,prop0,nshl0,nshl1)
 
-             call calc_egmass(egmass11,egmass10,AiNa1,AiNa0,KijNaj1,KijNaj0,KijNajC1,KijNajC0,
-     &         shp1,nv1,nv0,WdetJif1,prop1,nshl1,nshl0)
+             call calc_egmass(egmass11,egmass10,
+     &                         A0_1, A0_0, Ai1, Ai0,
+     &                         Kij1, Kij0,
+     &                         AiNa1,AiNa0,KijNaj1,KijNaj0,KijNajC1,KijNajC0,
+     &                         shp1,nv1,nv0,WdetJif1,prop1,nshl1,nshl0)
 
 c      call calc_egmass_(egmass00,AiNa0,KijNaj0,KijNaj0,KijNajC0,shp0,shp1,nv0,nv1,WdetJif0,nshl0,nshl1)
 c      call calc_egmass_(egmass01,AiNa1,KijNaj0,KijNaj1,KijNajC1,shp0,shp1,nv0,nv1,WdetJif0,nshl0,nshl1)
@@ -115,21 +142,13 @@ c
             call e3if_wmlt(rl0, ri0, shp0, shg0, WdetJif0, nshl0)
             call e3if_wmlt(rl1, ri1, shp1, shg1, WdetJif1, nshl1)
 c
-c ... Interface velocity calculations...
-c
-            if     (mat_eos(mater0,1) == ieos_ideal_gas) then
-              call calc_vi(pres0,nv0,u1)
-            elseif (mat_eos(mater1,1) == ieos_ideal_gas) then
-              call calc_vi(pres1,nv1,u0)
-            else
-              call error ('wrong mater: ', 'calc vi', 0)
-            endif
-c
-            call calc_vi_area_node(sum_vi_area_l0,shp0,WdetJif0,nshl0)
-            call calc_vi_area_node(sum_vi_area_l1,shp1,WdetJif1,nshl1)
-c
           enddo  ! end of integeration points loop 
 c
+c      do iel=1,npro
+c        do n = 1,nshl0
+c          write(*,'(a,2i6,5e24.16)') 'rl0: ',iel,n,rl0(iel,n,:)
+c        enddo
+c      enddo
         end subroutine e3if
 c
         subroutine e3var(y,var,ycl,shp,shgl,shg,nshl)
@@ -255,6 +274,8 @@ c
           real*8 :: etot, diff_flux(nsd,nflow), dTdx0
           real*8 :: kappa0(nsd), kappa1(nsd), k0,k1 ! mean curvature
 c
+          real*8 :: alpha,jump_u(5),climit,jump_y(5),A0_jump_y(5)
+c
           do iel = 1,npro
 c
             call calc_conv_flux(fconv0,rho0(iel),u0(iel,:),um0(iel,:),pres0(iel),ei0(iel))
@@ -272,8 +293,8 @@ c
 c... calculate flux in normal direction...
 c
             do iflow = 1,nflow
-              f0(:,iflow) = fconv0(:,iflow) - fdiff0(:,iflow)
-              f1(:,iflow) = fconv1(:,iflow) - fdiff1(:,iflow)
+              f0(:,iflow) = fconv0(:,iflow) !- fdiff0(:,iflow)
+              f1(:,iflow) = fconv1(:,iflow) !- fdiff1(:,iflow)
               f0n0(iflow) = dot_product(f0(:,iflow),nv0(iel,:))
               f0n1(iflow) = dot_product(f0(:,iflow),nv1(iel,:))
               f1n0(iflow) = dot_product(f1(:,iflow),nv0(iel,:))
@@ -282,7 +303,7 @@ c
 c        write(*,500) myrank,iel,f0n0(:)
 c
 c
-c      if (iel == 1) then
+      if (iel == 1) then
 c        write(*,10) 'rho0, u0, p0, T0, ei0:', rho0(iel), u0(iel,1), pres0(iel), ei0(iel)
 c        write(*,10) 'conv0: ',fconv0(1,:)
 c        write(*,10) 'diff0: ',fdiff0(1,:)
@@ -297,10 +318,59 @@ c        write(*,10) 'grad_y u:', var1(iel)%grad_y(:,2)
 c        write(*,10) 'grad_y T:', var1(iel)%grad_y(:,5)
 c        write(*,10) 'f1: ',f1(1,:)
 c       write(*,*) 'stiff1: ',prop1(1)%stiff(15,15)
-c      endif
+      endif
 c
-            ri0(iel,16:20) = ri0(iel,16:20) + 0.5 * ( f0n0(1:5) + f1n0(1:5) )
-            ri1(iel,16:20) = ri1(iel,16:20) + 0.5 * ( f1n1(1:5) + f0n1(1:5) )
+c      write(*,11) 'f0n0:',iel,f0n0
+c      write(*,11) 'f1n0:',iel,f1n0
+c      write(*,11) 'f1n1:',iel,f1n1
+c      write(*,11) 'f0n1:',iel,f0n1
+            ri0(iel,16:20) = ri0(iel,16:20) + pt50 * ( f0n0(1:5) + f1n0(1:5) )
+            ri1(iel,16:20) = ri1(iel,16:20) + pt50 * ( f1n1(1:5) + f0n1(1:5) )
+c      write(*,11) 'ri0  : ',iel,ri0(iel,16:20)
+c      write(*,11) 'ri1  : ',iel,ri1(iel,16:20)
+c...UPWIND????
+c   Flow is in n0 direction...
+c
+c      ri0(iel,16:20) = ri0(iel,16:20) + f0n0(1:5)
+c      ri1(iel,16:20) = ri1(iel,16:20) + f0n1(1:5)
+c
+c
+c... Here is the additional stability terms from the Lax-Friedrichs flux calculations
+c
+            climit = zero
+c            climit = one
+c            climit = 1.e-1
+            alpha_LF(iel) = climit * max(abs(dot_product(u0(iel,:)-um0(iel,:),nv0(iel,:))-c0(iel)),
+     &                  abs(dot_product(u1(iel,:)-um1(iel,:),nv1(iel,:))-c1(iel)))
+            alpha = alpha_LF(iel)
+c
+            jump_u(1) = rho0(iel) - rho1(iel)
+            jump_u(2) = rho0(iel)*u0(iel,1) - rho1(iel)*u1(iel,1)
+            jump_u(3) = rho0(iel)*u0(iel,2) - rho1(iel)*u1(iel,2)
+            jump_u(4) = rho0(iel)*u0(iel,3) - rho1(iel)*u1(iel,3)
+            jump_u(5) = rho0(iel)*(ei0(iel)+pt50*dot_product(u0(iel,:),u0(iel,:))) 
+     &                - rho1(iel)*(ei1(iel)+pt50*dot_product(u1(iel,:),u1(iel,:)))
+c
+            jump_y(1) = pres0(iel) - pres1(iel)
+            jump_y(2) = u0(iel,1) - u1(iel,1)
+            jump_y(3) = u0(iel,2) - u1(iel,2)
+            jump_y(4) = u0(iel,3) - u1(iel,3)
+            jump_y(5) = T0(iel) - T1(iel)
+c
+            A0_jump_y = zero
+c
+            do iflow = 1,nflow
+              do jflow = 1,nflow
+                A0_jump_y(iflow) = A0_jump_y(iflow) + pt50*(A0_0(iel,iflow,jflow)+A0_1(iel,iflow,jflow))*jump_y(jflow)
+              enddo 
+            enddo
+c
+c      ri0(iel,16:20) = ri0(iel,16:20) + pt50*alpha*jump_u(1:5)
+c      ri1(iel,16:20) = ri1(iel,16:20) - pt50*alpha*jump_u(1:5)
+c      write(*,11) 'ri0 a: ',iel,ri0(iel,16:20)
+c      write(*,11) 'ri1 a: ',iel,ri1(iel,16:20)
+      ri0(iel,16:20) = ri0(iel,16:20) + alpha*A0_jump_y(1:5)
+      ri1(iel,16:20) = ri1(iel,16:20) - alpha*A0_jump_y(1:5)
 c
 C... Do we account for surface tension in jump?
 c
@@ -315,26 +385,53 @@ c
               k0 = dot_product(kappa0,nv0(iel,:))
               k1 = dot_product(kappa1,nv1(iel,:))
 c
-              ri0(iel,17:19) = ri0(iel,17:19) + 0.5 * surface_tension_coeff * k0 * nv0(iel,1:nsd)
-              ri1(iel,17:19) = ri1(iel,17:19) + 0.5 * surface_tension_coeff * k1 * nv1(iel,1:nsd)
+c              ri0(iel,17:19) = ri0(iel,17:19) + pt50 * surface_tension_coeff * k0 * nv0(iel,1:nsd)
+c              ri1(iel,17:19) = ri1(iel,17:19) + pt50 * surface_tension_coeff * k1 * nv1(iel,1:nsd)
+              ri0(iel,17:19) = ri0(iel,17:19) + pt50 * surface_tension_coeff * kappa0
+              ri1(iel,17:19) = ri1(iel,17:19) + pt50 * surface_tension_coeff * kappa1
 c
             endif
 c
-c...UPWIND????
-c   Flow is in n0 direction...
-c
-c      ri0(iel,16:20) = ri0(iel,16:20) + f0n0(1:5)
-c      ri1(iel,16:20) = ri1(iel,16:20) + f0n1(1:5)
-c
-c       write(*,500) myrank,iel,ri0(iel,16:20)
-c        write(*,500) myrank,iel,ri1(iel,16:20)
           enddo
 c
 10    format(a,5e24.16)
+11    format(a,i6,5e24.16)
 20    format(a,1e24.16)
 500   format('[',i2,'] ',i3,x,5e24.16)
 c
         end subroutine e3if_flux
+c
+        subroutine flux_jump
+c
+          real*8, dimension(npro) :: vi0,vi1,etot0,etot1
+c
+          vi0 = + (vi(:,1)-um0(:,1))*nv0(:,1)
+     &          + (vi(:,2)-um0(:,2))*nv0(:,2)
+     &          + (vi(:,3)-um0(:,3))*nv0(:,3)
+c
+          vi1 = + (vi(:,1)-um1(:,1))*nv1(:,1)
+     &          + (vi(:,2)-um1(:,2))*nv1(:,2)
+     &          + (vi(:,3)-um1(:,3))*nv1(:,3)
+c
+c      write(*,*) 'vi0:',vi0
+c      write(*,*) 'vi1:',vi1
+c
+          etot0 = ei0 + pt50 * (u0(:,1)*u0(:,1)+u0(:,2)*u0(:,2)+u0(:,3)*u0(:,3))
+          etot1 = ei1 + pt50 * (u1(:,1)*u1(:,1)+u1(:,2)*u1(:,2)+u1(:,3)*u1(:,3))
+c
+          ri0(:,16) = ri0(:,16) + vi0*rho0
+          ri0(:,17) = ri0(:,17) + vi0*rho0*u0(:,1)
+          ri0(:,18) = ri0(:,18) + vi0*rho0*u0(:,2)
+          ri0(:,19) = ri0(:,19) + vi0*rho0*u0(:,3)
+          ri0(:,20) = ri0(:,20) + vi0*rho0*etot0
+c
+          ri1(:,16) = ri1(:,16) + vi1*rho1
+          ri1(:,17) = ri1(:,17) + vi1*rho1*u1(:,1)
+          ri1(:,18) = ri1(:,18) + vi1*rho1*u1(:,2)
+          ri1(:,19) = ri1(:,19) + vi1*rho1*u1(:,3)
+          ri1(:,20) = ri1(:,20) + vi1*rho1*etot1
+c
+        end subroutine flux_jump
 c
         subroutine stability_term(ri,Kij)
 c
@@ -637,6 +734,7 @@ c
             enddo
           enddo
 c
+c      write(*,'(a,5e24.16)') 'ri: ',ri(1,16:20)
           do iflow = 1,nflow
             do n = 1,nshl
               rl(:,n,iflow) = rl(:,n,iflow) + shp(:,n)*WdetJ(:) * ri(:,3*nflow+iflow)
