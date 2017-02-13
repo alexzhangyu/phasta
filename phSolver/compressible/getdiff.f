@@ -11,7 +11,7 @@ c
         integer :: ivisc, icond
 c
         select case (mat_eos(mater,1))
-        case (ieos_ideal_gas,ieos_ideal_gas_2)
+        case (ieos_ideal_gas,ieos_ideal_gas_2,ieos_ideal_gas_mixture)
           ivisc = iprop_gas_visc
           icond = iprop_gas_cond
         case (ieos_liquid_1)
@@ -50,5 +50,21 @@ c        endif
 c
       end subroutine getdiff
 c
-      subroutine getdiffsclr
-      end subroutine getdiffsclr
+      subroutine getDiffSclr(rmu, rlm, rlm2mu, con, npro, mater)
+c
+        use number_def_m
+        use matdat_def_m
+        use sclrs_m
+c
+        implicit none
+c
+        integer, intent(in) :: npro, mater
+        real*8, dimension(npro), intent(out) :: rmu,rlm,rlm2mu,con
+c
+c
+        rmu = scdiff(isclr)
+c
+        rlm = -pt66 * rmu
+        rlm2mu = rlm + two * rmu
+c
+      end subroutine getdiffSclr

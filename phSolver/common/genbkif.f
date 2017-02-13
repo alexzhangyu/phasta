@@ -23,6 +23,7 @@ c
         integer, parameter :: ione = 1, itwo = 2, iseven = 7, inine = 9
         character*255 :: fname1, fname2, tempchar
         character(len=30) :: dataInt
+        integer :: tmpnenl0,tmpnenl1,tmpnshl0,tmpnshl1,tmplcsyst0,tmplcsyst1,iptr
         dataInt = c_char_'integer'//c_null_char
 c
 c
@@ -32,12 +33,11 @@ c
 c
         ! Get the total number of different interface topologies in the whole domain. 
         ! Try to read from a field. If the field does not exist, scan the geombc file.
-C<--- BEGIND HARD CODE
-        itpblktot=1  ! hardwired to montopology for now
-C        call phio_readheader(fhandle,
-C     &   c_char_'number of interface tpblocks' // char(0),
-C     &   c_loc(itpblktot), ione, dataInt, iotype) 
-C<--- END HARD CODE
+C
+C        itpblktot=1  ! hardwired to montopology for now
+        call phio_readheader(fhandle,
+     &   c_char_'number of interface tpblocks' // char(0),
+     &   c_loc(itpblktot), ione, dataInt, iotype) 
 c
         if (itpblktot == -1) then 
           ! The field 'total number of different interface tpblocks' was not found in the geombc file.
@@ -76,40 +76,52 @@ c
         ndofl  = ndof
         nsymdl = nsymdf      ! ????
 c
-        iblk_loop: do iblk = 1, itpblk
+        iblk_loop: do iblk = 1, maxtopif
 c
            writeLock=0;
            if(input_mode.ge.1) then
              write (fname2,"('connectivity interface',i1)") iblk
            else
-             write (fname2,"('connectivity interface linear tetrahedron tetrahedron')") 
-!              write (fname2,"('connectivity interior?')") 
+             select case (iblk)
+             case (itpif_tet_tet)
+               write (fname2,"('connectivity interface linear tetrahedron tetrahedron')") 
+             case (itpif_wedge_tet)
+               write (fname2,"('connectivity interface linear wedge tetrahedron')") 
+             case (itpif_tet_wedge)
+               write (fname2,"('connectivity interface linear tetrahedron wedge')") 
+             case (itpif_wedge_wedge)
+               write (fname2,"('connectivity interface linear wedge wedge')") 
+             case default
+               cycle iblk_loop
+             end select
            endif
-
+c
            ! Synchronization for performance monitoring, as some parts do not include some topologies
 c           call MPI_Barrier(MPI_COMM_WORLD,ierr) 
+           intfromfile(:)=-1
            call phio_readheader(fhandle, fname2 // char(0),
      &      c_loc(intfromfile), inine, dataInt, iotype)
 c
            neltp  = intfromfile(1)       ! number of pair of elements in this block
-           nenl0  = intfromfile(2)       ! number of nodes in element 0
-           nenl1  = intfromfile(3)       ! number of nodes in element 1
+           tmpnenl0  = intfromfile(2)       ! number of nodes in element 0
+           tmpnenl1  = intfromfile(3)       ! number of nodes in element 1
            ipordl = intfromfile(4)       ! polynomial order
-           nshl0  = intfromfile(5)
-           nshl1  = intfromfile(6)
+           tmpnshl0  = intfromfile(5)
+           tmpnshl1  = intfromfile(6)
            nnface = intfromfile(7)       ! number of nodes on the interface
-           lcsyst0= intfromfile(8)       ! element type 0
-           lcsyst1= intfromfile(9)       ! element type 1
-
-           if (neltp==0) then
+           tmplcsyst0= intfromfile(8)       ! element type 0
+           tmplcsyst1= intfromfile(9)       ! element type 1
+c
+           if (neltp<0) then
               writeLock=1;
-      cycle iblk_loop
+              cycle iblk_loop
            endif
+c
 c
 c... reads all the connectivity data in one array
 c
-           iientpsiz = neltp*(nshl0+nshl1)
-           allocate (ientp(neltp,(nshl0+nshl1)))
+           iientpsiz = neltp*(tmpnshl0+tmpnshl1)
+           allocate (ientp(neltp,(tmpnshl0+tmpnshl1)))
            call phio_readdatablock(fhandle,fname2 // char(0),
      &      c_loc(ientp), iientpsiz, dataInt, iotype)
 c
@@ -121,10 +133,20 @@ c
            if(input_mode.ge.1) then
              write(fname2,"('material type interface',i1)") iblk
            else
-             write(fname2,"('material type interface linear tetrahedron tetrahedron')")
+             select case (iblk)
+             case (itpif_tet_tet)
+               write(fname2,"('material type interface linear tetrahedron tetrahedron')")
+             case (itpif_wedge_tet)
+               write(fname2,"('material type interface linear wedge tetrahedron')")
+             case (itpif_tet_wedge)
+               write(fname2,"('material type interface linear tetrahedron wedge')")
+             case (itpif_wedge_wedge)
+               write(fname2,"('material type interface linear wedge wedge')")
+             end select
            endif
 c
 c           call MPI_Barrier(MPI_COMM_WORLD,ierr) 
+           intfromfile(:)=-1
            call phio_readheader(fhandle, fname2 // char(0),
      &      c_loc(intfromfile), itwo, dataInt, iotype)
            allocate(mattypeif(intfromfile(1),intfromfile(2)))
@@ -132,51 +154,55 @@ c           call MPI_Barrier(MPI_COMM_WORLD,ierr)
            call phio_readdatablock(fhandle,fname2 // char(0),
      &      c_loc(mattypeif), imattypesiz, dataInt, iotype)
 c
+c ... material tag first always takes mattype0 and ienif0
+c
+          mattype0 = 1
+          mattype1 = 2
+c
+          if     (mattypeif(1,1) == mat_tag(1,1)) then
+            nshl0 = tmpnshl0
+            nshl1 = tmpnshl1
+            lcsyst0 = tmplcsyst0
+            lcsyst1 = tmplcsyst1
+            nenl0 = tmpnenl0
+            nenl1 = tmpnenl1
+          elseif (mattypeif(1,2) == mat_tag(1,1)) then
+            nshl0 = tmpnshl1
+            nshl1 = tmpnshl0
+            lcsyst0 = tmplcsyst1
+            lcsyst1 = tmplcsyst0
+            nenl0 = tmpnenl1
+            nenl1 = tmpnenl0
+          else
+            write(*,*) 'ERROR: in genbkif. material type is wrong!'
+            call error ('genbkif  ', '', 0)
+          endif
+c
           allocate(ienif0tmp(neltp,nshl0))
           allocate(ienif1tmp(neltp,nshl1))
-c
-c... set material types:
-c
-          do imattype = 1,nummat
-            ! check the material type from file against the input tags...
-            if (mattypeif(1,1) == mat_tag(imattype,1)) then
-              mattype0 = imattype
-            endif
-            if (mattypeif(1,2) == mat_tag(imattype,1)) then
-              mattype1 = imattype
-            endif
-          enddo
-c
-          if (mattype0 == mattype1) then
-            call error('genbkif ','Wrong interface mattype in geombc',0)
-          endif
 c
           if(writeLock==0) then
 c
 c... make blocks of elements
 c
-          blocks_loop: do n = 1, neltp, ibksz
+          iptr = 1
 c
-            ipro = 0
+          blocks_loop:   do n = 1, neltp, ibksz
+c
             npro = 0
+c
             do
               npro = npro + 1
-              if (mattypeif(iel+ipro,1) == mat_tag(mattype0,1)) then
-                ienif0tmp(npro,1:nshl0) = ientp(iel+ipro,1:nshl0)
-                ienif1tmp(npro,1:nshl1) = ientp(iel+ipro,nshl0+1:nshl0+nshl1)
-              else if (mattypeif(iel+ipro,2) == mat_tag(mattype0,1)) then
-                ienif0tmp(npro,1:nshl0) = ientp(iel+ipro,nshl0+1:nshl0+nshl1)
-                ienif1tmp(npro,1:nshl1) = ientp(iel+ipro,1:nshl0)
-              else
-                call error ('genbkif  ', 'wrong material type', mattype(i))
-              endif
-c
-              ipro = ipro + 1
-              if (npro == ibksz .or. iel+ipro>neltp) exit
+              ienif0tmp(npro,1:nshl0) = ientp(iptr,1:nshl0)
+              ienif1tmp(npro,1:nshl1) = ientp(iptr,nshl0+1:nshl0+nshl1)
+              iptr = iptr + 1
+              if (npro == ibksz .or. iptr > neltp) exit
             enddo
 c
-            nelblif = nelblif + 1
+c      write(*,11) iel, lcsyst0, lcsyst1,nshl0,nshl1, mattype0, mattype1
+11    format(' iel, lcsyst0, lcsyst1, nshl0, nshl1, mattype0, mattype1: ',7i4)
 c
+            nelblif = nelblif + 1
             lcblkif(1,nelblif) = iel
 c            lcblkif(2,nelblif) = iopen   ! ??? see genblk.f
             lcblkif(3,nelblif) = lcsyst0  ! local coordinate system
@@ -189,19 +215,9 @@ c            lcblkif(2,nelblif) = iopen   ! ??? see genblk.f
             lcblkif(10,nelblif) = mattype1
             lcblkif(11,nelblif) = ndof
             lcblkif(12,nelblif) = nsymdl ! ????
-            lcblkif(13,nelblif) = nshl0
-            lcblkif(14,nelblif) = nshl1
-c
-c... fill the toplogical id
-c    NOTE: the iftpid array can be replaced by using a function which will return
-c          topological id 1-12, by taking the two element coordinate systems...
-c          The current approach requires additional array of sizeof(int)*MAXBLK...
-c
-          if (lcsyst0 .eq. 1 .AND. lcsyst1 .eq. 1) then
-            iftpid(nelblif) = 1
-          else
-            write(*,*) 'ERROR: THE INTERFACE TOPOLOGICAL ID HAS NOT COMPLETED!!!'
-          endif          
+            lcblkif(iblkif_nshl0,nelblif) = nshl0
+            lcblkif(iblkif_nshl1,nelblif) = nshl1
+            lcblkif(iblkif_topology,nelblif) = iblk
 c
 c... allocate memory for stack arrays
 c

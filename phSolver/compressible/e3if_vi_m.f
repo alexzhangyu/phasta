@@ -8,19 +8,23 @@ c
 c
       contains
 c
-      subroutine calc_vi(p,n,u)
+      subroutine calc_vi(p,u)
 c
-        real*8, pointer, intent(in) :: p(:), n(:,:), u(:,:)
+        use sclrs_m
+c
+        real*8, pointer, intent(in) :: p(:), u(:,:)
         real*8 :: vi_max
 c
-        integer :: isd,i
+        integer :: isd,i,n
         real*8 :: vimag,v1,t1,c1
         real*8 :: pvap,cprod,cdest
 c... Clausius-Clapeyron:
         real*8, dimension(npro) :: x_vapor     ! vapor mole fraction in gas/vapor mixture
      &,                            y_vapor     ! vapor mass fraction ...
+     &,                            dydn        ! vapor mass fraction gradient in normal direction of liquid 1
      &,                            rho_mix     ! mixture density
      &,                            mw_mix      ! mixture molecular weight
+     &,                            vap_rate
 c
         select case (vi_ramping)
         case (no_ramp)
@@ -42,34 +46,57 @@ c
         case (no_vi)
           vi = zero
         case (const_vi)
-          vi = vi_mag * n
+          vi = vi_mag * nv0
         case (vieilles_burning)
 c
-          vi(:,1) = burn_rate_coeff*(p/burn_rate_pref)**burn_rate_exp * n(:,1)
-          vi(:,2) = burn_rate_coeff*(p/burn_rate_pref)**burn_rate_exp * n(:,2)
-          vi(:,3) = burn_rate_coeff*(p/burn_rate_pref)**burn_rate_exp * n(:,3)
+          vi(:,1) = burn_rate_coeff*(p/burn_rate_pref)**burn_rate_exp * nv0(:,1)
+          vi(:,2) = burn_rate_coeff*(p/burn_rate_pref)**burn_rate_exp * nv0(:,2)
+          vi(:,3) = burn_rate_coeff*(p/burn_rate_pref)**burn_rate_exp * nv0(:,3)
 c
         case (clausius_clapeyron)
 c
           x_vapor = exp( - hfg_liquid / Ru * (one/T0 - one/T_boil_liquid) )
-          !x_vapor = min(1.d-1,exp( - hfg_liquid / Ru * (one/T0 - one/T_boil_liquid) ))
           mw_mix  = x_vapor*MW_liquid + (one-x_vapor)*mat_prop(mater0,iprop_ideal_gas_mw, 1)
+c
+          y_vapor = x_vapor*MW_liquid/MW_mix
+          y_vapor = max(zero,y_vapor)
+          y_vapor = min(one, y_vapor)
+c
+          vap_frac0 = y_vapor
+c
           rho_mix = pres0 / (Ru/mw_mix*1.d3*T0)
 c
-          vi(:,1) = - (rho1*(u1(:,1)-um1(:,1)) - rho_mix*(u0(:,1)-um0(:,1))) / (rho1 - rho_mix)
-          vi(:,2) = - (rho1*(u1(:,2)-um1(:,2)) - rho_mix*(u0(:,2)-um0(:,2))) / (rho1 - rho_mix)
-          vi(:,3) = - (rho1*(u1(:,3)-um1(:,3)) - rho_mix*(u0(:,3)-um0(:,3))) / (rho1 - rho_mix)
+          dydn = zero
+c
+          do n = 1,nshl0
+            dydn = dydn + ycl0(:,n,ndof)*shg0(:,n,1)*nv1(:,1)
+     &                  + ycl0(:,n,ndof)*shg0(:,n,2)*nv1(:,2)
+     &                  + ycl0(:,n,ndof)*shg0(:,n,3)*nv1(:,3)
+          enddo
+c
+          vap_rate = -rho_mix/rho1*scdiff(1)*dydn/(one - y_vapor)
+c
+          vi(:,1) = vap_rate * nv0(:,1)
+          vi(:,2) = vap_rate * nv0(:,2)
+          vi(:,3) = vap_rate * nv0(:,3)
+c
 c      print*,'npro:',npro
-c      print*, 'x_vapor: ',x_vapor
+c      print*, 'y_vapor, dydn: ',y_vapor,dydn
 c      print*, 'mw_mix:  ',mw_mix
-c      print*, 'rho1*u1: ',rho1*(u1(:,1)-um1(:,1))
-c      print*, 'rho_mix: ',rho_mix*(u0(:,1)-um0(:,1))
+c      print*, 'rho1:    ',rho1
+c      print*, 'rho_mix: ',rho_mix
+c      print*, 'vap_rate:',vap_rate
 c      print*, 'u0(:,1): ',u0(:,1)
 c      print*, 'u1(:,1): ',u1(:,1)
 c      print*, 'um0(:,1):',um0(:,1)
 c      print*, 'um1(:,1):',um1(:,1)
 c      print*, 'vi(1):   ',vi(:,1)
 c      print*, 'vi(2):   ',vi(:,2)
+c      print*, 'vi(3):   ',vi(:,3)
+C
+c... NOTE: we don't add liquid velocity because it's already there...
+c
+      return
 c
         case (cavitation)
 c
@@ -122,5 +149,12 @@ c          sum_vi_area_l(:,n,nsd+1) = sum_vi_area_l(:,n,nsd+1) + shp(:,n)*WdetJi
         enddo
 c
       end subroutine calc_vi_area_node
+c
+      subroutine calc_vapor_frac_node
+        integer :: n
+        do n = 1,nshl0
+          ifbc_l0(:,n,ivapor_frac) = ifbc_l0(:,n,ivapor_frac) + shp0(:,n)*area(:)*vap_frac0
+        enddo
+      end subroutine calc_vapor_frac_node
 c
       end module e3if_vi_m

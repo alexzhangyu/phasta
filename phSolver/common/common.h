@@ -18,6 +18,7 @@ c
       use elmpar_m
       use blkdat_m
       use intpt_m
+      use intdat_m
       use shpdat_m
       use genpar_m
       use inpdat_m
@@ -30,6 +31,7 @@ c
       use workfc_m
       use mio_m
       use mioname_m
+      use sclrs_m
 
 	IMPLICIT REAL*8 (a-h,o-z)
 c
@@ -37,7 +39,6 @@ c the common block nomodule holds all the things which have been removed
 c from different modules
      
         integer seqsize, stepseq
-        integer consrv_sclr_conv_vel
         integer spongecontinuity, spongemomentum1, spongemomentum2
         integer spongeenergy, spongemomentum3
         integer*8 nshgt,minowned, maxowned
@@ -88,8 +89,6 @@ c from different modules
         common /spebcvr/ irscale, intpres, plandist,
      &            thetag, ds, tolerence, radcyl, rbltin, rvscal
 
-        common /sclrs/ scdiff(5),tdecay,nsclr,isclr,nsolt,nosource,
-     &            consrv_sclr_conv_vel
 c 
 c.... common blocks
 c
@@ -163,7 +162,6 @@ c
 c
         common /melmcat/ mcsyst, melCat, nenCat(8,3),    nfaCat(8,3)
 c
-       common /intdat/ intg(3,MAXTS),  intpt(3),       intptb(3)
 c
         common /mintpar/ indQpt(3,3,4),  numQpt(3,3,4),
      &                  intmax
@@ -251,13 +249,6 @@ c melCat        : maximum number of element categories
 c nenCat (8,3)  : number of nodes for each category and dimension
 c nfaCat (8,3)  : number of faces for each category and dimension
 c
-c----------------------------------------------------------------------
-c
-c.... common /intdat/   : integration data
-c
-c intg  (2,MAXTS) : integration parameters
-c intpt (3)       : integration pointers
-c intptb(3)       : integration pointers of boundary elements
 c----------------------------------------------------------------------
 c
 c.... common /shpdat/   : hierarchic shape function quadrature data

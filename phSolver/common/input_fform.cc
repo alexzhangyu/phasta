@@ -28,6 +28,7 @@ void populate_eos_map
 (map<string,int>& eos_map)
 {
   eos_map.insert(map<string,int>::value_type("ideal_gas", ieos_ideal_gas));
+  eos_map.insert(map<string,int>::value_type("ideal_gas_mixture", ieos_ideal_gas_mixture));
   eos_map.insert(map<string,int>::value_type("ideal_gas_2", ieos_ideal_gas_2));
   eos_map.insert(map<string,int>::value_type("liquid_1",  ieos_liquid_1));
   eos_map.insert(map<string,int>::value_type("solid_1",  ieos_solid_1));
@@ -532,11 +533,13 @@ int input_fform(phSolver::Input& inp)
     }
     vec.erase(vec.begin(),vec.end());
 
+/*
     vec = inp.GetValue("Viscosity");
     for(i=0; i< levlset.iLSet +1 ; i++){
       matdat.datmat[i][1][0] = vec[i];
     }
     vec.erase(vec.begin(),vec.end());
+ */
 
 //      vec = inp.GetValue("Specific Heat");
     for(i=0; i< levlset.iLSet +1 ; i++){
@@ -900,7 +903,7 @@ int input_fform(phSolver::Input& inp)
 
     intdat.intg[0][0]=inp.GetValue("Quadrature Rule on Interior");
     intdat.intg[0][1]=inp.GetValue("Quadrature Rule on Boundary");
-    intdat.intg[0][2]=inp.GetValue("Quadrature Rule on interface");
+    intdat.intg[0][2]=inp.GetValue("Quadrature Rule on Interface");
     genpar.ibksiz = inp.GetValue("Number of Elements Per Block");
 
     ((string)inp.GetValue("Turn Off Source Terms for Scalars") 
