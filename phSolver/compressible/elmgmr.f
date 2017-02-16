@@ -688,9 +688,9 @@ c
         enddo   !end of boundary element loop
 c
 #if debug==1
-      imax = maxloc(res,1)
-      idbg = imax(1)
-      write(*,'(a22,i6,5e24.16)') 'ELMGMR: after boundary',idbg,res(idbg,:)
+c      imax = maxloc(res,1)
+c      idbg = imax(1)
+c      write(*,'(a22,i6,5e24.16)') 'ELMGMR: after boundary',idbg,res(idbg,:)
 #endif
 c
       ttim(80) = ttim(80) + secs(0.0)
@@ -917,7 +917,7 @@ c
         enddo if_blocks
 c
 #if debug==1
-      write(*,'(a22,i6,5e24.16)') 'ELMGMR: after interface',idbg,res(idbg,:)
+c      write(*,'(a22,i6,5e24.16)') 'ELMGMR: after interface',idbg,res(idbg,:)
 #endif
 c
         if (associated(if_kappa)) then
