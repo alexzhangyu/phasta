@@ -60,9 +60,6 @@ c
      &     f1(npro), f2(npro), f3(npro), f4(npro), 
      &     f5(npro), f6(npro)
 c     &,     rk(npro) 
-c.....Used for solid calculation
-c      real*8, dimension(npro) :: d_temp1,d_temp2,d_temp3
-c      real*8, dimension(npro,6) :: bq_af
 c.....
       ttim(23) = ttim(23) - secs(0.0)
 c
@@ -279,7 +276,7 @@ c
 c     
 c.... flop count
 c
-    !      flops = flops + 86*npro
+!      flops = flops + 86*npro
 c     
 c.... end of GLS
 c     
@@ -291,7 +288,7 @@ c
 c.... compute diffusive fluxes and add them to ri and rmi
 c
 c....if this is the solid block, modify the momentum and energy equation
-        if (mat_eos(mater,1).eq.ieos_solid_1)then
+      if (mat_eos(mater,1).eq.ieos_solid_1)then
 c
          call set_solid_difflux_interior( rmi,  ri,  u1,  u2,
      &                                    u3,   con )
