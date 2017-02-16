@@ -373,6 +373,9 @@ c
         dudx = g1yi(:,2:4)
         dudy = g2yi(:,2:4)
         dudz = g3yi(:,2:4)
+        dtpdx = g1yi(:,5)           
+        dtpdy = g2yi(:,5)
+        dtpdz = g3yi(:,5)
         call calc_solid_bdy
 c          call e3bvar_solid(g1yi,g2yi,g3yi,almBi,alfBi,gamBi)
       endif
