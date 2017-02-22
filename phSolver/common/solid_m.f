@@ -2,13 +2,19 @@
         use pointer_data
         use outpar_m
         implicit none
-c
+c        
+c.......for interior blocks
         type (r3d), dimension(MAXBLK2) ::  b !for solid,left Cauchy_green tensor,added
         type (r3d), dimension(MAXBLK2) ::  b_dot!time derivative of b,added
         type (r3d), dimension(MAXBLK2) ::  b_af! b at time step n+af,added
+c.......for boundary element blocks        
         type (r3d), dimension(MAXBLK2) ::  bdy_b !left Cauchy_green tensor on the boundary,added
         type (r3d), dimension(MAXBLK2) ::  bdy_b_dot!time derivative of b on the boudary,added
         type (r3d), dimension(MAXBLK2) ::  bdy_b_af! b at time step n+af on the boudary,added
+c.......for interface element blocks        
+        type (r3d), dimension(MAXBLK2) ::  if_b !left Cauchy_green tensor on the iterface,added
+        type (r3d), dimension(MAXBLK2) ::  if_b_dot!time derivative of b on the interface,added
+        type (r3d), dimension(MAXBLK2) ::  if_b_af! b at time step n+af on the interface,added        
 c
         integer, pointer :: is_solid(:)
         integer, parameter :: b_size = 6
@@ -18,12 +24,15 @@ c
 c
         type solid_t
           logical :: is_active, restart
-          integer :: nel,nelb
+          integer :: nel,nelb,nel_if
         end type solid_t
 c
         integer :: b_array_size
         real*8, dimension(:), pointer :: temp_b, temp_b_dot, temp_b_af  ! temp arrays to read b, b_dot and b_af
         real*8, dimension(:), pointer :: bdy_temp_b, bdy_temp_b_dot, bdy_temp_b_af  ! on the boundary...
+c.......for the interface element blocks
+        real*8, dimension(:), pointer :: if_temp_b, if_temp_b_dot, 
+     &                                   if_temp_b_af  ! on the interface...
 c
         type(solid_t) :: solid_p
 c
@@ -82,6 +91,9 @@ c
           use intpt_m
           implicit none
           integer :: mattype, iblk, npro
+! local variables for interface element
+          integer :: matif_0, matif_1,
+     &               lcsyst_0, lcsyst_1
 c
 c.... allocate space for solid arrays 
 c
@@ -153,7 +165,9 @@ c
 c
               if (solid_p%restart) then
 c
-                call init_block(bdy_b(iblk)%p,bdy_b_dot(iblk)%p,bdy_b_af(iblk)%p,bdy_temp_b,bdy_temp_b_dot,bdy_temp_b_af)
+                call init_block(bdy_b(iblk)%p, bdy_b_dot(iblk)%p,
+     &                          bdy_b_af(iblk)%p, bdy_temp_b,
+     &                          bdy_temp_b_dot, bdy_temp_b_af)
 c
               else
 c
@@ -180,6 +194,64 @@ c..
             endif
 c
           enddo boundary_blocks_loop
+c
+          solid_p%nel_if= 0
+c.........for interface element blocks
+         interface_blocks_loop: do iblk = 1, nelblif
+c
+            matif_0 = lcblkif(9,iblk)
+            matif_1 = lcblkif(10,iblk)
+!            lcsyst_0 = lcblkif(3,iblk)
+!            lcsyst_1 = lcblkif(4,iblk)
+!            ngaussif = nintif0(lcsyst_0)!same for both sides
+            npro = lcblkif(1,iblk+1) - lcblkif(1,iblk) !same for both sides
+            itpid   = lcblkif(iblkif_topology,iblk)
+            ngaussif = nintif(itpid)
+            
+c
+c..........check !check the proper ngaussif here!!!
+            if ( (mat_eos(matif_0,1).eq.ieos_solid_1) .or.
+     &           (mat_eos(matif_1,1).ne.ieos_solid_1) ) then
+c
+              allocate (if_b(iblk)%p(npro,ngaussif,b_size))
+              allocate (if_b_dot(iblk)%p(npro,ngaussif,b_size))
+              allocate (if_b_af(iblk)%p(npro,ngaussif,b_size))
+c
+              solid_p%nel_if = solid_p%nel_if + npro
+c
+              if (solid_p%restart) then
+c
+                call init_block(if_b(iblk)%p, if_b_dot(iblk)%p,
+     &                          if_b_af(iblk)%p, if_temp_b,
+     &                          if_temp_b_dot, if_temp_b_af)
+c
+              else
+c
+                if_b(iblk)%p(:,:,:)= one
+                if_b(iblk)%p(:,:,4)= zero
+                if_b(iblk)%p(:,:,5)= zero
+                if_b(iblk)%p(:,:,6)= zero
+                if_b_af(iblk)%p(:,:,:) = one
+                if_b_af(iblk)%p(:,:,4) = zero
+                if_b_af(iblk)%p(:,:,5) = zero
+                if_b_af(iblk)%p(:,:,6) = zero
+c
+                if_b_dot(iblk)%p(:,:,:) = zero
+c
+              endif
+            else
+!              write(*,*) 'ERROR: in solid_m. only one side of interface is solid !'
+!              call error ('solid_m  ', '', 0)
+              cycle
+            endif
+c..
+            if (solid_p%restart) then
+              deallocate(if_temp_b)
+              deallocate(if_temp_b)
+              deallocate(if_temp_b_af)
+            endif
+c
+          enddo interface_blocks_loop
 c
 c
         end subroutine malloc_solid
