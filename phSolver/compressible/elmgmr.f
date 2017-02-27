@@ -309,6 +309,7 @@ c
         use e3_solid_m
         use probe_m
         use ifbc_def_m
+        use e3if_solid_data_m
 c
         include "common.h"
         include "mpif.h"
@@ -825,6 +826,10 @@ c
             get_vap_frac0 => get_vapor_fraction0
           case (ieos_liquid_1)
             getthmif0_ptr => getthm7_liquid_1
+          case (ieos_solid_1)
+            getthmif0_ptr => getthm7_solid_1
+            iblkif_solid = iblk 
+            call e3if0_malloc_solid !may improve later
           case default
             call error ('getthm  ', 'WE DO NOT SUPPORT THIS MATERIAL (3)', mater1)
           end select
@@ -840,6 +845,10 @@ c            get_vap_frac1 => get_vapor_fraction1
             call error ('getthm  ', 'WE DO NOT SUPPORT THIS MATERIAL (3)', mater1)
           case (ieos_liquid_1)
             getthmif1_ptr => getthm7_liquid_1
+          case (ieos_solid_1)
+            getthmif1_ptr => getthm7_solid_1
+            iblkif_solid = iblk 
+            call e3if1_malloc_solid !may improve later
           case default
             call error ('getthm  ', 'WE DO NOT SUPPORT THIS MATERIAL (3)', mater1)
           end select
@@ -913,6 +922,15 @@ c
           deallocate (egmassif01)
           deallocate (egmassif10)
           deallocate (egmassif11)
+c
+! for solid deallocation only
+          if ( associated(bulkMod0) ) then
+            call e3if0_mfree_solid
+          endif
+          if ( associated(bulkMod1) ) then
+            call e3if1_mfree_solid
+          endif
+! for solid deallocation
 c
         enddo if_blocks
 c
