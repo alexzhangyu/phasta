@@ -12,9 +12,14 @@ c.......for boundary element blocks
         type (r3d), dimension(MAXBLK2) ::  bdy_b_dot!time derivative of b on the boudary,added
         type (r3d), dimension(MAXBLK2) ::  bdy_b_af! b at time step n+af on the boudary,added
 c.......for interface element blocks        
-        type (r3d), dimension(MAXBLK2) ::  if_b !left Cauchy_green tensor on the iterface,added
-        type (r3d), dimension(MAXBLK2) ::  if_b_dot!time derivative of b on the interface,added
-        type (r3d), dimension(MAXBLK2) ::  if_b_af! b at time step n+af on the interface,added        
+        type (r3d), dimension(MAXBLK2) ::  if_b0 !left Cauchy_green tensor on the iterface,added
+        type (r3d), dimension(MAXBLK2) ::  if_b0_dot!time derivative of b on the interface,added
+        type (r3d), dimension(MAXBLK2) ::  if_b0_af! b at time step n+af on the interface,added
+c        
+        type (r3d), dimension(MAXBLK2) ::  if_b1 !left Cauchy_green tensor on the iterface,added
+        type (r3d), dimension(MAXBLK2) ::  if_b1_dot!time derivative of b on the interface,added
+        type (r3d), dimension(MAXBLK2) ::  if_b1_af! b at time step n+af on the interface,added        
+c
 c
         integer, pointer :: is_solid(:)
         integer, parameter :: b_size = 6
@@ -24,15 +29,17 @@ c
 c
         type solid_t
           logical :: is_active, restart
-          integer :: nel,nelb,nel_if
+          integer :: nel,nelb,nel_if0, nel_if1
         end type solid_t
 c
         integer :: b_array_size
         real*8, dimension(:), pointer :: temp_b, temp_b_dot, temp_b_af  ! temp arrays to read b, b_dot and b_af
         real*8, dimension(:), pointer :: bdy_temp_b, bdy_temp_b_dot, bdy_temp_b_af  ! on the boundary...
 c.......for the interface element blocks
-        real*8, dimension(:), pointer :: if_temp_b, if_temp_b_dot, 
-     &                                   if_temp_b_af  ! on the interface...
+        real*8, dimension(:), pointer :: if_temp_b0, if_temp_b0_dot, 
+     &                                   if_temp_b0_af  ! on the interface...
+        real*8, dimension(:), pointer :: if_temp_b1, if_temp_b1_dot,
+     &                                   if_temp_b1_af  ! on the interface...
 c
         type(solid_t) :: solid_p
 c
@@ -195,8 +202,10 @@ c..
 c
           enddo boundary_blocks_loop
 c
-          solid_p%nel_if= 0
 c.........for interface element blocks
+          solid_p%nel_if0= 0
+          solid_p%nel_if1 = 0          
+c...............................................
          interface_blocks_loop: do iblk = 1, nelblif
 c
             matif_0 = lcblkif(9,iblk)
@@ -210,33 +219,59 @@ c
             
 c
 c..........check !check the proper ngaussif here!!!
-            if ( (mat_eos(matif_0,1).eq.ieos_solid_1) .or.
-     &           (mat_eos(matif_1,1).ne.ieos_solid_1) ) then
+            if ( (mat_eos(matif_0,1).eq.ieos_solid_1) ) then
 c
-              allocate (if_b(iblk)%p(npro,ngaussif,b_size))
-              allocate (if_b_dot(iblk)%p(npro,ngaussif,b_size))
-              allocate (if_b_af(iblk)%p(npro,ngaussif,b_size))
+              allocate (if_b0(iblk)%p(npro,ngaussif,b_size))
+              allocate (if_b0_dot(iblk)%p(npro,ngaussif,b_size))
+              allocate (if_b0_af(iblk)%p(npro,ngaussif,b_size))
 c
-              solid_p%nel_if = solid_p%nel_if + npro
+              solid_p%nel_if0 = solid_p%nel_if0 + npro
 c
               if (solid_p%restart) then
 c
-                call init_block(if_b(iblk)%p, if_b_dot(iblk)%p,
-     &                          if_b_af(iblk)%p, if_temp_b,
-     &                          if_temp_b_dot, if_temp_b_af)
+                call init_block(if_b0(iblk)%p, if_b0_dot(iblk)%p,
+     &                          if_b0_af(iblk)%p, if_temp_b0,
+     &                          if_temp_b0_dot, if_temp_b0_af)
 c
               else
 c
-                if_b(iblk)%p(:,:,:)= one
-                if_b(iblk)%p(:,:,4)= zero
-                if_b(iblk)%p(:,:,5)= zero
-                if_b(iblk)%p(:,:,6)= zero
-                if_b_af(iblk)%p(:,:,:) = one
-                if_b_af(iblk)%p(:,:,4) = zero
-                if_b_af(iblk)%p(:,:,5) = zero
-                if_b_af(iblk)%p(:,:,6) = zero
+                if_b0(iblk)%p(:,:,:)= one
+                if_b0(iblk)%p(:,:,4)= zero
+                if_b0(iblk)%p(:,:,5)= zero
+                if_b0(iblk)%p(:,:,6)= zero
+                if_b0_af(iblk)%p(:,:,:) = one
+                if_b0_af(iblk)%p(:,:,4) = zero
+                if_b0_af(iblk)%p(:,:,5) = zero
+                if_b0_af(iblk)%p(:,:,6) = zero
 c
-                if_b_dot(iblk)%p(:,:,:) = zero
+                if_b0_dot(iblk)%p(:,:,:) = zero
+c
+              endif
+            else if ( (mat_eos(matif_1,1).eq.ieos_solid_1) )then
+c
+              allocate (if_b1(iblk)%p(npro,ngaussif,b_size))
+              allocate (if_b1_dot(iblk)%p(npro,ngaussif,b_size))
+              allocate (if_b1_af(iblk)%p(npro,ngaussif,b_size))
+c
+              solid_p%nel_if1 = solid_p%nel_if1 + npro
+c
+              if (solid_p%restart) then
+c
+                call init_block( if_b1(iblk)%p,if_b1_dot(iblk)%p,
+     &                           if_b1_af(iblk)%p,if_temp_b1,
+     &                           if_temp_b1_dot,if_temp_b1_af )
+              else
+c
+                if_b1(iblk)%p(:,:,:)= one
+                if_b1(iblk)%p(:,:,4)= zero
+                if_b1(iblk)%p(:,:,5)= zero
+                if_b1(iblk)%p(:,:,6)= zero
+                if_b1_af(iblk)%p(:,:,:) = one
+                if_b1_af(iblk)%p(:,:,4) = zero
+                if_b1_af(iblk)%p(:,:,5) = zero
+                if_b1_af(iblk)%p(:,:,6) = zero
+c
+                if_b1_dot(iblk)%p(:,:,:) = zero
 c
               endif
             else
@@ -246,9 +281,9 @@ c
             endif
 c..
             if (solid_p%restart) then
-              deallocate(if_temp_b)
-              deallocate(if_temp_b)
-              deallocate(if_temp_b_af)
+              deallocate(if_temp_b0, if_temp_b1)
+              deallocate(if_temp_b0_dot, if_temp_b1_dot)
+              deallocate(if_temp_b0_af, if_temp_b1_af)
             endif
 c
           enddo interface_blocks_loop
