@@ -6,7 +6,7 @@ c
         use matdat_def_m
         use number_def_m
         use blkdat_m
-        use elmpar_m, only: nelblk, nelblb
+        use elmpar_m, only: nelblk, nelblb, nelblif
         use pointer_data, only: mien
         use inpdat_m
         use intpt_m, only: nint
@@ -20,6 +20,9 @@ c
        integer :: nshl_temp
        integer :: iel_temp, lcsyst_temp, ngauss_temp
        real*8 :: dt
+! local array for interface elements operations
+       integer :: mater_if0, mater_if1
+       integer :: npro_if_temp      
 c
        real*8  old_x(numnp,nsd)
        real*8  y(nshg,ndof)
@@ -45,7 +48,7 @@ c
        elm_b5 = zero
        elm_b6 = zero
       
-c.....for interior blocks
+c-----------------------for interior blocks-----------------------------------
          do iblk = 1, nelblk
            mater_s = lcblk(7,iblk)
 !for solid block only
@@ -90,8 +93,8 @@ c........solid debug
 c........solid debug
 c
         deallocate(is_solid) 
-
-c.....for boundary blocks
+c
+c--------------------for boundary blocks---------------------------------------
          do iblk = 1, nelblb
            mater_sb = lcblkb(7,iblk)
 c
@@ -100,16 +103,66 @@ c
 c.....save the temp
               npro_b_temp = SIZE(bdy_b(iblk)%p,1)
 c.....Do the update
-              bdy_b_dot(iblk)%p(:,:,:)  =  -one/(alfBi * gamBi * dt)*bdy_b(iblk)%p(:,:,:)
-     &+                           (one - one/gamBi) * bdy_b_dot(iblk)%p(:,:,:)
-     &+                           one/(alfBi * gamBi * dt) * bdy_b_af(iblk)%p(:,:,:)
+              bdy_b_dot(iblk)%p(:,:,:)  = -one/(alfBi * gamBi * dt)
+     &                                  * bdy_b(iblk)%p(:,:,:)
+     &                                  + (one - one/gamBi) 
+     &                                  * bdy_b_dot(iblk)%p(:,:,:)
+     &                                  + one/(alfBi * gamBi * dt) 
+     &                                  * bdy_b_af(iblk)%p(:,:,:)
 
-              bdy_b(iblk)%p(:,:,:) = (one/alfBi) * (bdy_b_af(iblk)%p(:,:,:) - bdy_b(iblk)%p(:,:,:) )
-     &+                              bdy_b(iblk)%p(:,:,:)
+              bdy_b(iblk)%p(:,:,:) = (one/alfBi) 
+     &                             * ( bdy_b_af(iblk)%p(:,:,:) 
+     &                             - bdy_b(iblk)%p(:,:,:) )
+     &                             + bdy_b(iblk)%p(:,:,:)
 
 c.....end of updates
             endif
         enddo  
 c
+c-----------------------for interface blocks-----------------------------------
+c.....for interface blocks
+         do iblk = 1, nelblif
+           mater_if0 = lcblkif(9, iblk)
+           mater_if1 = lcblkif(10,iblk)
+           npro_if_temp = lcblkif(1,iblk+1) - lcblkif(1,iblk)
+c
+! for phase_0
+           if (mat_eos(mater_if0,1).eq.ieos_solid_1)then
+c.....Do the update
+              if_b0_dot(iblk)%p(:,:,:)  = -one/(alfBi * gamBi * dt)
+     &                                  * if_b0(iblk)%p(:,:,:)
+     &                                  + (one - one/gamBi)
+     &                                  * if_b0_dot(iblk)%p(:,:,:)
+     &                                  + one/(alfBi * gamBi * dt) 
+     &                                  * if_b0_af(iblk)%p(:,:,:)
+
+              if_b0(iblk)%p(:,:,:) = (one/alfBi) 
+     &                             * ( if_b0_af(iblk)%p(:,:,:)
+     &                             - if_b0(iblk)%p(:,:,:) )
+     &                             + if_b0(iblk)%p(:,:,:)
+
+c.....end of updates
+           endif
+! for phase_1           
+           if (mat_eos(mater_if1,1).eq.ieos_solid_1)then
+c.....Do the update
+              if_b1_dot(iblk)%p(:,:,:)  = -one/(alfBi * gamBi * dt)
+     &                                  * if_b1(iblk)%p(:,:,:)
+     &                                  + (one - one/gamBi)
+     &                                  * if_b1_dot(iblk)%p(:,:,:)
+     &                                  + one/(alfBi * gamBi * dt) 
+     &                                  * if_b1_af(iblk)%p(:,:,:)
+
+              if_b1(iblk)%p(:,:,:) = (one/alfBi) 
+     &                             * ( if_b1_af(iblk)%p(:,:,:)
+     &                             - if_b1(iblk)%p(:,:,:) )
+     &                             + if_b1(iblk)%p(:,:,:)
+
+c.....end of updates
+            endif
+c            
+        enddo
+c--------------------------------------
+c          
       return
       end subroutine update_solid_blocks
