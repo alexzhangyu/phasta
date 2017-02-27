@@ -3,7 +3,7 @@
      &                   iBC,       BC,         
      &                   iper,      ilwork,     shp,       
      &                   shgl,      shpb,       shglb,
-     &                   shpif, shpif0, shpif1, shgif, shgif0, shgif1,
+     &                   shpif,     shgif,
      &                   ifath,     velbar,     nsons ) 
 c
 c----------------------------------------------------------------------
@@ -63,8 +63,8 @@ c
      &            shgl(MAXTOP,nsd,maxsh,MAXQPT), 
      &            shpb(MAXTOP,maxsh,MAXQPT),
      &            shglb(MAXTOP,nsd,maxsh,MAXQPT) 
-        real*8, dimension(maxtop,    maxsh,maxqpt) :: shpif, shpif0, shpif1
-        real*8, dimension(maxtop,nsd,maxsh,maxqpt) :: shgif, shgif0, shgif1
+        real*8, dimension(maxtop,    maxsh,maxqpt) :: shpif
+        real*8, dimension(maxtop,nsd,maxsh,maxqpt) :: shgif
         real*8   almit, alfit, gamit
         dimension ifath(numnp),    velbar(nfath,ndof),  nsons(nfath)
         real*8 rerr(nshg,10),ybar(nshg,ndof+8) ! 8 is for avg. of square as uu, vv, ww, pp, TT, uv, uw, and vw
@@ -101,8 +101,10 @@ c
      &         disp(numnp, nsd),    elasDy(nshg,nelas),
      &         umeshold(numnp, nsd), xold(numnp,nsd)
 
+       dimension gcnormal(nshg, nsd) ! For debugging
+
        logical alive
- 
+
         integer iTurbWall(nshg) 
         real*8 yInlet(3), yInletg(3)
         integer imapped, imapInlet(nshg)  !for now, used for setting Blower conditions
@@ -531,7 +533,7 @@ c                        write(*,*) 'lhs=',lhs
      &                       iper,          ilwork,
      &                       shp,           shgl,
      &                       shpb,          shglb,         
-     &                       shpif, shpif0, shpif1, shgif, shgif0, shgif1,
+     &                       shpif,         shgif,
      &                       solinc,        rerr,          umesh)
 c
 c                     call set_if_velocity (BC(:,ndof+2:ndof+4),  iBC, 
@@ -666,11 +668,12 @@ c
 c
 c.... call to SolGMRElas ... For mesh-elastic solve
 c
-                     call SolGMRElas (x,        disp,      iBC,    BC,
-     &                                colm,     rowp,      meshq,
-     &                                hBrg,     eBrg, 
-     &                                yBrg,     Rcos,      Rsin,     iper, 
-     &                                ilwork,   shp,       shgl,     elasDy)
+                     call SolGMRElas (x,        disp,    iBC,    BC,
+     &                                colm,     rowp,    meshq,
+     &                                hBrg,     eBrg,    yBrg,
+     &                                Rcos,     Rsin,    iper,   ilwork,
+     &                                shp,      shgl,    shpb,   shglb,
+     &                                shpif,    elasDy,  gcnormal)
 c
                   endif  ! end of switch for flow or scalar or mesh-elastic solve
 c     
@@ -693,7 +696,7 @@ c                       call itrBC (y,  ac,  iBC,  BC, iper, ilwork)
                      endif
 c
                      if (nsclr > 0) then
-                       call ifbc_set(bc,ilwork,nlwork)
+                       call ifbc_set(y,bc,ilwork,nlwork)
                      endif
 c
                   else if(iupdate.lt.10) then         ! update scalar
@@ -729,11 +732,13 @@ c
 c
 c.... call itrCorrectElas ... and then itrBCElas ...
 c
-                     call itrCorrectElas(xold, x, disp, elasDy)
+                     call itrCorrectElas(disp, elasDy)
 c
-                     call itrBCElas(umesh,  disp,  iBC, 
+                     call itrBCElas(umesh,  disp,  iBC,
      &                              BC(:,ndof+2:ndof+5),
      &                              iper,   ilwork        )
+c
+                     x = xold + disp
 c
                      umesh = disp / Delt(1)
                      umeshold = umesh
@@ -905,10 +910,15 @@ c     &                  xdot,  'd'//char(0), numnp, nsd, lstep)
                    call write_field(
      &                  myrank,'a'//char(0),'meshQ'//char(0), 5, 
      &                  meshq, 'd'//char(0), numel, 1,   lstep)
+c.... for debugging
+                   call write_field(
+     &                  myrank,  'a'//char(0),'gcnormal'//char(0), 8,
+     &                  gcnormal,'d'//char(0), numnp, nsd, lstep)
+c.... for debugging
+                 endif
 c
       if (solid_p%is_active) call write_restart_solid
 c
-                 endif
 c
                  if (iSOLID == 1)then
                    call write_field(
@@ -960,11 +970,16 @@ c     &                xdot,  'd'//char(0), numnp, nsd, lstep)
                  call write_field(
      &                myrank,'a'//char(0),'meshQ'//char(0), 5, 
      &                meshq, 'd'//char(0), numel, 1,   lstep)
+c.... for debugging
+                 call write_field(
+     &                myrank,  'a'//char(0),'gcnormal'//char(0), 8,
+     &                gcnormal,'d'//char(0), numnp, nsd, lstep)
+c.... for debugging
                endif
 c
                   call write_field(
      &              myrank,'a'//char(0),'material_type'//char(0),13,
-     &              mattype_interior, 'd',numel, 1, lstep)   
+     &              mattype_interior, 'd',numel, 1, lstep)
 c
                if (solid_p%is_active)
      &           call write_restart_solid
