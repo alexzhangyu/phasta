@@ -12,6 +12,8 @@ c
         use e3if_lhs_m
         use e3if_vi_m
         use if_global_m
+        use e3if_solid_data_m
+        use e3if_solid_func_m
 c
         implicit none
 c
@@ -25,7 +27,7 @@ c
           real*8, dimension(nsd,nshl1,nqpt), intent(in) :: shgif1
           real*8, dimension(nqpt), intent(in) :: qwtif0, qwtif1
 c
-          integer :: intp
+          integer :: intp !
       integer :: iel,isd,n
       real*8 ::sum0,sumg0
       real*8, allocatable :: tmpmu0(:,:),tmpmu1(:,:)
@@ -82,15 +84,29 @@ c... calculate the integration varibles
 c
             call e3if_var
 c
-            call e3if_mtrx
-c
-c... calculate the contribution of the jump in the fluxes, across the interface
-c
       prop0%mater = mater0
       prop1%mater = mater1
 c
             call e3var(y0, var0, ycl0, shp0, shgl0, shg0, nshl0) 
-            call e3var(y1, var1, ycl1, shp1, shgl1, shg1, nshl1) 
+            call e3var(y1, var1, ycl1, shp1, shgl1, shg1, nshl1)
+c
+! calculate the integration varibles for solid if needed
+            if (mat_eos(mater0,1).eq.ieos_solid_1)then
+              call e3if0_var_solid(intp, var0)
+            
+            
+            
+            endif
+!!!!!            
+            if (mat_eos(mater1,1).eq.ieos_solid_1)then
+               call e3if1_var_solid(intp, var1)
+            
+            endif
+                     
+! end for solid             
+            call e3if_mtrx
+c
+c... calculate the contribution of the jump in the fluxes, across the interface
 c
             call calc_stiff(prop0, var0, mater0)
             call calc_stiff(prop1, var1, mater1)
