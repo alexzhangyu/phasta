@@ -81,6 +81,9 @@ c
 c
       subroutine e3if_mtrx
 c
+        use matdat_def_m ! added for solid
+        use e3if_solid_func_m ! added for solid    
+c
         real*8, dimension(:), pointer :: rmu0, rlm0, rlm2mu0, con0
         real*8, dimension(:), pointer :: rmu1, rlm1, rlm2mu1, con1
 c
@@ -95,8 +98,26 @@ c
         call getdiff(rmu0, rlm0, rlm2mu0, con0, npro, mater0)
         call getdiff(rmu1, rlm1, rlm2mu1, con1, npro, mater1)
 c
-        call set_Kij(Kij0,rmu0,rlm0,rlm2mu0,con0,u0)
-        call set_Kij(Kij1,rmu1,rlm1,rlm2mu1,con1,u1)
+! different K_ij formula for different material type
+        select case (mat_eos(mater0,1))
+        case (ieos_ideal_gas,ieos_ideal_gas_mixture,ieos_liquid_1)
+          call set_Kij(Kij0,rmu0,rlm0,rlm2mu0,con0,u0)
+        case (ieos_solid_1)
+          call set_solid_kij_if( Kij0,  con0,      u0, 
+     &                           if_d0, if_det_d0, shearMod0 )
+        case default
+          call error ('e3if_mtrx  ', 'wrong material', mater0)
+        end select
+c
+        select case (mat_eos(mater1,1))
+        case (ieos_ideal_gas,ieos_ideal_gas_mixture,ieos_liquid_1)
+          call set_Kij(Kij1,rmu1,rlm1,rlm2mu1,con1,u1)
+        case (ieos_solid_1)
+          call set_solid_kij_if( Kij1,  con1,      u1,
+     &                           if_d1, if_det_d1, shearMod1 )
+        case default
+          call error ('e3if_mtrx  ', 'wrong material', mater1)
+        end select
 c
         deallocate(rmu0,rlm0,rlm2mu0,con0)
         deallocate(rmu1,rlm1,rlm2mu1,con1)

@@ -12,6 +12,7 @@ c
         use e3if_lhs_m
         use e3if_vi_m
         use if_global_m
+!        use intpt_m
         use e3if_solid_data_m
         use e3if_solid_func_m
 c
@@ -31,6 +32,9 @@ c
       integer :: iel,isd,n
       real*8 ::sum0,sumg0
       real*8, allocatable :: tmpmu0(:,:),tmpmu1(:,:)
+! added for solid, could get improved
+      real*8, dimension(:), allocatable :: rmu0, rlm0, rlm2mu0, con0 !added
+      real*8, dimension(:), allocatable :: rmu1, rlm1, rlm2mu1, con1 !added     
 #define debug 0
 c
 c      write(*,*) 'In e3if...'
@@ -90,6 +94,26 @@ c
             call e3var(y0, var0, ycl0, shp0, shgl0, shg0, nshl0) 
             call e3var(y1, var1, ycl1, shp1, shgl1, shg1, nshl1)
 c
+c.....get diffusivities, added, could get improved
+            allocate(rmu0(npro),rlm0(npro),rlm2mu0(npro),con0(npro))
+            allocate(rmu1(npro),rlm1(npro),rlm2mu1(npro),con1(npro))
+c
+            call getdiff(rmu0, rlm0, rlm2mu0, con0, npro, mater0)
+            call getdiff(rmu1, rlm1, rlm2mu1, con1, npro, mater1)
+            do iel = 1,npro
+              prop0(iel)%rmu = rmu0(iel)
+              prop0(iel)%rlm = rlm0(iel)
+              prop0(iel)%rlm2mu = rlm2mu0(iel)
+              prop0(iel)%con = con0(iel)
+c
+              prop1(iel)%rmu = rmu1(iel)
+              prop1(iel)%rlm = rlm1(iel)
+              prop1(iel)%rlm2mu = rlm2mu1(iel)
+              prop1(iel)%con = con1(iel)                             
+            enddo
+c
+            deallocate(rmu0,rlm0,rlm2mu0,con0)
+            deallocate(rmu1,rlm1,rlm2mu1,con1)         
 ! calculate the integration varibles for solid if needed
             if (mat_eos(mater0,1).eq.ieos_solid_1)then
               call e3if0_var_solid(intp, var0)
@@ -113,7 +137,7 @@ c
 c
 c ... Interface flux 
 c
-            call e3if_flux
+            call e3if_flux(intp)
 c
 c            call flux_jump
 c
@@ -136,7 +160,8 @@ c
         tmpmu0(:,4) = prop0%stiff(3,3)
         tmpmu0(:,5) = prop0%stiff(5,5)
       case (ieos_solid_1)
-C
+        call set_kinematic_mu_solid(tmpmu0,   prop0%con, shearMod0,
+     &                              bulkMod0, mater0)
 C Yu please fill this out
 c
       case default
@@ -151,8 +176,9 @@ c
         tmpmu1(:,4) = prop1%stiff(3,3)
         tmpmu1(:,5) = prop1%stiff(5,5)
       case (ieos_solid_1)
-C
-C Yu please fill this out
+        call set_kinematic_mu_solid(tmpmu1,   prop1%con,  shearMod1,
+     &                              bulkMod1, mater1)      
+c 
 c
       case default
         call error ('getthm  ', 'wrong material', mater)
@@ -284,11 +310,15 @@ c
 c
         end subroutine e3if_var
 c
-        subroutine e3if_flux
+        subroutine e3if_flux(intp)
+c
+          use e3if_solid_func_m !added for solid       
 c
           integer :: iel,iflow,isd,jsd,jflow,n
           real*8, dimension(nsd,nflow) :: f0, f1, fconv0, fconv1, fdiff0, fdiff1
           real*8, dimension(nflow) :: f0n0, f0n1, f1n0, f1n1
+! temporary added for solid
+          integer :: intp
 c
           real*8 :: etot, diff_flux(nsd,nflow), dTdx0
           real*8 :: kappa0(nsd), kappa1(nsd), k0,k1 ! mean curvature
@@ -300,8 +330,35 @@ c
             call calc_conv_flux(fconv0,rho0(iel),u0(iel,:),um0(iel,:),pres0(iel),ei0(iel))
             call calc_conv_flux(fconv1,rho1(iel),u1(iel,:),um1(iel,:),pres1(iel),ei1(iel))
 c
-            call calc_diff_flux(fdiff0,var0(iel),prop0(iel))
-            call calc_diff_flux(fdiff1,var1(iel),prop1(iel))
+! different diffusive flux formula for different material type
+            select case (mat_eos(mater0,1))
+            case (ieos_ideal_gas,ieos_ideal_gas_mixture,ieos_liquid_1)
+              call calc_diff_flux(fdiff0,var0(iel),prop0(iel))
+            case (ieos_solid_1)
+! could get improved              
+              call set_solid_difflux_if( fdiff0,         shearMod0(iel), 
+     &                                   prop0(iel)%con, if_det_baf0(iel),
+     &                                   u0(iel,:),      dtpdx_0(iel),
+     &                                   dtpdy_0(iel),   dtpdz_0(iel),                                
+     &                             if_b0_af(iblkif_solid)%p(iel,intp,:) )
+            case default
+              call error ('e3if_flux  ', 'wrong material', mater0)
+            end select                 
+!
+            select case (mat_eos(mater1,1))
+            case (ieos_ideal_gas,ieos_ideal_gas_mixture,ieos_liquid_1)              
+              call calc_diff_flux(fdiff1,var1(iel),prop1(iel))
+            case (ieos_solid_1)
+! could get improved              
+              call set_solid_difflux_if( fdiff1,         shearMod1(iel), 
+     &                                   prop1(iel)%con, if_det_baf1(iel),
+     &                                   u1(iel,:),      dtpdx_1(iel),
+     &                                   dtpdy_1(iel),   dtpdz_1(iel),                           
+     &                             if_b1_af(iblkif_solid)%p(iel,intp,:) )
+            case default
+              call error ('e3if_mtrx  ', 'wrong material', mater1)
+            end select     
+              
 c        write(*,500) myrank,iel,fconv0(1,:)
 c        write(*,500) myrank,iel,fconv1(1,:)
 c        write(*,500) myrank,iel,fdiff0(1,:)

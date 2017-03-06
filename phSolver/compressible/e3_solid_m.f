@@ -429,7 +429,7 @@ c
          stiff(:, 7, 8) = ShearMod * (det_d)**(-5.0/6.0)
      &                  * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)
      &                  * ( d(:,6) -(5.0/3.0)* (almBi)**(-2) * d(:,6) )
-         stiff(:, 8, 7) = ShearMod * (almBi * det_d)**(-5.0/6.0)
+         stiff(:, 8, 7) = ShearMod * (det_d)**(-5.0/6.0)
      &                  * (gamBi*Delt(1) * alfBi)*(almBi)**(-7.0/6.0)
      &                  * ( -(2.0/3.0)*d(:,6) )
          stiff(:, 8, 8) = ShearMod * (det_d)**(-5.0/6.0)
