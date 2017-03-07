@@ -1079,7 +1079,8 @@ c
      &                        shp,    shgl,   iBC,
      &                        BC,     shpb,   shglb,
      &                        rest,   rmest,  Diag,
-     &                        iper,   ilwork, EGmasst)
+     &                        iper,   ilwork, EGmasst,
+     &                        umesh )
 c
 c----------------------------------------------------------------------
 c
@@ -1119,6 +1120,7 @@ c
         real*8, allocatable :: tmpshp(:,:), tmpshgl(:,:,:)
         real*8, allocatable :: tmpshpb(:,:), tmpshglb(:,:,:)
         real*8, allocatable :: elDwl(:)
+        real*8, dimension(numnp,nsd), intent(in) :: umesh
 c
 	ttim(80) = ttim(80) - tmr()
 c
@@ -1256,7 +1258,8 @@ c
      &                    mmat(iblk)%p,    rest,
      &                    rmest,               
      &                    qrest,           EGmasst(iel:inum,:,:),
-     &                    Diag )
+     &                    Diag ,
+     &                    umesh)
 c
  
 c.... satisfy the BC's on the implicit LHS

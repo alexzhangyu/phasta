@@ -479,6 +479,7 @@ c Zdenek Johan, Winter 1991.  (Fortran 90)
 c----------------------------------------------------------------------
 c
         use turbSA ! for saSigma
+        use e3Sclr_param_m
         include "common.h"
 c
         dimension ycl(npro,nshl,ndof),        iBCB(npro,ndiBCB),
@@ -493,9 +494,6 @@ c
      &            g1yti(npro),                 g2yti(npro),
      &            g3yti(npro),                 WdetJb(npro),
      &            bnorm(npro,nsd)
-c
-        dimension rho(npro),                   Sclr(npro),
-     &            T(npro),                     cp(npro)
 c
         dimension rou(npro),                   F(npro),
      &            un(npro),                    Sclrn(npro)

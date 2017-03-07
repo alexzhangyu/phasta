@@ -6,14 +6,14 @@
 c
 c----------------------------------------------------------------------
 c
-c This routine computes the LHS mass matrix, the RHS residual 
+c This routine computes the LHS mass matrix, the RHS residual
 c vector, and the preconditioning matrix, for mesh-elastic solve
 c
 c----------------------------------------------------------------------
 c
          use pointer_data
-c         use timedata
          use timedataC
+         use readarrays ! read BLflt, BLgr, BLtnv, BLlist
 c
         include "common.h"
         include "mpif.h"
@@ -42,6 +42,10 @@ c
         dimension ilwork(nlwork)
 c
         integer errorcount(2)
+c
+        integer listcounter, ngc, itnv, basevID, nv, vID, vID2
+        real*8  iflt, igr
+        dimension inormal(nsd)
 c
         real*8, allocatable :: tmpshp(:,:), tmpshgl(:,:,:)
         real*8, allocatable :: Estiff(:,:,:)
@@ -159,6 +163,53 @@ c
 c
 c.... end calculation of growth curve normal
 c
+c.... ---------------->   Re-position layered mesh   <-----------------
+c
+c.... loop over growth curves
+c
+        listconuter = 0
+        do ngc = 1, numgc
+          itnv = BLtnv(ngc) ! total number of vertices for this growth curve
+c
+c.... precaution
+c
+          if (itnv .lt. 2) then
+            listconuter = listconuter + itnv
+            cycle ! not loop over vertices
+          endif
+c
+c.... prepare other paramteres
+c
+          iflt = BLflt(ngc) ! first layer thickness for this growth curve
+          igr  = BLgr(ngc)  ! growth ratio for this growth curve
+          basevID = BLlist(listconuter + 1)
+          inormal = gcnormal(basevID,:)
+c
+c.... loop over vertices on this growth curve
+c
+          do nv = 2, itnv
+            vID = BLlist(listconuter + nv)
+            vID2= BLlist(listconuter + nv - 1) ! the previous one
+            xtmp(vID,:) = xtmp(vID2,:) + iflt * inormal(:) * igr**(nv-2)
+            disp(vID,:) = xtmp(vID,:) - x(vID,:)
+c
+c.... assign iBC and BC arrays
+c
+            call assign_bl_bc( disp, iBC, BC(:,ndof+2:ndof+5),
+     &                         basevID, vID )
+c
+c.... end loop vertices on this growth curve
+c
+          enddo
+c
+          listconuter = listconuter + itnv ! update counter
+c
+c.... end loop growth curves
+c
+        enddo
+c
+c.... end re-position layered mesh
+c
 c.... -------------------->   interior elements   <--------------------
 c
 c.... loop over element blocks to compute element residuals
@@ -209,16 +260,16 @@ c
      &                    meshV(iel:iel+npro-1), errorcount )
 c
           call AsIGMRElas (x,             disp,
-     &                     tmpshp,        tmpshgl,    
-     &                     mien(iblk)%p,  elasres,      
+     &                     tmpshp,        tmpshgl,
+     &                     mien(iblk)%p,  elasres,
      &                     elasBDiag,     Estiff,
      &                     meshq(iel:iel+npro-1),
      &                     meshV(iel:iel+npro-1)   )
 c
 c.... satisfy the BCs on the implicit LHS
-c     
+c
           call bc3LHSElas (iBC, BC(:, ndof+2:ndof+5),
-     &                     mien(iblk)%p, Estiff) 
+     &                     mien(iblk)%p, Estiff)
 c
 c.... Fill-up the global sparse LHS mass matrix
 c
