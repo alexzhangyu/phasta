@@ -190,9 +190,23 @@ c
 c
       subroutine getthmif_solid_0
 c
+        use e3if_param_m
+        use e3if_solid_data_m
+        implicit none
+c
+        call e3if_setparam_solid_0
+        call getthmif0_ptr            
+c
       end subroutine getthmif_solid_0
 c
       subroutine getthmif_solid_1
+c
+        use e3if_param_m
+        use e3if_solid_data_m
+        implicit none
+c
+        call e3if_setparam_solid_1
+        call getthmif1_ptr  
 c
       end subroutine getthmif_solid_1
 c

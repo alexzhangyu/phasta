@@ -98,6 +98,52 @@ c
           deallocate( dtpdx_1, dtpdy_1, dtpdz_1)         
 c
         end subroutine e3if1_mfree_solid
+c...............................................................................
+c
+        subroutine e3if_setparam_solid_0
+c-------------------------------------------------------------------------------
+           use e3if_param_m
+           use e3_solid_m
+           implicit none
+c
+           rho  => rho0
+           ei   => ei0
+           pres => pres0
+           T    => T0
+           h    => h0
+           cv   => cp0
+           cp   => cp0
+           alphaP => alfaP0
+           betaT => betaT0
+           mater = mater0
+c
+           bulkMod => bulkMod0
+           shearMod => shearMod0
+           stress_T_Mod => stress_T_Mod0
+         end subroutine e3if_setparam_solid_0
+c...............................................................................
+c
+        subroutine e3if_setparam_solid_1
+c-------------------------------------------------------------------------------
+           use e3if_param_m
+           use e3_solid_m
+           implicit none
+c
+           rho  => rho1
+           ei   => ei1
+           pres => pres1
+           T    => T1
+           h    => h1
+           cv   => cp1
+           cp   => cp1
+           alphaP => alfaP1
+           betaT => betaT1
+           mater = mater1
+c
+           bulkMod => bulkMod1
+           shearMod => shearMod1
+           stress_T_Mod => stress_T_Mod1
+         end subroutine e3if_setparam_solid_1
 c
 c
       end module e3if_solid_data_m

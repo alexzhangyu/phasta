@@ -306,8 +306,23 @@ c
           call get_mesh_velocity(um0,umeshl0,shp0,npro,nshl0)
           call get_mesh_velocity(um1,umeshl1,shp1,npro,nshl1)
 c
-          call getthmif0
-          call getthmif1
+          select case (mat_eos(mater0,1))
+          case (ieos_ideal_gas,ieos_ideal_gas_mixture,ieos_liquid_1)
+            call getthmif0
+          case (ieos_solid_1)
+            call getthmif_solid_0
+          case default
+            call error ('getthm  ', 'wrong material', mater0)
+          end select
+!
+          select case (mat_eos(mater1,1))
+          case (ieos_ideal_gas,ieos_ideal_gas_mixture,ieos_liquid_1)  
+            call getthmif1
+          case (ieos_solid_1)
+            call getthmif_solid_1
+          case default
+            call error ('getthm  ', 'wrong material', mater1)
+          end select            
 c
         end subroutine e3if_var
 c
