@@ -16,10 +16,10 @@ c
 c......adding the displacment from solution field
       do ith =1,nsd
 c......solid debug
-        old_um(:,ith) = is_solid(:) * y( :,ith)
+c        old_um(:,ith) = is_solid(:) * y( :,ith)
 c......solid debug
-        old_x(:,ith) = old_x(:,ith)+ is_solid(:)
-     &*                y( :,ith) * dt
+c        old_x(:,ith) = old_x(:,ith)+ is_solid(:)
+c     &*                y( :,ith) * dt
         if (iSOLID == 1)then
           disp_solid_temp(:,ith) =  disp_solid_temp(:,ith)+ is_solid(:)
      &*                y( :,ith) * dt
