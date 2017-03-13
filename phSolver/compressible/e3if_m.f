@@ -132,8 +132,21 @@ c
 c
 c... calculate the contribution of the jump in the fluxes, across the interface
 c
-            call calc_stiff(prop0, var0, mater0)
-            call calc_stiff(prop1, var1, mater1)
+            if (mat_eos(mater0,1).eq.ieos_solid_1)then
+              do iel =1, npro
+                prop0(iel)%stiff = zero
+              enddo
+            else
+              call calc_stiff(prop0, var0, mater0)
+            endif
+!
+            if (mat_eos(mater1,1).eq.ieos_solid_1)then
+              do iel =1, npro
+                prop1(iel)%stiff = zero
+              enddo
+            else
+              call calc_stiff(prop1, var1, mater1)
+            endif
 c
 c ... Interface flux 
 c
