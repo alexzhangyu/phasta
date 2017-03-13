@@ -357,7 +357,7 @@ c============ Start the loop of time steps============================c
         do 2000 istp = 1, nstp
 c
 c.......solid debugging..............
-        call settimedepandantflux(ini_x)
+c        call settimedepandantflux(ini_x)
 
 c.......end of solid debugging........
 c
